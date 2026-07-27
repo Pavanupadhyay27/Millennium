@@ -1,0 +1,772 @@
+"use client";
+
+import React, { useState, useMemo } from "react";
+import {
+  Plus,
+  Trash2,
+  Edit2,
+  Search,
+  Check,
+  X,
+  ChevronDown,
+  ArrowRight,
+  Sparkles,
+  Upload,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+// Format currency
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(price);
+};
+
+// Initial Mock Product Database
+const INITIAL_PRODUCTS = [
+  {
+    id: "p1",
+    name: "Odisha Teak Lounge Chair",
+    slug: "odisha-teak-lounge-chair",
+    category: "Seating",
+    price: 24500,
+    wholesalePrice: 18500,
+    stock: 22,
+    status: "active",
+    featured: true,
+    bg: "bg-pastel-mint",
+    image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=200",
+    description: "A comfortable hand-made teak lounge chair with high density foam cushions.",
+    colors: ["Natural Wood", "Charcoal Black"],
+    materials: ["Teak Wood"],
+    seoTitle: "Odisha Teak Lounge Chair | Buy Handmade Teak Chair",
+    seoDescription: "Premium handcraft teak lounge chair built in Bhubaneswar with organic wood finishing.",
+  },
+  {
+    id: "p2",
+    name: "Konark Rattan Easy Armchair",
+    slug: "konark-rattan-easy-armchair",
+    category: "Seating",
+    price: 15500,
+    wholesalePrice: 11000,
+    stock: 2,
+    status: "active",
+    featured: false,
+    bg: "bg-pastel-butter",
+    image: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=200",
+    description: "Eco-friendly rattan weaving armchair. Fits light minimalist living spaces.",
+    colors: ["Natural Wood"],
+    materials: ["Rattan"],
+    seoTitle: "Konark Rattan Armchair | Millennium B2B Furniture",
+    seoDescription: "Shop natural handcrafted rattan dining and lounge armchairs directly from Odisha.",
+  },
+  {
+    id: "p6",
+    name: "Kalinga Walnut Coffee Table",
+    slug: "kalinga-walnut-coffee-table",
+    category: "Tables",
+    price: 18900,
+    wholesalePrice: 14000,
+    stock: 14,
+    status: "active",
+    featured: true,
+    bg: "bg-pastel-blush",
+    image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=200",
+    description: "Walnut coffee table featuring organic soft angles and a magazine shelf underneath.",
+    colors: ["Natural Walnut", "Ebonized Oak"],
+    materials: ["Walnut Wood"],
+    seoTitle: "Kalinga Walnut Coffee Table - Millennium Odisha",
+    seoDescription: "Premium walnut coffee tables crafted for modern organic living rooms.",
+  },
+  {
+    id: "p10",
+    name: "Bhubaneswar Oak Sideboard",
+    slug: "bhubaneswar-oak-sideboard",
+    category: "Storage",
+    price: 48000,
+    wholesalePrice: 36000,
+    stock: 8,
+    status: "draft",
+    featured: false,
+    bg: "bg-pastel-lavender",
+    image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=200",
+    description: "Oak credenza storage unit with sliding tambour doors.",
+    colors: ["Natural Wood"],
+    materials: ["Oak Wood"],
+    seoTitle: "Bhubaneswar Oak Sideboard Credenza",
+    seoDescription: "Solid oak timber storage credenza sideboard handcrafted locally in Odisha.",
+  }
+];
+
+export default function ProductCrudPage() {
+  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  // Form View State
+  const [showForm, setShowForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    id: "",
+    name: "",
+    slug: "",
+    category: "Seating",
+    price: 10000,
+    wholesalePrice: 8000,
+    stock: 10,
+    status: "active",
+    featured: false,
+    description: "",
+    colors: ["Natural Wood"],
+    materials: ["Teak Wood"],
+    seoTitle: "",
+    seoDescription: "",
+    image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=200",
+    bg: "bg-pastel-mint",
+  });
+
+  // Bulk Actions Input States
+  const [bulkPricePercent, setBulkPricePercent] = useState("");
+  const [bulkMoveCategory, setBulkMoveCategory] = useState("Seating");
+  const [activeBulkAction, setActiveBulkAction] = useState<"price" | "move" | null>(null);
+
+  // Filter & Search Products
+  const filteredProducts = useMemo(() => {
+    return products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.slug.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [products, searchQuery]);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(filteredProducts.map((p) => p.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      setSelectedIds((prev) => prev.filter((item) => item !== id));
+    }
+  };
+
+  const toggleStatus = (id: string) => {
+    setProducts((prev) =>
+      prev.map((p) =>
+        p.id === id ? { ...p, status: p.status === "active" ? "draft" : "active" } : p
+      )
+    );
+    showToast("Product status updated successfully.");
+  };
+
+  // Bulk Operations
+  const triggerBulkDelete = () => {
+    if (selectedIds.length === 0) return;
+    setProducts((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
+    setSelectedIds([]);
+    showToast("Selected products deleted.");
+  };
+
+  const triggerBulkPriceUpdate = () => {
+    const percent = parseFloat(bulkPricePercent);
+    if (isNaN(percent) || selectedIds.length === 0) return;
+
+    setProducts((prev) =>
+      prev.map((p) => {
+        if (selectedIds.includes(p.id)) {
+          const factor = 1 + percent / 100;
+          return {
+            ...p,
+            price: Math.round(p.price * factor),
+            wholesalePrice: Math.round(p.wholesalePrice * factor),
+          };
+        }
+        return p;
+      })
+    );
+    setBulkPricePercent("");
+    setActiveBulkAction(null);
+    setSelectedIds([]);
+    showToast(`Bulk price updated by ${percent}% for selected products.`);
+  };
+
+  const triggerBulkCategoryMove = () => {
+    if (selectedIds.length === 0) return;
+    setProducts((prev) =>
+      prev.map((p) =>
+        selectedIds.includes(p.id) ? { ...p, category: bulkMoveCategory } : p
+      )
+    );
+    setActiveBulkAction(null);
+    setSelectedIds([]);
+    showToast(`Selected products moved to ${bulkMoveCategory}.`);
+  };
+
+  // CRUD Operations
+  const handleOpenAdd = () => {
+    setFormData({
+      id: `p-${Date.now()}`,
+      name: "",
+      slug: "",
+      category: "Seating",
+      price: 12000,
+      wholesalePrice: 9000,
+      stock: 10,
+      status: "active",
+      featured: false,
+      description: "",
+      colors: ["Natural Wood"],
+      materials: ["Teak Wood"],
+      seoTitle: "",
+      seoDescription: "",
+      image: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=200",
+      bg: "bg-pastel-blush",
+    });
+    setIsEditing(false);
+    setShowForm(true);
+  };
+
+  const handleOpenEdit = (p: typeof INITIAL_PRODUCTS[0]) => {
+    setFormData({ ...p });
+    setIsEditing(true);
+    setShowForm(true);
+  };
+
+  const handleDeleteRow = (id: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+    setSelectedIds((prev) => prev.filter((item) => item !== id));
+    showToast("Product deleted.");
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Auto generate slug if empty
+    const finalSlug = formData.slug.trim() || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const finalData = { ...formData, slug: finalSlug };
+
+    if (isEditing) {
+      setProducts((prev) => prev.map((p) => (p.id === formData.id ? finalData : p)));
+      showToast("Product details updated.");
+    } else {
+      setProducts((prev) => [...prev, finalData]);
+      showToast("New product created.");
+    }
+    setShowForm(false);
+  };
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 4000);
+  };
+
+  return (
+    <div className="flex flex-col gap-8">
+      {/* Toast Alert */}
+      <AnimatePresence>
+        {toastMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="fixed top-24 right-8 z-50 bg-accent-teal text-white rounded-2xl px-6 py-4 text-xs font-bold shadow-warm-lg flex items-center gap-2"
+          >
+            <Check className="w-4 h-4" /> {toastMsg}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Header bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F1B16]/5 pb-6">
+        <div>
+          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] mb-2">
+            Catalog Inventory
+          </h1>
+          <p className="text-[#1F1B16]/50 text-xs font-semibold">
+            Control items pricing, stock thresholds, custom descriptions, and metadata.
+          </p>
+        </div>
+
+        {!showForm && (
+          <button
+            onClick={handleOpenAdd}
+            className="bg-accent-teal text-white font-bold px-6 py-3.5 rounded-full text-xs flex items-center gap-2 hover:bg-accent-teal/90 hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-300 active:translate-y-0"
+          >
+            <Plus className="w-4 h-4" /> Create New Product
+          </button>
+        )}
+      </div>
+
+      {!showForm ? (
+        <div className="flex flex-col gap-6">
+          {/* Controls: Search & Bulk Action buttons */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            
+            {/* Search Input */}
+            <div className="flex items-center bg-white border border-[#1F1B16]/10 rounded-full px-5 py-2.5 w-80 shadow-warm-sm">
+              <Search className="w-3.5 h-3.5 text-[#1F1B16]/40 mr-2.5" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by name, category, or slug..."
+                className="bg-transparent text-xs focus:outline-none w-full text-[#1F1B16]"
+              />
+            </div>
+
+            {/* Bulk actions triggers */}
+            {selectedIds.length > 0 && (
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-bold text-[#1F1B16]/50 mr-2">
+                  {selectedIds.length} Selected:
+                </span>
+                
+                {/* Bulk delete */}
+                <button
+                  onClick={triggerBulkDelete}
+                  className="bg-red-50 border border-red-200 text-red-700 font-bold px-4 py-2 rounded-full text-[10px] flex items-center gap-1 hover:bg-red-100 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Bulk Delete
+                </button>
+
+                {/* Bulk price toggle */}
+                <button
+                  onClick={() => setActiveBulkAction(activeBulkAction === "price" ? null : "price")}
+                  className="border border-[#1F1B16]/20 bg-white text-[#1F1B16] font-bold px-4 py-2 rounded-full text-[10px] flex items-center gap-1 hover:bg-[#1F1B16]/5 transition-colors"
+                >
+                  Bulk Price Update % <ChevronDown className="w-3 h-3" />
+                </button>
+
+                {/* Bulk category move */}
+                <button
+                  onClick={() => setActiveBulkAction(activeBulkAction === "move" ? null : "move")}
+                  className="border border-[#1F1B16]/20 bg-white text-[#1F1B16] font-bold px-4 py-2 rounded-full text-[10px] flex items-center gap-1 hover:bg-[#1F1B16]/5 transition-colors"
+                >
+                  Move Category <ChevronDown className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Bulk Action Inputs */}
+          <AnimatePresence>
+            {activeBulkAction && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="bg-white border border-[#1F1B16]/10 rounded-2xl p-5 shadow-warm-sm flex items-center gap-4 max-w-md overflow-hidden"
+              >
+                {activeBulkAction === "price" && (
+                  <>
+                    <input
+                      type="number"
+                      value={bulkPricePercent}
+                      onChange={(e) => setBulkPricePercent(e.target.value)}
+                      placeholder="Price adjust % (e.g. +10 or -5)..."
+                      className="border border-[#1F1B16]/10 rounded-full px-4 py-2 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal flex-1"
+                    />
+                    <button
+                      onClick={triggerBulkPriceUpdate}
+                      className="bg-accent-teal text-white font-bold px-4 py-2.5 rounded-full text-[10px]"
+                    >
+                      Apply
+                    </button>
+                  </>
+                )}
+                {activeBulkAction === "move" && (
+                  <>
+                    <select
+                      value={bulkMoveCategory}
+                      onChange={(e) => setBulkMoveCategory(e.target.value)}
+                      className="border border-[#1F1B16]/10 rounded-full px-4 py-2 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none cursor-pointer flex-1"
+                    >
+                      <option value="Seating">Seating</option>
+                      <option value="Tables">Tables</option>
+                      <option value="Storage">Storage</option>
+                      <option value="Decorations">Decorations</option>
+                    </select>
+                    <button
+                      onClick={triggerBulkCategoryMove}
+                      className="bg-accent-teal text-white font-bold px-4 py-2.5 rounded-full text-[10px]"
+                    >
+                      Move Items
+                    </button>
+                  </>
+                )}
+                <button
+                  onClick={() => setActiveBulkAction(null)}
+                  className="w-8 h-8 rounded-full bg-[#1F1B16]/5 flex items-center justify-center hover:bg-[#1F1B16]/15"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Denser Products Table */}
+          <div className="bg-white border border-[#1F1B16]/10 rounded-[28px] overflow-hidden shadow-warm-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-[#1F1B16]/[0.01] border-b border-[#1F1B16]/10 text-[9px] font-bold uppercase tracking-wider text-[#1F1B16]/40">
+                    <th className="py-4 px-6 text-center w-12">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.length === filteredProducts.length && filteredProducts.length > 0}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        className="rounded accent-accent-teal cursor-pointer"
+                      />
+                    </th>
+                    <th className="py-4 px-4">Item details</th>
+                    <th className="py-4 px-4">Category</th>
+                    <th className="py-4 px-4 text-right">Retail Rate</th>
+                    <th className="py-4 px-4 text-right">Wholesale Rate</th>
+                    <th className="py-4 px-4 text-center">Stock</th>
+                    <th className="py-4 px-4 text-center">Status</th>
+                    <th className="py-4 px-6 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#1F1B16]/5">
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((p) => {
+                      const isChecked = selectedIds.includes(p.id);
+                      return (
+                        <tr key={p.id} className={`text-xs hover:bg-[#1F1B16]/[0.005] ${isChecked ? "bg-accent-teal/5" : ""}`}>
+                          {/* Bulk Checkbox */}
+                          <td className="py-4 px-6 text-center">
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) => handleSelectRow(p.id, e.target.checked)}
+                              className="rounded accent-accent-teal cursor-pointer"
+                            />
+                          </td>
+
+                          {/* Image Thumbnail & details */}
+                          <td className="py-4 px-4 flex items-center gap-4">
+                            <div className={`${p.bg} w-11 h-11 rounded-xl overflow-hidden p-1 flex items-center justify-center shadow-warm-sm flex-shrink-0`}>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={p.image} alt={p.name} className="w-full h-full object-cover rounded-lg" />
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-[#1F1B16] leading-tight mb-0.5">{p.name}</h4>
+                              <p className="font-mono text-[9px] text-[#1F1B16]/40 uppercase leading-none">{p.slug}</p>
+                            </div>
+                          </td>
+
+                          {/* Category */}
+                          <td className="py-4 px-4 font-bold text-[#1F1B16]/60">
+                            {p.category}
+                          </td>
+
+                          {/* Retail Price */}
+                          <td className="py-4 px-4 text-right font-mono font-bold text-[#1F1B16] tabular-nums">
+                            {formatPrice(p.price)}
+                          </td>
+
+                          {/* Wholesale Price */}
+                          <td className="py-4 px-4 text-right font-mono font-bold text-accent-teal tabular-nums">
+                            {formatPrice(p.wholesalePrice)}
+                          </td>
+
+                          {/* Stock level */}
+                          <td className="py-4 px-4 text-center">
+                            <span className={`font-mono font-bold px-2 py-0.5 rounded ${
+                              p.stock <= 2 ? "text-accent-terracotta bg-accent-terracotta/10" : "text-[#1F1B16]/60 bg-[#1F1B16]/5"
+                            }`}>
+                              {p.stock}
+                            </span>
+                          </td>
+
+                          {/* Active / Draft Status */}
+                          <td className="py-4 px-4 text-center">
+                            <button
+                              onClick={() => toggleStatus(p.id)}
+                              className={`px-3 py-1 border rounded-full text-[9px] font-extrabold uppercase transition-all ${
+                                p.status === "active"
+                                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                  : "bg-charcoal/10 text-charcoal/80 border-charcoal/15"
+                              }`}
+                            >
+                              {p.status}
+                            </button>
+                          </td>
+
+                          {/* Action triggers */}
+                          <td className="py-4 px-6 text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleOpenEdit(p)}
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-[#1F1B16]/50 hover:bg-[#1F1B16]/5"
+                                title="Edit specs"
+                              >
+                                <Edit2 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteRow(p.id)}
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-red-500 hover:bg-red-50"
+                                title="Delete product"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="py-16 text-center text-[#1F1B16]/40 font-serif">
+                        No product matches found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      ) : (
+        /* CRUD FORM VIEW OVERLAY */
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white border border-[#1F1B16]/10 rounded-[32px] p-8 md:p-10 shadow-warm-lg max-w-4xl"
+        >
+          <div className="flex items-center justify-between border-b border-[#1F1B16]/5 pb-4 mb-8">
+            <h3 className="font-serif text-2xl font-bold text-[#1F1B16]">
+              {isEditing ? "Modify Product Specifications" : "Create New Catalog Entry"}
+            </h3>
+            <button
+              onClick={() => setShowForm(false)}
+              className="w-9 h-9 rounded-full bg-[#1F1B16]/5 flex items-center justify-center hover:bg-[#1F1B16]/15"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <form onSubmit={handleFormSubmit} className="flex flex-col gap-6">
+            
+            {/* 1. Core Metadata Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Product Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  placeholder="e.g. Konark Teak Bench"
+                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">URL Slug (Auto or custom)</label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+                  placeholder="e.g. konark-teak-bench"
+                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Category *</label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
+                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none cursor-pointer"
+                >
+                  <option value="Seating">Seating</option>
+                  <option value="Tables">Tables</option>
+                  <option value="Storage">Storage</option>
+                  <option value="Decorations">Decorations</option>
+                </select>
+              </div>
+            </div>
+
+            {/* 2. Description */}
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Product Description (CMS editor)</label>
+              <textarea
+                rows={3}
+                value={formData.description}
+                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                placeholder="Enter rich details about joinery, materials, style..."
+                className="border border-[#1F1B16]/10 rounded-2xl px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal resize-none"
+              />
+            </div>
+
+            {/* 3. Pricing & Stock */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Retail Price (₹) *</label>
+                <input
+                  type="number"
+                  required
+                  value={formData.price}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, price: parseInt(e.target.value, 10) || 0 }))}
+                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Wholesale Rate (₹) *</label>
+                <input
+                  type="number"
+                  required
+                  value={formData.wholesalePrice}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, wholesalePrice: parseInt(e.target.value, 10) || 0 }))}
+                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Initial Stock Quantity *</label>
+                <input
+                  type="number"
+                  required
+                  value={formData.stock}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, stock: parseInt(e.target.value, 10) || 0 }))}
+                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                />
+              </div>
+            </div>
+
+            {/* 4. Variant Builder (Color/Materials) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-[#F7F3EC] rounded-2xl border border-[#1F1B16]/5">
+              <div className="flex flex-col gap-2.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55 block">Available Colors (Comma separated)</span>
+                <input
+                  type="text"
+                  value={formData.colors.join(", ")}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, colors: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) }))
+                  }
+                  placeholder="e.g. Natural Wood, Charcoal Black"
+                  className="border border-[#1F1B16]/10 rounded-full px-5 py-2.5 text-xs bg-white text-[#1F1B16] focus:outline-none"
+                />
+              </div>
+              <div className="flex flex-col gap-2.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55 block">Available Materials (Comma separated)</span>
+                <input
+                  type="text"
+                  value={formData.materials.join(", ")}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, materials: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) }))
+                  }
+                  placeholder="e.g. Teak Wood, Walnut Veneer"
+                  className="border border-[#1F1B16]/10 rounded-full px-5 py-2.5 text-xs bg-white text-[#1F1B16] focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* 5. Drag-Drop Mock Image Uploader */}
+            <div className="border border-dashed border-[#1F1B16]/20 rounded-2xl p-6 text-center flex flex-col items-center justify-center bg-[#F7F3EC]/50 hover:bg-[#F7F3EC] transition-colors cursor-pointer group">
+              <Upload className="w-8 h-8 text-[#1F1B16]/40 mb-3 group-hover:text-accent-teal transition-colors" />
+              <h5 className="font-bold text-xs text-[#1F1B16] mb-1">Drag and drop images here, or browse</h5>
+              <p className="text-[10px] text-[#1F1B16]/40">PNG, JPG formats accepted. Recommended size 1200x900px.</p>
+            </div>
+
+            {/* 6. SEO Meta & Settings */}
+            <div className="border-t border-[#1F1B16]/5 pt-6 flex flex-col gap-5">
+              <h4 className="font-serif text-sm font-bold text-[#1F1B16] flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-accent-teal" /> SEO Search Configuration
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Meta Search Title</label>
+                  <input
+                    type="text"
+                    value={formData.seoTitle}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, seoTitle: e.target.value }))}
+                    placeholder="e.g. Buy Odisha Teak Bench Online"
+                    className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Meta Search Description</label>
+                  <input
+                    type="text"
+                    value={formData.seoDescription}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, seoDescription: e.target.value }))}
+                    placeholder="Short summary for Google search result listing..."
+                    className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 7. Homepage Featured & Status Toggles */}
+            <div className="flex flex-wrap gap-8 items-center border-t border-[#1F1B16]/5 pt-6">
+              <label className="flex items-center gap-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, featured: e.target.checked }))}
+                  className="w-4 h-4 rounded accent-accent-teal border-charcoal/20"
+                />
+                <span className="text-xs font-bold text-[#1F1B16]/80">Featured on storefront homepage</span>
+              </label>
+
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold text-[#1F1B16]/80">Publish Status:</span>
+                <div className="flex bg-[#F7F3EC] border border-[#1F1B16]/10 rounded-full p-1 text-[10px] font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, status: "active" }))}
+                    className={`rounded-full px-4 py-1.5 transition-all ${
+                      formData.status === "active" ? "bg-accent-teal text-white" : "text-[#1F1B16]/50"
+                    }`}
+                  >
+                    ACTIVE
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, status: "draft" }))}
+                    className={`rounded-full px-4 py-1.5 transition-all ${
+                      formData.status === "draft" ? "bg-[#1F1B16] text-[#F7F3EC]" : "text-[#1F1B16]/50"
+                    }`}
+                  >
+                    DRAFT
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit & Cancel Actions */}
+            <div className="flex gap-4 border-t border-[#1F1B16]/5 pt-8 justify-end">
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="border border-[#1F1B16]/30 text-[#1F1B16] font-bold px-8 py-3.5 rounded-full text-xs"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold px-8 py-3.5 rounded-full text-xs flex items-center gap-2 shadow-warm-md hover:-translate-y-0.5 transition-all duration-300"
+              >
+                Save Product <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+          </form>
+        </motion.div>
+      )}
+    </div>
+  );
+}

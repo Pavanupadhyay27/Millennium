@@ -1,0 +1,133 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CUSTOMER
+  WHOLESALE
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id            String             @id @default(cuid())
+  name          String?
+  email         String?            @unique
+  phone         String?
+  password      String?
+  role          Role               @default(CUSTOMER)
+  orders        Order[]
+  inquiries     WholesaleInquiry[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model Category {
+  id            String     @id @default(cuid())
+  name          String
+  slug          String     @unique
+  image         String?
+  products      Product[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model Product {
+  id             String           @id @default(cuid())
+  name           String
+  slug           String           @unique
+  description    String
+  price          Float
+  wholesalePrice Float
+  images         String[]
+  space          String           @default("home") // "home" | "office" | "commercial" | "outdoor"
+  categoryName   String           @default("Chairs")
+  categoryId     String?
+  category       Category?        @relation(fields: [categoryId], references: [id])
+  stock          Int              @default(10)
+  material       String           @default("Solid Teak Wood")
+  colorName      String           @default("Natural Teak")
+  rating         Float            @default(4.9)
+  featured       Boolean          @default(false)
+  variants       ProductVariant[]
+  orderItems     OrderItem[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model ProductVariant {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type       String   // "COLOR" | "MATERIAL"
+  value      String   // "Sage Green", "Teak Wood"
+  priceDelta Float    @default(0.0)
+  stock      Int      @default(10)
+  imageUrl   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique // e.g. RET-2026-8921
+  userId         String?
+  user           User?       @relation(fields: [userId], references: [id])
+  customerName   String
+  customerEmail  String
+  customerPhone  String
+  address        String
+  city           String
+  state          String
+  postalCode     String
+  totalAmount    Float
+  subtotal       Float
+  taxAmount      Float
+  status         OrderStatus @default(CONFIRMED)
+  items          OrderItem[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  name      String
+  price     Float
+  quantity  Int
+  color     String?
+  material  String?
+}
+
+model WholesaleInquiry {
+  id          String   @id @default(cuid())
+  name        String
+  companyName String?
+  email       String
+  phone       String
+  city        String
+  itemTitle   String?
+  quantity    Int?
+  notes       String?
+  status      String   @default("NEW") // "NEW" | "CONTACTED" | "CONVERTED"
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

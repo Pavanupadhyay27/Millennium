@@ -3,25 +3,64 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cream: #F7F3EC;
+  --cream-light: #FAF7F2;
+  --charcoal: #1F1B16;
+  --charcoal-light: #332E27;
+  
+  --accent-teal: #2F6F62;
+  --accent-terracotta: #D97B3F;
+  
+  --pastel-mint: #DFF4EE;
+  --pastel-blush: #FCE9E4;
+  --pastel-lavender: #EFE7F7;
+  --pastel-butter: #FDF3D8;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --cream: #12100E;
+  --cream-light: #1A1714;
+  --charcoal: #F7F3EC;
+  --charcoal-light: #EBE6DC;
+  
+  --accent-teal: #4EA392;
+  --accent-terracotta: #E38D56;
+  
+  --pastel-mint: #1E2B27;
+  --pastel-blush: #2C1A16;
+  --pastel-lavender: #211927;
+  --pastel-butter: #2C2417;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--cream);
+  color: var(--charcoal);
+  font-family: var(--font-inter), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+h1, h2, h3, h4, h5, h6, .font-serif-display {
+  font-family: var(--font-fraunces), serif;
+}
+
+/* Micro-interaction utility for link hover drawing */
+.nav-link-underline {
+  position: relative;
+}
+.nav-link-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1.5px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--accent-teal);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+.nav-link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
 }
