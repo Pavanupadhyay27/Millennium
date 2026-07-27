@@ -18,9 +18,57 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Millennium Furniture | Premium E-Commerce & Wholesale CRM",
+  metadataBase: new URL("https://millennium-furniture.vercel.app"),
+  title: {
+    default: "Millennium Furniture | Solid Teak Modern Furniture Bhubaneswar",
+    template: "%s | Millennium Furniture",
+  },
   description:
-    "Production-grade furniture e-commerce and wholesale CRM based in Bhubaneswar, Odisha, India. Discover custom-designed, premium crafted furniture.",
+    "Handcrafting heirloom mid-century modern solid teak wood furniture in Bhubaneswar, Odisha. Explore lounge chairs, executive office desks, dining tables & B2B wholesale supplies.",
+  keywords: [
+    "Furniture Bhubaneswar",
+    "Solid Teak Wood Furniture Odisha",
+    "Handcrafted Teak Furniture",
+    "B2B Wholesale Furniture Supplier",
+    "Mid-Century Modern Lounge Chairs",
+    "Executive Office Desks",
+  ],
+  authors: [{ name: "Millennium Furniture Odisha" }],
+  creator: "Millennium Furniture",
+  publisher: "Millennium Furniture",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://millennium-furniture.vercel.app",
+    title: "Millennium Furniture | Premium Handcrafted Solid Teak Wood Furniture",
+    description:
+      "Handcrafting heirloom solid teak wood furniture in Bhubaneswar, Odisha. Free insured delivery across Odisha.",
+    siteName: "Millennium Furniture",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: "Millennium Furniture Odisha",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Millennium Furniture | Premium Handcrafted Teak",
+    description: "Solid teak wood furniture in Bhubaneswar, Odisha. Free insured transport.",
+    images: ["/logo.png"],
+  },
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
