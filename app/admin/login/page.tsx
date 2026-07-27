@@ -37,9 +37,9 @@ export default function AdminLoginPage() {
         <div className="lg:col-span-5 relative hidden lg:block overflow-hidden bg-charcoal/5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=700"
+            src="/admin-hero.png"
             alt="Millennium Furniture HQ"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-8 text-white">
             <span className="text-[9px] font-extrabold text-accent-teal uppercase tracking-widest block mb-1">
