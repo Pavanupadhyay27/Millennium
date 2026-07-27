@@ -10,29 +10,70 @@ import {
   Users,
   FileEdit,
   Menu,
-  Search,
   Bell,
   LogOut,
   Lock,
-  User,
+  ArrowRight
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(true);
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    setCurrentTime(new Date());
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    // Check local admin authentication state
+    const authState = localStorage.getItem("millennium_admin_auth");
+    if (authState === "true") {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
   }, []);
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
-  };
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "short", day: "numeric" });
+  // Allow unrestricted rendering for the login page route itself
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
+  // Loading spinner while verifying auth state
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#12100E] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-accent-teal border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  // Access Denied Screen (Redirect to Login)
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-8 max-w-md shadow-2xl flex flex-col items-center">
+          <div className="w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 mb-4">
+            <Lock className="w-7 h-7" />
+          </div>
+          <h1 className="font-serif text-2xl font-bold mb-2">Admin Sign-In Required</h1>
+          <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 leading-relaxed mb-6">
+            You must be logged in as an administrator to access the Millennium Furniture HQ backend.
+          </p>
+
+          <a
+            href="/admin/login"
+            className="w-full bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md"
+          >
+            Go To Admin Login <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("millennium_admin_auth");
+    localStorage.removeItem("millennium_admin_email");
+    window.location.href = "/admin/login";
   };
 
   const navigationItems = [
@@ -45,168 +86,82 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Homepage CMS", href: "/admin/cms", icon: FileEdit },
   ];
 
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen bg-[#F7F3EC] flex flex-col items-center justify-center p-6 text-center">
-        <div className="bg-white border border-[#1F1B16]/10 rounded-[32px] p-8 md:p-12 max-w-md shadow-warm-lg flex flex-col items-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-6">
-            <Lock className="w-8 h-8" />
-          </div>
-          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] mb-4">
-            Access Denied
-          </h1>
-          <p className="text-[#1F1B16]/60 text-sm leading-relaxed mb-8">
-            You do not have the required <strong>ADMIN</strong> permissions to view the store
-            management backend. Return to the shop storefront.
-          </p>
-
-          <div className="flex flex-col gap-3 w-full">
-            <button
-              onClick={() => setIsAdmin(true)}
-              className="bg-accent-teal text-white font-bold py-3.5 rounded-full hover:bg-accent-teal/90 transition-all text-xs"
-            >
-              Simulate ADMIN Login (Gain Access)
-            </button>
-            <a
-              href="/"
-              className="border border-[#1F1B16]/20 text-[#1F1B16] font-bold py-3.5 rounded-full hover:bg-[#1F1B16] hover:text-[#F7F3EC] transition-all text-xs text-center"
-            >
-              Return to Storefront
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#F7F3EC] font-sans selection:bg-accent-teal/20 selection:text-[#1F1B16] flex">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] font-sans selection:bg-accent-teal/20 flex transition-colors duration-300">
       {/* 1. SIDEBAR PANEL */}
       <aside
-        className={`bg-white border-r border-[#1F1B16]/5 fixed inset-y-0 left-0 z-40 lg:static flex flex-col ${
+        className={`bg-white dark:bg-[#1C1814] border-r border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 fixed inset-y-0 left-0 z-40 lg:static flex flex-col transition-all ${
           sidebarOpen ? "w-64" : "w-20"
         }`}
       >
-        {/* Brand header */}
-        <div className="h-20 border-b border-[#1F1B16]/5 px-4 flex items-center justify-between">
+        {/* Brand Header */}
+        <div className="h-20 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-5 flex items-center justify-between">
           <a href="/admin" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded bg-[#1F1B16] text-[#F7F3EC] flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 19V5L12 14L21 5V19" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="12" cy="18" r="1.5" fill="currentColor" />
-              </svg>
-            </div>
-            {sidebarOpen && (
-              <span className="font-serif text-lg font-bold tracking-tight text-[#1F1B16] whitespace-nowrap">
-                Millennium HQ
-              </span>
-            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Millennium Admin" className="h-10 w-auto object-contain dark:brightness-0 dark:invert" />
           </a>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#1F1B16]/5"
+            className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
             aria-label="Toggle sidebar"
           >
             <Menu className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Live Date, Day, and Time Widget moved to header bar */}
-
         {/* Links list */}
-        <nav className="p-4 flex flex-col gap-1 flex-1">
-          {navigationItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.name === "Dashboard" ? "/admin" : item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded text-xs font-bold text-[#1F1B16]/75 hover:bg-accent-teal/10 hover:text-accent-teal ${
-                sidebarOpen ? "justify-start" : "justify-center"
-              }`}
-              title={item.name}
-            >
-              <item.icon className="w-4 h-4 flex-shrink-0" />
-              {sidebarOpen && <span>{item.name}</span>}
-            </a>
-          ))}
+        <nav className="p-4 flex flex-col gap-1.5 flex-1">
+          {navigationItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
+                  isActive
+                    ? "bg-accent-teal text-white shadow-sm"
+                    : "text-[#1F1B16]/75 dark:text-[#F7F3EC]/75 hover:bg-accent-teal/10 hover:text-accent-teal"
+                } ${sidebarOpen ? "justify-start" : "justify-center"}`}
+                title={item.name}
+              >
+                <item.icon className="w-4 h-4 flex-shrink-0" />
+                {sidebarOpen && <span>{item.name}</span>}
+              </a>
+            );
+          })}
         </nav>
 
-        {/* Sidebar Footer Role toggler */}
-        <div className="p-4 border-t border-[#1F1B16]/5 bg-white">
-          {sidebarOpen ? (
-            <>
-              <div className="bg-[#F7F3EC] rounded p-3 border border-[#1F1B16]/5 text-[10px] font-semibold text-[#1F1B16]/70 mb-3">
-                <div className="flex justify-between items-center mb-1">
-                  <span>Admin:</span>
-                  <span className="font-bold text-accent-teal uppercase">ACTIVE</span>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsAdmin(false)}
-                className="w-full border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 font-bold py-2.5 rounded text-[10px] flex items-center justify-center gap-1.5"
-              >
-                <LogOut className="w-3.5 h-3.5" /> Simulate Logout
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => setIsAdmin(false)}
-              className="w-full border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 font-bold py-2.5 rounded text-[10px] flex items-center justify-center"
-              title="Simulate Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          )}
+        {/* Logout Footer */}
+        <div className="p-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 bg-white dark:bg-[#1C1814]">
+          <button
+            onClick={handleLogout}
+            className="w-full border border-red-500/20 text-red-500 hover:bg-red-500/10 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition-all"
+          >
+            <LogOut className="w-4 h-4" /> {sidebarOpen && "Sign Out Admin"}
+          </button>
         </div>
       </aside>
 
-      {/* 2. MAIN HUB WRAPPER */}
+      {/* 2. MAIN CONTENT PANEL */}
       <div className="flex-1 flex flex-col min-w-0">
-        
-        {/* Top Header Bar */}
-        <header className="h-20 bg-white border-b border-[#1F1B16]/5 px-6 md:px-8 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-4">
-
-            {/* Quick search */}
-            <div className="hidden sm:flex items-center bg-[#F7F3EC] border border-[#1F1B16]/10 rounded-full px-4 py-2 w-72">
-              <Search className="w-3.5 h-3.5 text-[#1F1B16]/40 mr-2" />
-              <input
-                type="text"
-                placeholder="Search orders, clients, or products..."
-                className="bg-transparent text-[11px] font-semibold focus:outline-none w-full text-[#1F1B16]"
-              />
-            </div>
+        {/* Top Navbar */}
+        <header className="h-20 bg-white dark:bg-[#1C1814] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-6 flex items-center justify-between sticky top-0 z-30">
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
+              Millennium HQ Admin
+            </span>
           </div>
 
-          <div className="flex items-center gap-4 md:gap-6">
-            {/* Live Date, Day, and Time Widget beside notifications */}
-            {currentTime && (
-              <div className="hidden sm:flex flex-col items-end font-mono text-[9px] text-[#1F1B16]/65 leading-tight select-none">
-                <span className="font-bold text-[#1F1B16]/80">{formatDate(currentTime)}</span>
-                <span className="font-extrabold text-accent-teal tracking-wider text-[10px] mt-0.5">{formatTime(currentTime)}</span>
-              </div>
-            )}
-
-            {/* Notifications */}
-            <button className="w-10 h-10 rounded-full flex items-center justify-center text-[#1F1B16]/80 hover:bg-[#1F1B16]/5 relative">
+          <div className="flex items-center gap-4">
+            <button className="w-9 h-9 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 flex items-center justify-center hover:bg-accent-teal hover:text-white transition-all text-[#1F1B16] dark:text-[#F7F3EC] relative">
               <Bell className="w-4 h-4" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-accent-terracotta rounded-full"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-500 rounded-full" />
             </button>
-
-            {/* Admin Avatar */}
-            <div className="flex items-center gap-3 pl-4 border-l border-[#1F1B16]/5">
-              <div className="w-9 h-9 rounded-full bg-accent-teal text-white font-bold flex items-center justify-center shadow-warm-sm">
-                <User className="w-4 h-4" />
-              </div>
-              <div className="hidden md:block">
-                <h4 className="text-xs font-bold text-[#1F1B16] leading-none mb-0.5">Admin Studio</h4>
-                <p className="text-[9px] text-[#1F1B16]/50 font-semibold leading-none">Global Manager</p>
-              </div>
-            </div>
           </div>
         </header>
 
-        {/* Layout Children Content */}
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+        {/* Child Pages Container */}
+        <main className="p-6 md:p-10 flex-1">
           {children}
         </main>
       </div>
