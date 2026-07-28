@@ -669,8 +669,13 @@ export default function ProductCrudPage() {
                 <input
                   type="number"
                   required
-                  value={formData.price}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, price: parseInt(e.target.value, 10) || 0 }))}
+                  min={0}
+                  value={formData.price === 0 ? "" : formData.price}
+                  onChange={(e) => {
+                    const val = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
+                    setFormData((prev) => ({ ...prev, price: isNaN(val) ? 0 : val }));
+                  }}
+                  placeholder="0"
                   className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                 />
               </div>
@@ -682,8 +687,13 @@ export default function ProductCrudPage() {
                 <input
                   type="number"
                   required
-                  value={formData.wholesalePrice}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, wholesalePrice: parseInt(e.target.value, 10) || 0 }))}
+                  min={0}
+                  value={formData.wholesalePrice === 0 ? "" : formData.wholesalePrice}
+                  onChange={(e) => {
+                    const val = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
+                    setFormData((prev) => ({ ...prev, wholesalePrice: isNaN(val) ? 0 : val }));
+                  }}
+                  placeholder="0"
                   className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                 />
               </div>
@@ -695,8 +705,13 @@ export default function ProductCrudPage() {
                 <input
                   type="number"
                   required
-                  value={formData.stock}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, stock: parseInt(e.target.value, 10) || 0 }))}
+                  min={0}
+                  value={formData.stock === 0 ? "" : formData.stock}
+                  onChange={(e) => {
+                    const val = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
+                    setFormData((prev) => ({ ...prev, stock: isNaN(val) ? 0 : val }));
+                  }}
+                  placeholder="0"
                   className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                 />
               </div>

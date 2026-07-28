@@ -366,9 +366,13 @@ export default function AdminOffersPage() {
                   <input
                     type="number"
                     required
-                    min={1}
-                    value={formData.discountValue}
-                    onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
+                    min={0}
+                    value={formData.discountValue === 0 ? "" : formData.discountValue}
+                    onChange={(e) => {
+                      const val = e.target.value === "" ? 0 : Number(e.target.value);
+                      setFormData({ ...formData, discountValue: val });
+                    }}
+                    placeholder="0"
                     className="w-full bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:border-accent-teal"
                   />
                 </div>
@@ -380,8 +384,12 @@ export default function AdminOffersPage() {
                   <input
                     type="number"
                     min={0}
-                    value={formData.minOrderValue}
-                    onChange={(e) => setFormData({ ...formData, minOrderValue: Number(e.target.value) })}
+                    value={formData.minOrderValue === 0 ? "" : formData.minOrderValue}
+                    onChange={(e) => {
+                      const val = e.target.value === "" ? 0 : Number(e.target.value);
+                      setFormData({ ...formData, minOrderValue: val });
+                    }}
+                    placeholder="0"
                     className="w-full bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:border-accent-teal"
                   />
                 </div>
