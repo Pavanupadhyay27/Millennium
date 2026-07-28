@@ -491,11 +491,46 @@ export default function CheckoutPage() {
               </div>
               <h2 className="font-serif text-3xl font-bold mb-2">Order Confirmed!</h2>
               <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mb-6 leading-relaxed">
-                Thank you for your order with Millennium Furniture. Order reference <strong>#RET-{Math.floor(1000 + Math.random() * 9000)}</strong> has been generated and sent to your email.
+                Thank you for your order with Millennium Furniture. Your order has been registered under Cash on Delivery (COD).
               </p>
+
+              {/* Instant WhatsApp Notification Button to Business */}
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 mb-6 text-left space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-md">
+                    💬
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Instant WhatsApp Confirmation</h4>
+                    <p className="text-[10px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">Send full order details directly to Millennium Business WhatsApp (+91 94371 82931)</p>
+                  </div>
+                </div>
+
+                <a
+                  href={`https://wa.me/919437182931?text=${encodeURIComponent(
+                    `*NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
+                    `----------------------------------------\n` +
+                    `👤 *Customer Name:* ${shippingForm.fullName}\n` +
+                    `📞 *Phone Number:* ${shippingForm.phone}\n` +
+                    `✉️ *Email:* ${shippingForm.email}\n` +
+                    `📍 *Delivery Address:* ${shippingForm.address}, ${shippingForm.city}, ${shippingForm.state} - ${shippingForm.postalCode}\n\n` +
+                    `🛍️ *ORDER ITEMS:*\n` +
+                    cart.map((item, idx) => `${idx + 1}. ${item.name} (${item.color || "Natural"}) - ${item.quantity}x @ ₹${item.price.toLocaleString("en-IN")}`).join("\n") +
+                    `\n----------------------------------------\n` +
+                    `💵 *Payment Method:* Cash on Delivery (COD)\n` +
+                    `💰 *TOTAL AMOUNT:* ₹${total.toLocaleString("en-IN")}`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider py-3 px-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+                >
+                  Send Order via WhatsApp <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+
               <a
                 href="/"
-                className="inline-flex items-center gap-2 bg-accent-teal text-white font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-full shadow-lg hover:bg-accent-teal/90 transition-all"
+                className="inline-flex items-center gap-2 bg-[#1F1B16] dark:bg-[#F7F3EC] text-[#F7F3EC] dark:text-[#1F1B16] font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-full shadow-lg hover:bg-accent-teal hover:text-white transition-all"
               >
                 Back To Home
               </a>
