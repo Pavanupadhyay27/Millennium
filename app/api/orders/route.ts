@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     ORDERS_DB.unshift(newOrder);
 
     // Send Free Automated Instant Order Push to Telegram Bot
-    const botToken = process.env.TELEGRAM_BOT_TOKEN || "8984065109:AAGkQ__Pl3zoH1-47BrRUhiaiXjF_3RA5GE";
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID; // Auto-sent if CHAT_ID configured
 
     if (botToken && chatId) {
