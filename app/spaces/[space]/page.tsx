@@ -478,7 +478,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                           : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10"
                       }`}
                     >
-                      All Categories ({SPACE_PRODUCTS.filter(p => p.space === currentSpaceKey).length})
+                      All Categories ({allCatalogProducts.filter(p => p.space === currentSpaceKey || currentSpaceKey === "home").length})
                     </button>
                     {categories.map((cat) => (
                       <button

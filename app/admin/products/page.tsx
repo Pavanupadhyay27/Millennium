@@ -487,9 +487,13 @@ export default function ProductCrudPage() {
 
                           {/* Image Thumbnail & details */}
                           <td className="py-4 px-4 flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl overflow-hidden p-0.5 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shrink-0 bg-accent-teal/10">
+                            <div className="w-12 h-12 rounded-xl overflow-hidden p-0.5 border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 shrink-0 bg-white dark:bg-[#12100E] shadow-sm">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={p.image} alt={p.name} className="w-full h-full object-cover rounded-lg" />
+                              <img
+                                src={p.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400"}
+                                alt={p.name}
+                                className="w-full h-full object-cover rounded-lg"
+                              />
                             </div>
                             <div>
                               <h4 className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-xs leading-tight mb-0.5">{p.name}</h4>
