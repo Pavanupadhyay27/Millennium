@@ -616,15 +616,15 @@ export default function ProductCrudPage() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white border border-[#1F1B16]/10 rounded-[32px] p-8 md:p-10 shadow-warm-lg max-w-4xl"
+          className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[32px] p-8 md:p-10 shadow-warm-lg max-w-4xl"
         >
-          <div className="flex items-center justify-between border-b border-[#1F1B16]/5 pb-4 mb-8">
-            <h3 className="font-serif text-2xl font-bold text-[#1F1B16]">
+          <div className="flex items-center justify-between border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-4 mb-8">
+            <h3 className="font-serif text-2xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
               {isEditing ? "Modify Product Specifications" : "Create New Catalog Entry"}
             </h3>
             <button
               onClick={() => setShowForm(false)}
-              className="w-9 h-9 rounded-full bg-[#1F1B16]/5 flex items-center justify-center hover:bg-[#1F1B16]/15"
+              className="w-9 h-9 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 flex items-center justify-center hover:bg-accent-teal hover:text-white transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
             >
               <X className="w-4 h-4" />
             </button>
@@ -968,7 +968,7 @@ export default function ProductCrudPage() {
                     onChange={(e) => setFormData((prev) => ({ ...prev, featured: e.target.checked }))}
                     className="w-4 h-4 rounded accent-accent-teal cursor-pointer"
                   />
-                  <span className="text-xs font-bold">Feature on Homepage Carousel</span>
+                  <span className="text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC]">Feature on Homepage Carousel</span>
                 </label>
 
                 <label className="flex items-center gap-2.5 cursor-pointer select-none bg-accent-teal/10 px-3 py-1.5 rounded-xl border border-accent-teal/20">
@@ -986,7 +986,7 @@ export default function ProductCrudPage() {
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-6 py-2.5 rounded-xl border border-[#1F1B16]/20 text-xs font-bold"
+                  className="px-6 py-2.5 rounded-xl border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10 transition-all"
                 >
                   Cancel
                 </button>
