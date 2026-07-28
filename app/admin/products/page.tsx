@@ -121,6 +121,7 @@ export default function ProductCrudPage() {
     stock: number;
     status: "active" | "draft";
     featured: boolean;
+    customizable: boolean;
     description: string;
     colors: string[];
     materials: string[];
@@ -138,6 +139,7 @@ export default function ProductCrudPage() {
     stock: 10,
     status: "active",
     featured: false,
+    customizable: true,
     description: "",
     colors: ["Natural Wood"],
     materials: ["Teak Wood"],
@@ -237,6 +239,7 @@ export default function ProductCrudPage() {
       stock: 10,
       status: "active",
       featured: false,
+      customizable: true,
       description: "",
       colors: ["Natural Wood"],
       materials: ["Teak Wood"],
@@ -260,6 +263,7 @@ export default function ProductCrudPage() {
       stock: p.stock,
       status: p.status || "active",
       featured: p.featured || false,
+      customizable: p.customizable !== false,
       description: p.description || "",
       colors: p.colors || ["Natural Wood"],
       materials: p.materials || ["Teak Wood"],
@@ -795,17 +799,29 @@ export default function ProductCrudPage() {
               </div>
             </div>
 
-            {/* 5. Publish Status & Form Actions */}
+            {/* 5. Publish Status & Customization Grant Toggles */}
             <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-              <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, featured: e.target.checked }))}
-                  className="w-4 h-4 rounded accent-accent-teal cursor-pointer"
-                />
-                <span className="text-xs font-bold">Feature on Homepage Carousel</span>
-              </label>
+              <div className="flex items-center gap-6">
+                <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={formData.featured}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, featured: e.target.checked }))}
+                    className="w-4 h-4 rounded accent-accent-teal cursor-pointer"
+                  />
+                  <span className="text-xs font-bold">Feature on Homepage Carousel</span>
+                </label>
+
+                <label className="flex items-center gap-2.5 cursor-pointer select-none bg-accent-teal/10 px-3 py-1.5 rounded-xl border border-accent-teal/20">
+                  <input
+                    type="checkbox"
+                    checked={formData.customizable}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, customizable: e.target.checked }))}
+                    className="w-4 h-4 rounded accent-accent-teal cursor-pointer"
+                  />
+                  <span className="text-xs font-extrabold text-accent-teal">Allow Bespoke Customization</span>
+                </label>
+              </div>
 
               <div className="flex items-center gap-3">
                 <button

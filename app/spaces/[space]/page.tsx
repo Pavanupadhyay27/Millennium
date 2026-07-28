@@ -680,51 +680,30 @@ export default function SpacePage({ params }: { params: { space: string } }) {
               </button>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 overflow-y-auto pr-1">
-                {/* Left: Product Image & Interactive 360 preview */}
+                {/* Left: Product Image */}
                 <div className="space-y-4">
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#1F1B16]/5 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={quickViewProduct.image}
                       alt={quickViewProduct.name}
-                      className="w-full h-full object-cover transition-transform duration-500"
-                      style={{ transform: `rotate(${rotationAngle}deg)` }}
+                      className="w-full h-full object-cover"
                     />
                     <span className="absolute top-4 left-4 text-[10px] font-extrabold uppercase tracking-widest bg-accent-teal text-white px-3 py-1 rounded-full shadow-sm">
                       {quickViewProduct.category}
                     </span>
                   </div>
-
-                  <div className="flex items-center justify-between bg-[#FAF7F2] dark:bg-[#12100E] p-3 rounded-2xl border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                    <span className="text-xs font-bold flex items-center gap-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                      <RotateCw className="w-4 h-4 text-accent-teal" /> 360° Rotation View
-                    </span>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setRotationAngle((prev) => prev - 45)}
-                        className="px-3 py-1 bg-white dark:bg-[#1C1814] rounded-xl text-xs font-bold border"
-                      >
-                        ↺ Left
-                      </button>
-                      <button
-                        onClick={() => setRotationAngle((prev) => prev + 45)}
-                        className="px-3 py-1 bg-white dark:bg-[#1C1814] rounded-xl text-xs font-bold border"
-                      >
-                        ↻ Right
-                      </button>
-                    </div>
-                  </div>
                 </div>
 
-                {/* Right: Bespoke Customizer Studio Controls */}
+                {/* Right: Product Details & Conditional Customizer */}
                 <div className="space-y-5 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[10px] font-bold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-2.5 py-0.5 rounded-full">
                         ★ {quickViewProduct.rating} Rating
                       </span>
-                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                        {quickViewProduct.customizable !== false ? "✓ Admin Customization Enabled" : "Standard Specification"}
+                      <span className={`text-[10px] font-bold ${quickViewProduct.customizable !== false ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600"}`}>
+                        {quickViewProduct.customizable !== false ? "✓ Admin Customization Granted" : "Standard Model Only"}
                       </span>
                     </div>
 
@@ -735,22 +714,30 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                       ₹{quickViewProduct.price.toLocaleString("en-IN")}
                     </span>
 
-                    {/* Interactive Customizer Panel */}
-                    <div className="mt-4 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 space-y-3">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-accent-teal block">
-                        ✨ Custom Timber Finish
-                      </span>
-                      <div className="grid grid-cols-2 gap-2">
-                        {["Natural Teak", "Charcoal Ebonized", "Warm Honey Polish", "Rosewood Finish"].map((f) => (
-                          <button
-                            key={f}
-                            className="px-3 py-1.5 rounded-xl text-[10px] font-bold text-left bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal transition-all"
-                          >
-                            {f}
-                          </button>
-                        ))}
+                    {/* Conditional Customizer Panel (Admin Granted) */}
+                    {quickViewProduct.customizable !== false ? (
+                      <div className="mt-4 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 space-y-3">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-accent-teal block">
+                          ✨ Select Custom Timber Finish
+                        </span>
+                        <div className="grid grid-cols-2 gap-2">
+                          {["Natural Teak", "Charcoal Ebonized", "Warm Honey Polish", "Rosewood Finish"].map((f) => (
+                            <button
+                              key={f}
+                              className="px-3 py-2 rounded-xl text-[10px] font-bold text-left bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
+                            >
+                              {f}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="mt-4 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4">
+                        <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 font-medium">
+                          This product is supplied with standard factory timber specifications. Customization is disabled by store administration.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex items-center gap-3">
@@ -761,7 +748,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                       }}
                       className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2"
                     >
-                      <ShoppingBag className="w-4 h-4" /> Add Customized Item To Cart
+                      <ShoppingBag className="w-4 h-4" /> Add Item To Cart
                     </button>
                   </div>
                 </div>
