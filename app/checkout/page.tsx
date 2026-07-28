@@ -18,6 +18,9 @@ import {
   Plus,
   Minus,
   Trash2,
+  Banknote,
+  Smartphone,
+  Check,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -32,6 +35,7 @@ const formatPrice = (price: number) => {
 export default function CheckoutPage() {
   const { cart, clearCart, updateCartQuantity, removeFromCart, addNotification } = useStore();
   const [step, setStep] = useState<"shipping" | "payment" | "review">("shipping");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "upi" | "card">("cod");
   const [isCompleted, setIsCompleted] = useState(false);
 
   // Form Fields
@@ -288,29 +292,107 @@ export default function CheckoutPage() {
                         </form>
                       )}
 
-                      {/* STEP 2: CASH ON DELIVERY (COD) PAYMENT */}
+                      {/* STEP 2: PAYMENT METHOD SELECTION */}
                       {step === "payment" && (
                         <form onSubmit={handlePaymentSubmit} className="space-y-4">
                           <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                            <h2 className="font-serif text-xl font-bold">2. Payment Method</h2>
+                            <h2 className="font-serif text-xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">2. Select Payment Method</h2>
                             <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-wider bg-accent-teal/10 px-3 py-1 rounded-full flex items-center gap-1">
-                              <ShieldCheck className="w-3.5 h-3.5" /> 100% Verified COD
+                              <ShieldCheck className="w-3.5 h-3.5" /> 100% Encrypted & Safe
                             </span>
                           </div>
 
-                          {/* Cash on Delivery Selection Tile */}
-                          <div className="bg-accent-teal/10 dark:bg-accent-teal/20 border-2 border-accent-teal rounded-2xl p-5 flex items-center gap-4 shadow-sm">
-                            <div className="w-12 h-12 rounded-2xl bg-accent-teal text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-md">
-                              💵
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-bold text-sm text-[#1F1B16] dark:text-[#F7F3EC]">Cash on Delivery (COD)</h4>
-                                <span className="text-[9px] font-extrabold uppercase tracking-wider bg-emerald-500 text-white px-2 py-0.5 rounded-full">Active</span>
+                          <div className="space-y-3">
+                            {/* Option 1: Cash on Delivery (COD) */}
+                            <div
+                              onClick={() => setPaymentMethod("cod")}
+                              className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                                paymentMethod === "cod"
+                                  ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
+                                  : "bg-[#F7F3EC]/30 dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3.5">
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 transition-colors ${
+                                  paymentMethod === "cod" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
+                                }`}>
+                                  <Banknote className="w-5 h-5" />
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Cash on Delivery (COD)</h4>
+                                    <span className="text-[9px] font-extrabold uppercase tracking-wider bg-emerald-500 text-white px-2 py-0.5 rounded-full">Recommended</span>
+                                  </div>
+                                  <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
+                                    Pay cash at doorstep after inspecting your handcrafted furniture delivery.
+                                  </p>
+                                </div>
                               </div>
-                              <p className="text-xs text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
-                                Pay upon doorstep delivery after inspecting your handcrafted furniture build. Zero advance card payments required!
-                              </p>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                paymentMethod === "cod" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
+                              }`}>
+                                {paymentMethod === "cod" && <Check className="w-3 h-3 stroke-[3]" />}
+                              </div>
+                            </div>
+
+                            {/* Option 2: UPI / QR Code Direct */}
+                            <div
+                              onClick={() => setPaymentMethod("upi")}
+                              className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                                paymentMethod === "upi"
+                                  ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
+                                  : "bg-[#F7F3EC]/30 dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3.5">
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 transition-colors ${
+                                  paymentMethod === "upi" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
+                                }`}>
+                                  <Smartphone className="w-5 h-5" />
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">UPI Instant (GPay / PhonePe / Paytm)</h4>
+                                  </div>
+                                  <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
+                                    Zero transaction fee via any Indian UPI app.
+                                  </p>
+                                </div>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                paymentMethod === "upi" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
+                              }`}>
+                                {paymentMethod === "upi" && <Check className="w-3 h-3 stroke-[3]" />}
+                              </div>
+                            </div>
+
+                            {/* Option 3: Credit / Debit Card */}
+                            <div
+                              onClick={() => setPaymentMethod("card")}
+                              className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                                paymentMethod === "card"
+                                  ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
+                                  : "bg-[#F7F3EC]/30 dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3.5">
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 transition-colors ${
+                                  paymentMethod === "card" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
+                                }`}>
+                                  <CreditCard className="w-5 h-5" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Credit / Debit Card</h4>
+                                  <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
+                                    Visa, Mastercard, RuPay, and American Express accepted.
+                                  </p>
+                                </div>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                paymentMethod === "card" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
+                              }`}>
+                                {paymentMethod === "card" && <Check className="w-3 h-3 stroke-[3]" />}
+                              </div>
                             </div>
                           </div>
 
@@ -318,7 +400,7 @@ export default function CheckoutPage() {
                             <button
                               type="button"
                               onClick={() => setStep("shipping")}
-                              className="border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-xs font-bold px-5 py-3 rounded-xl flex items-center justify-center gap-1"
+                              className="border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-xs font-bold px-5 py-3 rounded-xl flex items-center justify-center gap-1 text-[#1F1B16] dark:text-[#F7F3EC]"
                             >
                               <ArrowLeft className="w-4 h-4" /> Back
                             </button>
@@ -352,7 +434,13 @@ export default function CheckoutPage() {
                               <span className="text-[10px] font-bold uppercase tracking-wider text-accent-teal block mb-1">
                                 Payment Method
                               </span>
-                              <p className="font-bold text-emerald-600 dark:text-emerald-400">Cash on Delivery (Pay upon arrival)</p>
+                              <p className="font-bold text-emerald-600 dark:text-emerald-400">
+                                {paymentMethod === "cod"
+                                  ? "Cash on Delivery (Pay upon arrival)"
+                                  : paymentMethod === "upi"
+                                  ? "UPI Instant Transfer (GPay / PhonePe / Paytm)"
+                                  : "Credit / Debit Card Payment"}
+                              </p>
                             </div>
                           </div>
 
