@@ -39,6 +39,15 @@ export interface Offer {
   createdAt: string;
 }
 
+export interface Review {
+  id: string;
+  author: string;
+  rating: number;
+  date: string;
+  comment: string;
+  verified: boolean;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -55,6 +64,10 @@ export interface Product {
   colors: string[];
   materials: string[];
   customizable?: boolean;
+  dimensions?: string;
+  woodType?: string;
+  weight?: string;
+  reviews?: Review[];
   seoTitle?: string;
   seoDescription?: string;
 }
@@ -211,6 +224,7 @@ interface AppState {
   addProduct: (product: Omit<Product, "id">) => void;
   updateProduct: (id: string, product: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
+  addProductReview: (productId: string, review: Omit<Review, "id" | "date">) => void;
 
   // Wishlist Actions
   toggleWishlist: (item: WishlistItem) => void;
@@ -340,11 +354,29 @@ export const useStore = create<AppState>()(
         }));
       },
 
-      deleteProduct: (id) => {
+      deleteProduct: (id) =>
         set((state) => ({
           products: state.products.filter((p) => p.id !== id),
-        }));
-      },
+        })),
+
+      addProductReview: (productId, newReview) =>
+        set((state) => ({
+          products: state.products.map((p) => {
+            if (p.id === productId || p.slug === productId) {
+              const existingReviews = p.reviews || [];
+              const fullReview: Review = {
+                ...newReview,
+                id: `rev-${Date.now()}`,
+                date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+              };
+              return {
+                ...p,
+                reviews: [fullReview, ...existingReviews],
+              };
+            }
+            return p;
+          }),
+        })),
 
       // Wishlist
       toggleWishlist: (item) => {

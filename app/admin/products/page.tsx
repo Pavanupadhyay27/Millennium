@@ -122,6 +122,9 @@ export default function ProductCrudPage() {
     status: "active" | "draft";
     featured: boolean;
     customizable: boolean;
+    woodType?: string;
+    dimensions?: string;
+    weight?: string;
     description: string;
     colors: string[];
     materials: string[];
@@ -140,6 +143,9 @@ export default function ProductCrudPage() {
     status: "active",
     featured: false,
     customizable: true,
+    woodType: "A-Grade Kiln-dried Odisha Teak",
+    dimensions: "Width: 72cm | Depth: 80cm | Height: 85cm",
+    weight: "14 kg",
     description: "",
     colors: ["Natural Wood"],
     materials: ["Teak Wood"],
@@ -240,6 +246,9 @@ export default function ProductCrudPage() {
       status: "active",
       featured: false,
       customizable: true,
+      woodType: "A-Grade Kiln-dried Teak",
+      dimensions: "Width: 72cm | Depth: 80cm | Height: 85cm",
+      weight: "14 kg",
       description: "",
       colors: ["Natural Wood"],
       materials: ["Teak Wood"],
@@ -264,6 +273,9 @@ export default function ProductCrudPage() {
       status: p.status || "active",
       featured: p.featured || false,
       customizable: p.customizable !== false,
+      woodType: p.woodType || "A-Grade Kiln-dried Teak",
+      dimensions: p.dimensions || "Width: 72cm | Depth: 80cm | Height: 85cm",
+      weight: p.weight || "14 kg",
       description: p.description || "",
       colors: p.colors || ["Natural Wood"],
       materials: p.materials || ["Teak Wood"],
@@ -647,6 +659,47 @@ export default function ProductCrudPage() {
                     <option value="Storage">Storage</option>
                     <option value="Decorations">Decorations</option>
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Wood / Timber Type
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.woodType || ""}
+                    onChange={(e) => setFormData((prev: any) => ({ ...prev, woodType: e.target.value }))}
+                    placeholder="e.g. Kiln-dried Odisha Teak"
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-semibold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Dimensions Specs
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.dimensions || ""}
+                    onChange={(e) => setFormData((prev: any) => ({ ...prev, dimensions: e.target.value }))}
+                    placeholder="e.g. W: 72cm | D: 80cm | H: 85cm"
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-semibold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Weight
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.weight || ""}
+                    onChange={(e) => setFormData((prev: any) => ({ ...prev, weight: e.target.value }))}
+                    placeholder="e.g. 14 kg"
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-semibold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
+                  />
                 </div>
               </div>
 

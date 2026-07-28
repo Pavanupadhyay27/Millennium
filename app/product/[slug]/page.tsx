@@ -11,10 +11,15 @@ import {
   Truck,
   Shield,
   ArrowRight,
-  ChevronDown,
+  Star,
+  CheckCircle2,
+  MessageSquarePlus,
+  User,
+  Heart,
+  RotateCcw
 } from "lucide-react";
-import { motion } from "framer-motion";
-import { useStore, Offer } from "../../../lib/store";
+import { motion, AnimatePresence } from "framer-motion";
+import { useStore, Offer, Review } from "../../../lib/store";
 
 // Helper to format currency
 const formatPrice = (price: number) => {
@@ -25,133 +30,77 @@ const formatPrice = (price: number) => {
   }).format(price);
 };
 
-interface ProductColor {
-  name: string;
-  value: string;
-  priceDelta: number;
-  imgIdx: number;
-}
-
-interface ProductMaterial {
-  name: string;
-  priceDelta: number;
-}
-
-interface DetailedProduct {
-  name: string;
-  price: number;
-  wholesalePrice: number;
-  category: string;
-  description: string;
-  images: string[];
-  colors: ProductColor[];
-  materials: ProductMaterial[];
-  dimensions: string;
-  woodType: string;
-  weight: string;
-}
-
-// Detailed product mocks
-const DETAILED_PRODUCTS: Record<string, DetailedProduct> = {
-  "odisha-teak-lounge-chair": {
-    name: "Odisha Teak Lounge Chair",
-    price: 24500,
-    wholesalePrice: 18500,
-    category: "Seating",
-    description:
-      "Indulge in mid-century elegance with our signature lounge chair. Handcrafted by local artisans in Bhubaneswar using premium, sustainably harvested solid teak timber. The seat features high-density foam wrapped in a breathable linen-blend fabric, structured with double-mortise joinery to last for generations.",
-    images: [
-      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=800",
-    ],
-    colors: [
-      { name: "Natural Wood", value: "#D97B3F", priceDelta: 0, imgIdx: 0 },
-      { name: "Charcoal Black", value: "#1F1B16", priceDelta: 1500, imgIdx: 1 },
-      { name: "Sage Green", value: "#2F6F62", priceDelta: 2500, imgIdx: 2 },
-    ],
-    materials: [
-      { name: "Standard Solid Teak", priceDelta: 0 },
-      { name: "Premium Aged Walnut", priceDelta: 4500 },
-    ],
-    dimensions: "Width: 72cm | Depth: 80cm | Height: 85cm | Seat Height: 42cm",
-    woodType: "A-Grade Kiln-dried Teak (Tectona grandis)",
-    weight: "14 kg",
-  },
-  "kalinga-walnut-coffee-table": {
-    name: "Kalinga Walnut Coffee Table",
-    price: 18900,
-    wholesalePrice: 14000,
-    category: "Tables",
-    description:
-      "A minimalist centerpiece built for functional spaces. The Kalinga table showcases stunning natural walnut wood grains, detailed with a smooth lacquer finish. Features rounded kid-safe corners and a bottom shelf structure for magazines, books, and remote controls.",
-    images: [
-      "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1551215934-37d0573d6622?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=800",
-    ],
-    colors: [
-      { name: "Natural Walnut", value: "#8B5A2B", priceDelta: 0, imgIdx: 0 },
-      { name: "Ebonized Oak", value: "#1F1B16", priceDelta: 1200, imgIdx: 1 },
-    ],
-    materials: [
-      { name: "Walnut Veneer + Solid Birch", priceDelta: 0 },
-      { name: "100% Solid Indian Walnut", priceDelta: 6000 },
-    ],
-    dimensions: "Width: 110cm | Depth: 60cm | Height: 45cm",
-    woodType: "Walnut (Juglans regia) & Birch wood legs",
-    weight: "18 kg",
-  },
-};
-
-// Generic Fallback builder if other slug clicked
-const getFallbackProduct = (slug: string): DetailedProduct => {
-  const cleanName = slug
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-
-  return {
-    name: cleanName,
-    price: 32000,
-    wholesalePrice: 24000,
-    category: "Premium Collections",
-    description:
-      "A masterclass in furniture craft. This Millennium piece offers custom woodworking, locally sourced raw timber, and tailored finishes, designed to elevate your interior aesthetic.",
-    images: [
-      "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=800",
-    ],
-    colors: [
-      { name: "Natural Wood", value: "#D97B3F", priceDelta: 0, imgIdx: 0 },
-      { name: "Charcoal Black", value: "#1F1B16", priceDelta: 1800, imgIdx: 1 },
-    ],
-    materials: [
-      { name: "Solid Wood", priceDelta: 0 },
-    ],
-    dimensions: "Standard living room layout dimensions apply.",
-    woodType: "Sustainably harvested local wood",
-    weight: "22 kg",
-  };
-};
-
 export default function ProductDetailPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
+  const { products: storeProducts, addToCart, offers, addProductReview, toggleWishlist, wishlist } = useStore();
 
-  // Retrieve Mock Product details or fallback
+  // Find product from live Zustand store or fallback
+  const storeProduct = useMemo(() => {
+    return storeProducts.find((p) => p.slug === slug || p.id === slug);
+  }, [storeProducts, slug]);
+
   const product = useMemo(() => {
-    return DETAILED_PRODUCTS[slug] || getFallbackProduct(slug);
-  }, [slug]);
+    if (storeProduct) {
+      return {
+        id: storeProduct.id,
+        name: storeProduct.name,
+        price: storeProduct.price,
+        wholesalePrice: storeProduct.wholesalePrice,
+        category: storeProduct.category,
+        description: storeProduct.description || "Handcrafted with premium organic solid timber and precision joinery in Odisha.",
+        images: [
+          storeProduct.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
+          "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=800",
+        ],
+        colors: (storeProduct.colors && storeProduct.colors.length > 0)
+          ? storeProduct.colors.map((c, i) => ({ name: c, value: i === 0 ? "#D97B3F" : "#1F1B16", priceDelta: 0, imgIdx: 0 }))
+          : [{ name: "Natural Teak", value: "#D97B3F", priceDelta: 0, imgIdx: 0 }],
+        materials: (storeProduct.materials && storeProduct.materials.length > 0)
+          ? storeProduct.materials.map((m) => ({ name: m, priceDelta: 0 }))
+          : [{ name: "Solid Teak Wood", priceDelta: 0 }],
+        dimensions: storeProduct.dimensions || "Width: 72cm | Depth: 80cm | Height: 85cm",
+        woodType: storeProduct.woodType || "A-Grade Kiln-dried Odisha Teak",
+        weight: storeProduct.weight || "14 kg",
+        reviews: storeProduct.reviews || [
+          { id: "r1", author: "Rajesh Mohapatra", rating: 5, date: "July 12, 2026", comment: "Outstanding wood grain texture and heavy structural build. Fits perfectly into our hotel project in Puri.", verified: true },
+          { id: "r2", author: "Ananya Mishra", rating: 5, date: "June 28, 2026", comment: "Clean minimalist design. Delivered fully assembled with zero hassle.", verified: true }
+        ],
+      };
+    }
+
+    // Default fallback
+    return {
+      id: slug,
+      name: slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
+      price: 24500,
+      wholesalePrice: 18500,
+      category: "Seating",
+      description: "Indulge in mid-century elegance with our signature piece. Handcrafted by local artisans in Bhubaneswar using premium, sustainably harvested solid teak timber.",
+      images: [
+        "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=800",
+      ],
+      colors: [
+        { name: "Natural Wood", value: "#D97B3F", priceDelta: 0, imgIdx: 0 },
+        { name: "Charcoal Black", value: "#1F1B16", priceDelta: 1500, imgIdx: 1 },
+      ],
+      materials: [{ name: "Standard Solid Teak", priceDelta: 0 }],
+      dimensions: "Width: 72cm | Depth: 80cm | Height: 85cm",
+      woodType: "A-Grade Kiln-dried Odisha Teak",
+      weight: "14 kg",
+      reviews: [
+        { id: "r1", author: "Rajesh Mohapatra", rating: 5, date: "July 12, 2026", comment: "Outstanding wood grain texture and heavy structural build. Fits perfectly into our hotel project in Puri.", verified: true },
+        { id: "r2", author: "Ananya Mishra", rating: 5, date: "June 28, 2026", comment: "Clean minimalist design. Delivered fully assembled with zero hassle.", verified: true }
+      ],
+    };
+  }, [storeProduct, slug]);
 
   // Gallery Active Image Index
   const [activeImgIdx, setActiveImgIdx] = useState(0);
 
-  // Variant States
+  // Variant & Customization States
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
   const [quantity, setQuantity] = useState(1);
-
-  // Customization Specs State
   const [customSpecs, setCustomSpecs] = useState({
     finish: "Natural Organic Teak",
     upholstery: "Breathable Organic Linen",
@@ -161,18 +110,15 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     engraving: "",
   });
 
-  const { addToCart, offers } = useStore();
-
-  // Active Promo Offer calculation
-  const activeOffer = useMemo(() => {
-    return offers.find((o: Offer) => o.active && (o.targetProductId === undefined || o.targetProductId === slug));
-  }, [offers, slug]);
-
-  // Simulation Role State (Dev Mode toggle to show Wholesale Price)
+  // Role Preview Toggle (Dev/B2B Mode)
   const [simulatedRole, setSimulatedRole] = useState<"CUSTOMER" | "WHOLESALE">("CUSTOMER");
+  const [activeTab, setActiveTab] = useState<"description" | "specs" | "reviews" | "shipping">("description");
 
-  // Tab State
-  const [activeTab, setActiveTab] = useState<"description" | "specs" | "shipping">("description");
+  // New Review Form States
+  const [reviewAuthor, setReviewAuthor] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   // Calculate dynamic price based on variants & custom specs selection
   const calculatedPrice = useMemo(() => {
@@ -185,14 +131,14 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
   const handleAddToCart = () => {
     addToCart({
-      productId: slug,
+      productId: product.id,
       name: product.name,
       price: calculatedPrice,
       originalPrice: product.price,
       quantity,
       color: selectedColor.name,
       material: customSpecs.upholstery,
-      image: product.images[activeImgIdx],
+      image: product.images[activeImgIdx] || product.images[0],
       slug: slug,
       customSpecs: {
         finish: customSpecs.finish,
@@ -204,65 +150,106 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     });
   };
 
-  // Handle color change and auto-swap gallery image if color maps to one
-  const handleColorChange = (color: ProductColor) => {
-    setSelectedColor(color);
-    if (color.imgIdx !== undefined && color.imgIdx < product.images.length) {
-      setActiveImgIdx(color.imgIdx);
-    }
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewAuthor.trim() || !reviewComment.trim()) return;
+
+    addProductReview(product.id, {
+      author: reviewAuthor.trim(),
+      rating: reviewRating,
+      comment: reviewComment.trim(),
+      verified: true,
+    });
+
+    setReviewAuthor("");
+    setReviewComment("");
+    showToast("Thank you! Your verified review has been published.");
   };
 
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 4000);
+  };
+
+  // Average Rating
+  const avgRating = useMemo(() => {
+    if (!product.reviews || product.reviews.length === 0) return 5.0;
+    const sum = product.reviews.reduce((acc, r) => acc + r.rating, 0);
+    return (sum / product.reviews.length).toFixed(1);
+  }, [product.reviews]);
+
   return (
-    <div className="min-h-screen bg-cream font-sans selection:bg-accent-teal/20 selection:text-charcoal flex flex-col justify-between">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] font-sans selection:bg-accent-teal/20 flex flex-col justify-between transition-colors duration-300">
       <div>
         <Navbar />
 
-        {/* Product view area */}
+        {/* Toast Notification */}
+        <AnimatePresence>
+          {toastMsg && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="fixed top-24 right-8 z-50 bg-[#1F1B16] text-white rounded-2xl px-6 py-4 text-xs font-bold shadow-2xl flex items-center gap-2 border border-accent-teal/30"
+            >
+              <CheckCircle2 className="w-4 h-4 text-accent-teal shrink-0" /> {toastMsg}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Product View Area */}
         <main className="max-w-[1400px] mx-auto px-6 md:px-12 pt-32 pb-24">
           
-          {/* Simulated role banner (For testing NextAuth WHOLESALE role requested) */}
-          <div className="bg-pastel-lavender/60 border border-charcoal/5 rounded-[20px] p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mb-12 shadow-warm-sm">
+          {/* Simulated role banner */}
+          <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 shadow-sm">
             <div className="flex items-center gap-3">
-              <span className="flex h-3 w-3 relative">
+              <span className="flex h-2.5 w-2.5 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-teal opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-accent-teal"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-teal"></span>
               </span>
-              <p className="text-xs font-semibold text-charcoal/80">
-                <span className="font-bold text-accent-teal">NextAuth Role Simulation:</span> Toggle the user role to preview wholesale pricing triggers on this page.
+              <p className="text-xs font-medium text-[#1F1B16]/80 dark:text-[#F7F3EC]/80">
+                <span className="font-bold text-accent-teal">B2B Trade Pricing Preview:</span> Toggle role to view verified wholesale rates.
               </p>
             </div>
-            <div className="flex bg-cream border border-charcoal/10 rounded-full p-1 text-[10px] font-bold">
+            <div className="flex bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl p-1 text-[10px] font-bold">
               <button
                 onClick={() => setSimulatedRole("CUSTOMER")}
-                className={`rounded-full px-4 py-1.5 transition-all ${
-                  simulatedRole === "CUSTOMER" ? "bg-charcoal text-cream" : "text-charcoal/60"
+                className={`rounded-lg px-3.5 py-1.5 transition-all ${
+                  simulatedRole === "CUSTOMER" ? "bg-accent-teal text-white shadow-sm" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60"
                 }`}
               >
-                CUSTOMER
+                Retail Price
               </button>
               <button
                 onClick={() => setSimulatedRole("WHOLESALE")}
-                className={`rounded-full px-4 py-1.5 transition-all ${
-                  simulatedRole === "WHOLESALE" ? "bg-accent-teal text-white" : "text-charcoal/60"
+                className={`rounded-lg px-3.5 py-1.5 transition-all ${
+                  simulatedRole === "WHOLESALE" ? "bg-accent-teal text-white shadow-sm" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60"
                 }`}
               >
-                WHOLESALE
+                Wholesale Tier
               </button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
             
-            {/* LEFT: Gallery (takes 7 cols) */}
-            <div className="lg:col-span-7 flex flex-col gap-6">
-              {/* Main Image on Pastel Tile with Hover-Zoom */}
-              <div className="bg-pastel-mint rounded-[32px] p-6 md:p-8 aspect-[4/3] flex items-center justify-center overflow-hidden shadow-warm-md relative">
+            {/* LEFT: Product Image Gallery */}
+            <div className="lg:col-span-7 flex flex-col gap-5">
+              {/* Main Image Display */}
+              <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-4 md:p-6 aspect-[4/3] flex items-center justify-center overflow-hidden shadow-sm relative group">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={product.images[activeImgIdx]}
+                  src={product.images[activeImgIdx] || product.images[0]}
                   alt={product.name}
-                  className="w-full h-full object-cover rounded-2xl transition-transform duration-500 hover:scale-[1.04] cursor-zoom-in"
+                  className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
+
+                <button
+                  onClick={() => toggleWishlist({ id: product.id, slug: product.id, name: product.name, price: product.price, image: product.images[0], bg: "bg-cream" })}
+                  className="absolute top-6 right-6 p-3 rounded-full bg-white/90 dark:bg-[#1C1814]/90 backdrop-blur-md shadow-md text-[#1F1B16] dark:text-[#F7F3EC] hover:scale-110 transition-all border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10"
+                >
+                  <Heart className={`w-4 h-4 ${wishlist.some(w => w.id === product.id) ? "fill-accent-terracotta text-accent-terracotta" : "opacity-60"}`} />
+                </button>
               </div>
 
               {/* Thumbnails Strip */}
@@ -273,8 +260,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     <button
                       key={idx}
                       onClick={() => setActiveImgIdx(idx)}
-                      className={`w-20 h-20 rounded-2xl p-1.5 bg-pastel-mint overflow-hidden border-2 transition-all ${
-                        isActive ? "border-accent-teal scale-102 shadow-warm-sm" : "border-transparent opacity-70 hover:opacity-100"
+                      className={`w-20 h-20 rounded-2xl p-1 bg-white dark:bg-[#1C1814] overflow-hidden border-2 transition-all ${
+                        isActive ? "border-accent-teal shadow-md" : "border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 opacity-70 hover:opacity-100"
                       }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -285,14 +272,19 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               </div>
             </div>
 
-            {/* RIGHT: Product Details (takes 5 cols) */}
+            {/* RIGHT: Product Specs & Customizer Panel */}
             <div className="lg:col-span-5 flex flex-col items-start">
               
-              <span className="text-accent-teal text-xs font-extrabold uppercase tracking-widest bg-accent-teal/5 border border-accent-teal/10 rounded-full px-4 py-1.5 mb-4">
-                {product.category}
-              </span>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-accent-teal text-[10px] font-extrabold uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
+                  {product.category}
+                </span>
+                <span className="text-[10px] font-bold text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 flex items-center gap-1 bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 px-2.5 py-1 rounded-full">
+                  <Star className="w-3 h-3 text-amber-500 fill-amber-500" /> {avgRating} ({product.reviews?.length || 0} reviews)
+                </span>
+              </div>
               
-              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal leading-tight mb-4">
+              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1F1B16] dark:text-[#F7F3EC] leading-tight mb-3">
                 {product.name}
               </h1>
 
@@ -301,39 +293,38 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                 {simulatedRole === "WHOLESALE" ? (
                   <>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-accent-teal">
+                      <span className="text-2xl font-extrabold text-accent-teal">
                         {formatPrice(calculatedPrice)}
                       </span>
-                      <span className="text-xs font-bold text-white bg-accent-teal px-2 py-0.5 rounded uppercase tracking-wider">
+                      <span className="text-[9px] font-black text-white bg-accent-teal px-2 py-0.5 rounded uppercase tracking-wider">
                         Wholesale Rate
                       </span>
                     </div>
-                    <span className="text-xs text-charcoal/40 line-through">
+                    <span className="text-xs text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 line-through">
                       Regular Retail: {formatPrice(product.price + (selectedColor.priceDelta || 0))}
                     </span>
                   </>
                 ) : (
-                  <span className="text-2xl font-bold text-charcoal">
+                  <span className="text-3xl font-extrabold text-[#1F1B16] dark:text-[#F7F3EC]">
                     {formatPrice(calculatedPrice)}
                   </span>
                 )}
-                <p className="text-[10px] text-charcoal/50 leading-none">Prices inclusive of GST. Deliveries in Odisha.</p>
+                <p className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-medium">Inclusive of all taxes • Handcrafted in Bhubaneswar</p>
               </div>
 
-              <div className="w-full border-t border-charcoal/5 pt-6 mb-6 flex flex-col gap-6">
+              <div className="w-full border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pt-6 mb-6 flex flex-col gap-6">
                 
                 {/* Bespoke Customization Studio Panel */}
-                <div className="bg-pastel-mint/40 border border-accent-teal/20 rounded-3xl p-5 space-y-4">
-                  <div className="flex items-center justify-between">
+                <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 space-y-4 shadow-sm">
+                  <div className="flex items-center justify-between border-b border-[#1F1B16]/5 dark:border-[#F7F3EC]/10 pb-3">
                     <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
-                      Bespoke Furniture Customizer
+                      Custom Timber & Finishing Options
                     </span>
-                    <span className="text-[10px] font-bold text-charcoal/60">Tailored In Bhubaneswar</span>
                   </div>
 
                   {/* Wood Timber Finish */}
                   <div>
-                    <label className="text-[11px] font-bold text-charcoal block mb-1.5">
+                    <label className="text-[11px] font-bold text-[#1F1B16] dark:text-[#F7F3EC] block mb-2">
                       1. Custom Wood Finish: <span className="text-accent-teal">{customSpecs.finish}</span>
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -350,7 +341,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                           className={`px-3 py-2 rounded-xl text-[10px] font-bold text-left border transition-all ${
                             customSpecs.finish === f.name
                               ? "bg-accent-teal text-white border-accent-teal shadow-sm"
-                              : "bg-cream text-charcoal border-charcoal/10 hover:border-accent-teal/50"
+                              : "bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal"
                           }`}
                         >
                           {f.name} {f.delta > 0 ? `(+${formatPrice(f.delta)})` : ""}
@@ -361,13 +352,13 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
                   {/* Upholstery Choice */}
                   <div>
-                    <label className="text-[11px] font-bold text-charcoal block mb-1.5">
-                      2. Luxury Upholstery Fabric: <span className="text-accent-teal">{customSpecs.upholstery}</span>
+                    <label className="text-[11px] font-bold text-[#1F1B16] dark:text-[#F7F3EC] block mb-1.5">
+                      2. Upholstery Fabric: <span className="text-accent-teal">{customSpecs.upholstery}</span>
                     </label>
                     <select
                       value={customSpecs.upholstery}
                       onChange={(e) => setCustomSpecs((prev) => ({ ...prev, upholstery: e.target.value }))}
-                      className="w-full bg-cream border border-charcoal/10 rounded-xl px-3 py-2 text-[11px] font-bold text-charcoal focus:outline-none focus:border-accent-teal"
+                      className="w-full bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-3 py-2 text-[11px] font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                     >
                       <option value="Breathable Organic Linen">Breathable Organic Linen (+₹0)</option>
                       <option value="Plush Velvet Upholstery">Plush Velvet Upholstery (+₹2,000)</option>
@@ -375,120 +366,39 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                       <option value="Textured Bouclé Fabric">Textured Bouclé Fabric (+₹3,500)</option>
                     </select>
                   </div>
-
-                  {/* Custom Dimensions */}
-                  <div>
-                    <label className="text-[11px] font-bold text-charcoal block mb-1">
-                      3. Custom Dimensions (Width: {customSpecs.width}cm | Depth: {customSpecs.depth}cm | Height: {customSpecs.height}cm)
-                    </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div>
-                        <span className="text-[9px] font-bold text-charcoal/50 block">Width (cm)</span>
-                        <input
-                          type="range"
-                          min={60}
-                          max={120}
-                          value={customSpecs.width}
-                          onChange={(e) => setCustomSpecs((prev) => ({ ...prev, width: Number(e.target.value) }))}
-                          className="w-full accent-accent-teal cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <span className="text-[9px] font-bold text-charcoal/50 block">Depth (cm)</span>
-                        <input
-                          type="range"
-                          min={50}
-                          max={100}
-                          value={customSpecs.depth}
-                          onChange={(e) => setCustomSpecs((prev) => ({ ...prev, depth: Number(e.target.value) }))}
-                          className="w-full accent-accent-teal cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <span className="text-[9px] font-bold text-charcoal/50 block">Height (cm)</span>
-                        <input
-                          type="range"
-                          min={70}
-                          max={110}
-                          value={customSpecs.height}
-                          onChange={(e) => setCustomSpecs((prev) => ({ ...prev, height: Number(e.target.value) }))}
-                          className="w-full accent-accent-teal cursor-pointer"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Laser Engraving */}
-                  <div>
-                    <label className="text-[11px] font-bold text-charcoal block mb-1">
-                      4. Custom Laser Engraving (Initials / Family Name)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Handmade for Patnaik Family"
-                      value={customSpecs.engraving}
-                      onChange={(e) => setCustomSpecs((prev) => ({ ...prev, engraving: e.target.value }))}
-                      className="w-full bg-cream border border-charcoal/10 rounded-xl px-3 py-2 text-[11px] font-bold text-charcoal focus:outline-none focus:border-accent-teal"
-                    />
-                  </div>
                 </div>
 
-                {/* Variant Selector: Colors */}
+                {/* Quantity and Cart Button */}
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-charcoal/40 mb-3">
-                    Color: <span className="text-charcoal font-semibold">{selectedColor.name}</span>
-                  </h4>
-                  <div className="flex gap-3">
-                    {product.colors.map((color: ProductColor) => {
-                      const isActive = color.name === selectedColor.name;
-                      return (
-                        <button
-                          key={color.name}
-                          onClick={() => handleColorChange(color)}
-                          title={`${color.name} ${color.priceDelta > 0 ? `(+${formatPrice(color.priceDelta)})` : ""}`}
-                          className={`w-8 h-8 rounded-full border shadow-warm-sm flex items-center justify-center transition-all ${
-                            isActive ? "ring-2 ring-accent-teal scale-105 border-transparent" : "border-charcoal/10"
-                          }`}
-                          style={{ backgroundColor: color.value }}
-                        >
-                          {isActive && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Quantity and Actions */}
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-charcoal/40 mb-3">
-                    Quantity
+                  <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 mb-3">
+                    Select Quantity
                   </h4>
                   <div className="flex flex-wrap items-center gap-4">
                     {/* Stepper */}
-                    <div className="flex items-center bg-charcoal/5 border border-charcoal/10 rounded-full p-1.5">
+                    <div className="flex items-center bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-1.5 shadow-sm">
                       <button
                         onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                        className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-charcoal/10 text-charcoal transition-colors"
+                        className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC] transition-colors"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="w-12 text-center text-sm font-bold text-charcoal">
+                      <span className="w-10 text-center text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
                         {quantity}
                       </span>
                       <button
                         onClick={() => setQuantity((q) => q + 1)}
-                        className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-charcoal/10 text-charcoal transition-colors"
+                        className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC] transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
 
-                    {/* Action buttons */}
+                    {/* Action button */}
                     <button
                       onClick={handleAddToCart}
-                      className="flex-1 bg-accent-teal text-white font-bold px-8 py-4 rounded-full flex items-center justify-center gap-2 hover:bg-accent-teal/90 shadow-warm-md hover:-translate-y-0.5 transition-all duration-300"
+                      className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-4 px-8 rounded-2xl flex items-center justify-center gap-2 shadow-md uppercase tracking-wider text-xs transition-all active:scale-95"
                     >
-                      <ShoppingBag className="w-4 h-4" /> Add Customized Item To Cart
+                      <ShoppingBag className="w-4 h-4" /> Add Item To Cart
                     </button>
                   </div>
                 </div>
@@ -499,14 +409,15 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
           </div>
 
-          {/* TABS: Description, Specs, Shipping */}
-          <div className="mt-20 border-t border-charcoal/5 pt-12">
+          {/* TABS: Description, Specs, Reviews, Shipping */}
+          <div className="mt-20 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pt-12">
             
             {/* Tab Headers */}
-            <div className="flex border-b border-charcoal/5 pb-4 gap-8">
+            <div className="flex border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-4 gap-8 overflow-x-auto">
               {([
-                { id: "description", name: "Description", icon: FileText },
+                { id: "description", name: "Overview & Craft", icon: FileText },
                 { id: "specs", name: "Dimensions & Materials", icon: Shield },
+                { id: "reviews", name: `Customer Reviews (${product.reviews?.length || 0})`, icon: Star },
                 { id: "shipping", name: "Shipping & Returns", icon: Truck },
               ] as const).map((tab) => {
                 const isActive = activeTab === tab.id;
@@ -515,8 +426,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 text-sm font-bold pb-2 transition-all relative ${
-                      isActive ? "text-accent-teal" : "text-charcoal/55 hover:text-charcoal"
+                    className={`flex items-center gap-2 text-xs font-bold pb-2 transition-all relative shrink-0 ${
+                      isActive ? "text-accent-teal" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 hover:text-[#1F1B16] dark:hover:text-[#F7F3EC]"
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -524,7 +435,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     {isActive && (
                       <motion.div
                         layoutId="activeTabUnderline"
-                        className="absolute bottom-0 left-0 w-full h-[2px] bg-accent-teal"
+                        className="absolute bottom-0 left-0 w-full h-[2.5px] bg-accent-teal rounded-full"
                       />
                     )}
                   </button>
@@ -533,111 +444,153 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             </div>
 
             {/* Tab Content */}
-            <div className="py-8 min-h-[150px]">
+            <div className="py-8 min-h-[200px]">
               {activeTab === "description" && (
-                <div className="max-w-3xl text-charcoal/70 text-sm md:text-base leading-relaxed flex flex-col gap-4">
-                  <p>{product.description}</p>
+                <div className="max-w-3xl text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 text-sm leading-relaxed flex flex-col gap-4">
+                  <p className="text-base font-medium">{product.description}</p>
                   <p>Each order is handcrafted individually to maintain joinery accuracy and quality. We apply premium food-safe wood wax oils to highlight the natural golden glow of teak timber.</p>
                 </div>
               )}
 
               {activeTab === "specs" && (
-                <div className="max-w-2xl text-sm text-charcoal/80 flex flex-col gap-3">
-                  <div className="flex justify-between py-2 border-b border-charcoal/5">
-                    <span className="font-bold">Dimensions</span>
-                    <span className="text-charcoal/60">{product.dimensions}</span>
+                <div className="max-w-2xl text-xs text-[#1F1B16] dark:text-[#F7F3EC] flex flex-col gap-3 font-semibold">
+                  <div className="flex justify-between py-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                    <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase tracking-wider">Dimensions</span>
+                    <span className="font-mono">{product.dimensions}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-charcoal/5">
-                    <span className="font-bold">Wood Type</span>
-                    <span className="text-charcoal/60">{product.woodType}</span>
+                  <div className="flex justify-between py-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                    <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase tracking-wider">Wood Type</span>
+                    <span>{product.woodType}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-charcoal/5">
-                    <span className="font-bold">Weight</span>
-                    <span className="text-charcoal/60">{product.weight}</span>
+                  <div className="flex justify-between py-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                    <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase tracking-wider">Weight</span>
+                    <span className="font-mono">{product.weight}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-charcoal/5">
-                    <span className="font-bold">Assembly</span>
-                    <span className="text-charcoal/60">Fully assembled on delivery</span>
+                  <div className="flex justify-between py-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                    <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase tracking-wider">Assembly</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">Fully assembled on delivery</span>
                   </div>
+                </div>
+              )}
+
+              {/* REVIEWS TAB & SUBMISSION FORM */}
+              {activeTab === "reviews" && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  
+                  {/* Left Column: Existing Reviews */}
+                  <div className="lg:col-span-7 flex flex-col gap-4">
+                    {product.reviews && product.reviews.length > 0 ? (
+                      product.reviews.map((rev) => (
+                        <div key={rev.id} className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 shadow-sm space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-accent-teal/10 text-accent-teal flex items-center justify-center font-bold text-xs">
+                                <User className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <h5 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">{rev.author}</h5>
+                                <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3" /> Verified Buyer
+                                </span>
+                              </div>
+                            </div>
+                            <span className="text-[10px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-mono">{rev.date}</span>
+                          </div>
+
+                          {/* Star Rating */}
+                          <div className="flex items-center gap-1 text-amber-500">
+                            {Array.from({ length: rev.rating }).map((_, i) => (
+                              <Star key={i} className="w-3.5 h-3.5 fill-amber-500" />
+                            ))}
+                          </div>
+
+                          <p className="text-xs text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 leading-relaxed font-medium">
+                            &quot;{rev.comment}&quot;
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-8 text-center bg-white dark:bg-[#1C1814] rounded-2xl border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-xs text-[#1F1B16]/50">
+                        No reviews yet. Be the first to leave a review!
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column: Write a Review Form */}
+                  <div className="lg:col-span-5 bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-6 shadow-sm space-y-4">
+                    <h4 className="font-serif text-lg font-bold text-[#1F1B16] dark:text-[#F7F3EC] flex items-center gap-2">
+                      <MessageSquarePlus className="w-4 h-4 text-accent-teal" /> Write a Customer Review
+                    </h4>
+
+                    <form onSubmit={handleReviewSubmit} className="flex flex-col gap-4">
+                      <div>
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                          Your Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={reviewAuthor}
+                          onChange={(e) => setReviewAuthor(e.target.value)}
+                          placeholder="e.g. Subhakanta Jena"
+                          className="w-full bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                          Rating Rating *
+                        </label>
+                        <div className="flex items-center gap-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setReviewRating(star)}
+                              className="p-1 text-amber-500 transition-transform hover:scale-125"
+                            >
+                              <Star className={`w-5 h-5 ${star <= reviewRating ? "fill-amber-500" : "text-gray-300"}`} />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                          Your Review *
+                        </label>
+                        <textarea
+                          required
+                          rows={3}
+                          value={reviewComment}
+                          onChange={(e) => setReviewComment(e.target.value)}
+                          placeholder="Describe the timber finish, durability, and delivery experience..."
+                          className="w-full bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-medium text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal resize-none"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-md transition-all active:scale-95"
+                      >
+                        Submit Verified Review
+                      </button>
+                    </form>
+                  </div>
+
                 </div>
               )}
 
               {activeTab === "shipping" && (
-                <div className="max-w-3xl text-charcoal/70 text-sm md:text-base leading-relaxed flex flex-col gap-4">
-                  <p><strong>Bhubaneswar & Cuttack:</strong> Free delivery. Out of studio dispatch takes 3–5 working days.</p>
-                  <p><strong>Rest of Odisha:</strong> Delivery charges apply based on shipping weight. Safe transit crates are handled by local freight carriers.</p>
-                  <p><strong>Outside Odisha:</strong> B2B bulk logistics handled by national courier cargo networks. Quotations available on request.</p>
-                  <p><strong>Returns:</strong> 7-day transit damage replacement. Lifetime structural warranty covers wood splitting or joint loosening.</p>
+                <div className="max-w-3xl text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 text-xs md:text-sm leading-relaxed flex flex-col gap-4 font-medium">
+                  <p><strong>Bhubaneswar & Cuttack:</strong> Free white-glove studio delivery within 3–5 working days.</p>
+                  <p><strong>Rest of Odisha:</strong> Local freight carrier delivery with transit crates.</p>
+                  <p><strong>B2B Logistics:</strong> Commercial bulk logistics handled via national cargo networks.</p>
+                  <p><strong>Structural Warranty:</strong> Lifetime structural warranty covering solid wood joinery.</p>
                 </div>
               )}
             </div>
 
-          </div>
-
-          {/* Related products (You may also like) */}
-          <div className="mt-24 border-t border-charcoal/5 pt-16">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="font-serif text-2xl md:text-3xl font-bold text-charcoal">
-                You May Also Like
-              </h2>
-              <a href="/spaces/home" className="text-xs font-bold text-accent-teal hover:underline flex items-center gap-1">
-                View Spaces <ArrowRight className="w-3.5 h-3.5" />
-              </a>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {[
-                {
-                  name: "Konark Rattan Easy Armchair",
-                  slug: "konark-rattan-easy-armchair",
-                  price: 15500,
-                  bg: "bg-pastel-butter",
-                  image: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=600",
-                },
-                {
-                  name: "Kalinga Walnut Coffee Table",
-                  slug: "kalinga-walnut-coffee-table",
-                  price: 18900,
-                  bg: "bg-pastel-blush",
-                  image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=600",
-                },
-                {
-                  name: "Dhauli Marble Nested Table",
-                  slug: "dhauli-marble-nested-table",
-                  price: 13500,
-                  bg: "bg-pastel-mint",
-                  image: "https://images.unsplash.com/photo-1551215934-37d0573d6622?auto=format&fit=crop&q=80&w=600",
-                },
-              ].map((prod) => (
-                <div key={prod.slug} className="flex flex-col group cursor-pointer">
-                  <a
-                    href={`/product/${prod.slug}`}
-                    className={`${prod.bg} rounded-[24px] aspect-[4/5] p-6 relative overflow-hidden flex items-center justify-center transition-all duration-500 hover:shadow-warm-lg`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={prod.image}
-                      alt={prod.name}
-                      className="w-full h-full object-cover rounded-2xl group-hover:scale-102 transition-transform duration-500"
-                    />
-                    <button className="absolute bottom-4 right-4 w-9 h-9 bg-charcoal text-cream rounded-full flex items-center justify-center shadow-warm-md hover:bg-accent-teal transition-colors">
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </a>
-                  <div className="mt-4 flex justify-between items-start">
-                    <a
-                      href={`/product/${prod.slug}`}
-                      className="font-serif font-bold text-base text-charcoal group-hover:text-accent-teal transition-colors leading-snug"
-                    >
-                      {prod.name}
-                    </a>
-                    <span className="font-semibold text-charcoal text-sm whitespace-nowrap pl-2">
-                      {formatPrice(prod.price)}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
         </main>
@@ -646,3 +599,4 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     </div>
   );
 }
+
