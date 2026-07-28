@@ -51,10 +51,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         description: storeProduct.description || "Handcrafted with premium organic solid timber and precision joinery in Odisha.",
         images: (storeProduct.images && storeProduct.images.length > 0)
           ? storeProduct.images
-          : [
-              storeProduct.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
-              "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=800",
-            ],
+          : [storeProduct.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800"],
         colors: (storeProduct.colors && storeProduct.colors.length > 0)
           ? storeProduct.colors.map((c, i) => ({ name: c, value: i === 0 ? "#D97B3F" : "#1F1B16", priceDelta: 0, imgIdx: 0 }))
           : [{ name: "Natural Teak", value: "#D97B3F", priceDelta: 0, imgIdx: 0 }],
@@ -255,24 +252,26 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                 </button>
               </div>
 
-              {/* Thumbnails Strip */}
-              <div className="flex gap-4">
-                {product.images.map((img: string, idx: number) => {
-                  const isActive = idx === activeImgIdx;
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => setActiveImgIdx(idx)}
-                      className={`w-20 h-20 rounded-2xl p-1 bg-white dark:bg-[#1C1814] overflow-hidden border-2 transition-all ${
-                        isActive ? "border-accent-teal shadow-md" : "border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 opacity-70 hover:opacity-100"
-                      }`}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img} alt="thumbnail" className="w-full h-full object-cover rounded-xl" />
-                    </button>
-                  );
-                })}
-              </div>
+              {/* Thumbnails Strip (Rendered only if multiple images exist) */}
+              {product.images && product.images.length > 1 && (
+                <div className="flex gap-3">
+                  {product.images.map((img: string, idx: number) => {
+                    const isActive = idx === activeImgIdx;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setActiveImgIdx(idx)}
+                        className={`w-16 h-16 rounded-xl p-1 bg-white dark:bg-[#1C1814] overflow-hidden border-2 transition-all ${
+                          isActive ? "border-accent-teal shadow-md scale-105" : "border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img} alt="thumbnail" className="w-full h-full object-cover rounded-lg" />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* RIGHT: Product Specs & Customizer Panel */}
@@ -621,10 +620,10 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
           {/* SIMILAR PRODUCT SUGGESTIONS (YOU MAY ALSO LIKE) */}
           <div className="mt-20 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pt-14">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal bg-accent-teal/10 px-3 py-1 rounded-full inline-block mb-1">
-                  Curated Recommendations
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal bg-accent-teal/10 px-3 py-1 rounded-full inline-block mb-2">
+                  Handcrafted Alternatives
                 </span>
                 <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
                   You May Also Like
@@ -632,7 +631,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               </div>
               <a
                 href="/spaces/home"
-                className="text-xs font-bold text-accent-teal hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-accent-teal hover:underline flex items-center gap-1.5 self-start md:self-auto"
               >
                 Browse Full Catalog <ArrowRight className="w-3.5 h-3.5" />
               </a>
@@ -646,26 +645,32 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   <a
                     key={item.id}
                     href={`/product/${item.id}`}
-                    className="group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                    className="group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
                   >
-                    <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF7F2] dark:bg-[#12100E]">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF7F2] dark:bg-[#12100E] flex items-center justify-center p-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={item.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400"}
                         alt={item.name}
-                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                       />
-                    </div>
-                    <div className="p-4 flex flex-col gap-1">
-                      <span className="text-[9px] font-extrabold uppercase tracking-wider text-accent-teal">
+                      <span className="absolute top-3 left-3 text-[9px] font-extrabold uppercase tracking-wider bg-white/90 dark:bg-[#1C1814]/90 backdrop-blur-md text-accent-teal px-2.5 py-0.5 rounded-full border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                         {item.category}
                       </span>
+                    </div>
+
+                    <div className="p-4 flex flex-col gap-1.5 border-t border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
                       <h4 className="font-serif font-bold text-sm text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors line-clamp-1">
                         {item.name}
                       </h4>
-                      <span className="font-mono font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC] mt-1">
-                        {formatPrice(item.price)}
-                      </span>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="font-mono font-extrabold text-sm text-[#1F1B16] dark:text-[#F7F3EC]">
+                          {formatPrice(item.price)}
+                        </span>
+                        <span className="text-[10px] font-bold text-accent-teal group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                          View <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
                     </div>
                   </a>
                 ))}
