@@ -583,8 +583,8 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                           
                           {/* Customization Granted Badge on Photo if set by Admin */}
                           {product.customizable !== false && (
-                            <span className="absolute top-4 left-4 z-20 bg-[#1F1B16]/90 text-white backdrop-blur-md text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 border border-white/20">
-                              <Sparkles className="w-3 h-3 text-amber-400 fill-amber-400" /> ✨ Customisable
+                            <span className="absolute top-4 left-4 z-20 bg-[#1F1B16]/90 text-white backdrop-blur-md text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1 border border-white/20">
+                              Customisable
                             </span>
                           )}
 
@@ -727,7 +727,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                     {quickViewProduct.customizable !== false ? (
                       <div className="mt-4 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 space-y-3">
                         <span className="text-[10px] font-extrabold uppercase tracking-wider text-accent-teal block">
-                          ✨ Select Custom Timber Finish
+                          Select Custom Timber Finish
                         </span>
                         <div className="grid grid-cols-2 gap-2">
                           {["Natural Teak", "Charcoal Ebonized", "Warm Honey Polish", "Rosewood Finish"].map((f) => (

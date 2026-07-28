@@ -108,7 +108,7 @@ export default function AdminDashboardHome() {
       <div className="bg-gradient-to-r from-[#1C1814] via-[#2D2620] to-accent-teal/80 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1.5 relative z-10">
           <span className="text-[10px] font-black uppercase tracking-widest bg-white/10 text-emerald-400 px-3 py-1 rounded-full inline-block backdrop-blur-md">
-            ✨ Store Operations HQ
+            Store Operations HQ
           </span>
           <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight">Executive Dashboard</h1>
           <p className="text-xs text-white/70 font-medium max-w-xl">

@@ -101,7 +101,7 @@ export default function HomepageCmsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-6">
         <div>
           <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full inline-block mb-2">
-            ✨ Storefront CMS Engine
+            Storefront CMS Engine
           </span>
           <h1 className="font-serif text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
             Website Customization & CMS

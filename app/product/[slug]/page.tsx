@@ -326,7 +326,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                 <div className="bg-pastel-mint/40 border border-accent-teal/20 rounded-3xl p-5 space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
-                      ✨ Bespoke Furniture Customizer
+                      Bespoke Furniture Customizer
                     </span>
                     <span className="text-[10px] font-bold text-charcoal/60">Tailored In Bhubaneswar</span>
                   </div>
