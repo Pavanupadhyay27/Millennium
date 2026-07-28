@@ -30,7 +30,7 @@ const formatPrice = (price: number) => {
 };
 
 export default function CheckoutPage() {
-  const { cart, clearCart, updateCartQuantity, removeFromCart } = useStore();
+  const { cart, clearCart, updateCartQuantity, removeFromCart, addNotification } = useStore();
   const [step, setStep] = useState<"shipping" | "payment" | "review">("shipping");
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -75,11 +75,14 @@ export default function CheckoutPage() {
   };
 
   const handlePlaceOrder = async () => {
+    const orderId = `RET-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
     try {
       await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          orderId,
           customerName: shippingForm.fullName,
           customerEmail: shippingForm.email,
           customerPhone: shippingForm.phone,
@@ -94,6 +97,15 @@ export default function CheckoutPage() {
     } catch (err) {
       console.error(err);
     }
+
+    // Push live notification for Admin HQ Navbar
+    addNotification({
+      orderId,
+      customerName: shippingForm.fullName || "Valued Customer",
+      type: "Retail",
+      total: total,
+    });
+
     setIsCompleted(true);
     clearCart();
   };
@@ -276,77 +288,33 @@ export default function CheckoutPage() {
                         </form>
                       )}
 
-                      {/* STEP 2: PAYMENT FORM */}
+                      {/* STEP 2: CASH ON DELIVERY (COD) PAYMENT */}
                       {step === "payment" && (
                         <form onSubmit={handlePaymentSubmit} className="space-y-4">
                           <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                             <h2 className="font-serif text-xl font-bold">2. Payment Method</h2>
-                            <span className="text-[10px] font-bold text-accent-teal uppercase tracking-wider bg-accent-teal/10 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                              <Lock className="w-3 h-3" /> Secure 256-Bit SSL
+                            <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-wider bg-accent-teal/10 px-3 py-1 rounded-full flex items-center gap-1">
+                              <ShieldCheck className="w-3.5 h-3.5" /> 100% Verified COD
                             </span>
                           </div>
 
-                          <div>
-                            <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                              Cardholder Name *
-                            </label>
-                            <input
-                              type="text"
-                              required
-                              value={paymentForm.cardName}
-                              onChange={(e) => setPaymentForm({ ...paymentForm, cardName: e.target.value })}
-                              placeholder="Name as printed on card"
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                              Credit / Debit Card Number *
-                            </label>
-                            <div className="relative">
-                              <input
-                                type="text"
-                                required
-                                value={paymentForm.cardNumber}
-                                onChange={(e) => setPaymentForm({ ...paymentForm, cardNumber: e.target.value })}
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC] font-mono"
-                              />
-                              <CreditCard className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1F1B16]/40 dark:text-[#F7F3EC]/40" />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                                Expiration Date *
-                              </label>
-                              <input
-                                type="text"
-                                required
-                                value={paymentForm.cardExpiry}
-                                onChange={(e) => setPaymentForm({ ...paymentForm, cardExpiry: e.target.value })}
-                                placeholder="MM/YY"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC] font-mono"
-                              />
+                          {/* Cash on Delivery Selection Tile */}
+                          <div className="bg-accent-teal/10 dark:bg-accent-teal/20 border-2 border-accent-teal rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+                            <div className="w-12 h-12 rounded-2xl bg-accent-teal text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-md">
+                              💵
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                                CVC Code *
-                              </label>
-                              <input
-                                type="password"
-                                required
-                                maxLength={3}
-                                value={paymentForm.cardCvc}
-                                onChange={(e) => setPaymentForm({ ...paymentForm, cardCvc: e.target.value })}
-                                placeholder="•••"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC] font-mono"
-                              />
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-bold text-sm text-[#1F1B16] dark:text-[#F7F3EC]">Cash on Delivery (COD)</h4>
+                                <span className="text-[9px] font-extrabold uppercase tracking-wider bg-emerald-500 text-white px-2 py-0.5 rounded-full">Active</span>
+                              </div>
+                              <p className="text-xs text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
+                                Pay upon doorstep delivery after inspecting your handcrafted furniture build. Zero advance card payments required!
+                              </p>
                             </div>
                           </div>
 
-                          <div className="flex gap-3 mt-4">
+                          <div className="flex gap-3 mt-6">
                             <button
                               type="button"
                               onClick={() => setStep("shipping")}
@@ -356,9 +324,9 @@ export default function CheckoutPage() {
                             </button>
                             <button
                               type="submit"
-                              className="flex-1 bg-[#1F1B16] text-[#F7F3EC] dark:bg-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal dark:hover:bg-accent-teal hover:text-white dark:hover:text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+                              className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
                             >
-                              Review Order <ArrowRight className="w-4 h-4" />
+                              Proceed to Review <ArrowRight className="w-4 h-4" />
                             </button>
                           </div>
                         </form>
@@ -384,7 +352,7 @@ export default function CheckoutPage() {
                               <span className="text-[10px] font-bold uppercase tracking-wider text-accent-teal block mb-1">
                                 Payment Method
                               </span>
-                              <p className="font-mono">Card ending in {paymentForm.cardNumber.slice(-4)}</p>
+                              <p className="font-bold text-emerald-600 dark:text-emerald-400">Cash on Delivery (Pay upon arrival)</p>
                             </div>
                           </div>
 

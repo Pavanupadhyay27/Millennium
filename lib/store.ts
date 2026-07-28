@@ -188,11 +188,28 @@ const INITIAL_PRODUCTS: Product[] = [
   }
 ];
 
+export interface AppNotification {
+  id: string;
+  orderId: string;
+  customerName: string;
+  type: "Wholesale" | "Retail";
+  total: number;
+  timeAgo: string;
+  read: boolean;
+}
+
+const INITIAL_NOTIFICATIONS: AppNotification[] = [
+  { id: "n1", orderId: "PO-2026-0925", customerName: "Mohapatra Interiors", type: "Wholesale", total: 198000, timeAgo: "Just Now", read: false },
+  { id: "n2", orderId: "RET-2026-4081", customerName: "Sujata Mohanty", type: "Retail", total: 24500, timeAgo: "15m ago", read: false },
+  { id: "n3", orderId: "PO-2026-1082", customerName: "Utkal Builders Ltd", type: "Wholesale", total: 284000, timeAgo: "1h ago", read: false },
+];
+
 interface AppState {
   cart: CartItem[];
   wishlist: WishlistItem[];
   offers: Offer[];
   products: Product[];
+  notifications: AppNotification[];
   activePromoCode: string | null;
   cartDrawerOpen: boolean;
   leadModalOpen: boolean;
@@ -200,6 +217,10 @@ interface AppState {
   lastAddedItem: CartItem | null;
   isAuthenticated: boolean;
   user: { name: string; email: string } | null;
+  
+  // Notification Actions
+  markAllNotificationsRead: () => void;
+  addNotification: (notif: Omit<AppNotification, "id" | "timeAgo" | "read">) => void;
   
   // Cart Actions
   toggleCartDrawer: (isOpen?: boolean) => void;
@@ -239,12 +260,28 @@ export const useStore = create<AppState>()(
       wishlist: [],
       offers: INITIAL_OFFERS,
       products: INITIAL_PRODUCTS,
+      notifications: INITIAL_NOTIFICATIONS,
       activePromoCode: null,
       cartDrawerOpen: false,
       leadModalOpen: false,
       lastAddedItem: null,
       isAuthenticated: false,
       user: null,
+
+      markAllNotificationsRead: () =>
+        set((state) => ({
+          notifications: state.notifications.map((n) => ({ ...n, read: true })),
+        })),
+
+      addNotification: (notif) => {
+        const newNotif: AppNotification = {
+          ...notif,
+          id: `notif-${Date.now()}`,
+          timeAgo: "Just Now",
+          read: false,
+        };
+        set((state) => ({ notifications: [newNotif, ...state.notifications] }));
+      },
 
       login: (user) => set({ isAuthenticated: true, user }),
       logout: () => set({ isAuthenticated: false, user: null }),
@@ -402,6 +439,7 @@ export const useStore = create<AppState>()(
         wishlist: state.wishlist,
         offers: state.offers,
         products: state.products,
+        notifications: state.notifications,
         activePromoCode: state.activePromoCode,
         isAuthenticated: state.isAuthenticated,
         user: state.user,

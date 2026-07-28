@@ -16,17 +16,30 @@ import {
   ArrowRight,
   Sun,
   Moon,
+  CheckCheck,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useStore } from "../../lib/store";
 
 import { motion, AnimatePresence } from "framer-motion";
 
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(price);
+};
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { notifications, markAllNotificationsRead } = useStore();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
@@ -139,10 +152,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }`}
       >
         {/* Brand Header */}
-        <div className="h-20 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-5 flex items-center justify-between">
+        <div className="h-24 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-4 flex items-center justify-between">
           <a href="/admin" className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Millennium Admin" className="h-12 w-auto object-contain dark:brightness-0 dark:invert drop-shadow-md" />
+            <img src="/logo.png" alt="Millennium Admin" className="h-16 md:h-20 w-auto object-contain dark:brightness-0 dark:invert drop-shadow-lg" />
           </a>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -225,9 +238,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 title="Order Notifications"
               >
                 <Bell className="w-4 h-4" />
-                <span className="absolute -top-1 -right-1 bg-amber-500 text-white rounded-full text-[9px] font-mono font-extrabold w-4.5 h-4.5 flex items-center justify-center border-2 border-white dark:border-[#1C1814] shadow-sm animate-pulse">
-                  3
-                </span>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-amber-500 text-white rounded-full text-[9px] font-mono font-extrabold w-4.5 h-4.5 flex items-center justify-center border-2 border-white dark:border-[#1C1814] shadow-sm animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
 
               {/* Notification Popover Dropdown */}
@@ -241,52 +256,49 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   >
                     <div className="flex items-center justify-between border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-2">
                       <span className="font-serif font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC] flex items-center gap-1.5">
-                        <Bell className="w-3.5 h-3.5 text-accent-teal" /> Order Dispatch Alerts
+                        <Bell className="w-3.5 h-3.5 text-accent-teal" /> Order Alerts
                       </span>
-                      <span className="text-[9px] font-extrabold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                        3 Pending
-                      </span>
+                      
+                      {unreadCount > 0 ? (
+                        <button
+                          onClick={() => markAllNotificationsRead()}
+                          className="text-[10px] font-bold text-accent-teal hover:underline flex items-center gap-1 bg-accent-teal/10 px-2 py-0.5 rounded-full"
+                        >
+                          <CheckCheck className="w-3 h-3" /> Mark All Read
+                        </button>
+                      ) : (
+                        <span className="text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                          All Caught Up
+                        </span>
+                      )}
                     </div>
 
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
-                      <a
-                        href="/admin/orders"
-                        onClick={() => setNotificationsOpen(false)}
-                        className="block bg-[#FAF7F2] dark:bg-[#12100E] p-2.5 rounded-xl border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 hover:border-accent-teal transition-all text-xs"
-                      >
-                        <div className="flex justify-between items-center mb-0.5">
-                          <span className="font-mono font-bold text-accent-teal text-[11px]">PO-2026-0925</span>
-                          <span className="text-[9px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-mono">Just Now</span>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {notifications.length > 0 ? (
+                        notifications.map((n) => (
+                          <a
+                            key={n.id}
+                            href="/admin/orders"
+                            onClick={() => setNotificationsOpen(false)}
+                            className={`block p-2.5 rounded-xl border transition-all text-xs ${
+                              !n.read
+                                ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal/30"
+                                : "bg-[#FAF7F2] dark:bg-[#12100E] border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 opacity-70"
+                            }`}
+                          >
+                            <div className="flex justify-between items-center mb-0.5">
+                              <span className="font-mono font-bold text-accent-teal text-[11px]">{n.orderId}</span>
+                              <span className="text-[9px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono">{n.timeAgo}</span>
+                            </div>
+                            <p className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-[11px]">{n.customerName} ({n.type})</p>
+                            <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">Total: {formatPrice(n.total)}</span>
+                          </a>
+                        ))
+                      ) : (
+                        <div className="py-6 text-center text-xs text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">
+                          No order alerts yet.
                         </div>
-                        <p className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-[11px]">Mohapatra Interiors (Wholesale)</p>
-                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">Total: ₹1,98,000</span>
-                      </a>
-
-                      <a
-                        href="/admin/orders"
-                        onClick={() => setNotificationsOpen(false)}
-                        className="block bg-[#FAF7F2] dark:bg-[#12100E] p-2.5 rounded-xl border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 hover:border-accent-teal transition-all text-xs"
-                      >
-                        <div className="flex justify-between items-center mb-0.5">
-                          <span className="font-mono font-bold text-accent-teal text-[11px]">RET-2026-4081</span>
-                          <span className="text-[9px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-mono">15m ago</span>
-                        </div>
-                        <p className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-[11px]">Sujata Mohanty (Retail)</p>
-                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">Total: ₹24,500</span>
-                      </a>
-
-                      <a
-                        href="/admin/orders"
-                        onClick={() => setNotificationsOpen(false)}
-                        className="block bg-[#FAF7F2] dark:bg-[#12100E] p-2.5 rounded-xl border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 hover:border-accent-teal transition-all text-xs"
-                      >
-                        <div className="flex justify-between items-center mb-0.5">
-                          <span className="font-mono font-bold text-accent-teal text-[11px]">PO-2026-1082</span>
-                          <span className="text-[9px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-mono">1h ago</span>
-                        </div>
-                        <p className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-[11px]">Utkal Builders Ltd (Wholesale)</p>
-                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">Total: ₹2,84,000</span>
-                      </a>
+                      )}
                     </div>
 
                     <a
