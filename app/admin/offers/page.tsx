@@ -145,7 +145,7 @@ export default function AdminOffersPage() {
           <span className="text-[10px] font-extrabold text-amber-500 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full inline-block mb-1">
             Admin Offers & Discounts HQ
           </span>
-          <h1 className="font-serif text-3xl font-bold">Promotions & Coupons</h1>
+          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">Promotions & Coupons</h1>
           <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 font-medium">
             Manage promotional discounts, coupon codes, and target specific furniture items on the public storefront.
           </p>

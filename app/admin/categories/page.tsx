@@ -133,12 +133,12 @@ export default function CategoryTreePage() {
       </AnimatePresence>
 
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F1B16]/5 pb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-6">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] mb-2">
+          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC] mb-2">
             Catalog Categories
           </h1>
-          <p className="text-[#1F1B16]/50 text-xs font-semibold">
+          <p className="text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 text-xs font-semibold">
             Define subcategories, parent nodes, generate custom URL path slugs, and upload category tiles.
           </p>
         </div>

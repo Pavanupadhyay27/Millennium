@@ -342,12 +342,12 @@ export default function ProductCrudPage() {
       </AnimatePresence>
 
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F1B16]/5 pb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-6">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] mb-2">
+          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC] mb-2">
             Catalog Inventory
           </h1>
-          <p className="text-[#1F1B16]/50 text-xs font-semibold">
+          <p className="text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 text-xs font-semibold">
             Control items pricing, stock thresholds, custom descriptions, and metadata.
           </p>
         </div>
@@ -368,14 +368,14 @@ export default function ProductCrudPage() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             
             {/* Search Input */}
-            <div className="flex items-center bg-white border border-[#1F1B16]/10 rounded-full px-5 py-2.5 w-80 shadow-warm-sm">
-              <Search className="w-3.5 h-3.5 text-[#1F1B16]/40 mr-2.5" />
+            <div className="flex items-center bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full px-5 py-2.5 w-80 shadow-warm-sm">
+              <Search className="w-3.5 h-3.5 text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 mr-2.5" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name, category, or slug..."
-                className="bg-transparent text-xs focus:outline-none w-full text-[#1F1B16]"
+                className="bg-transparent text-xs focus:outline-none w-full text-[#1F1B16] dark:text-[#F7F3EC] placeholder:text-[#1F1B16]/40 dark:placeholder:text-[#F7F3EC]/40"
               />
             </div>
 

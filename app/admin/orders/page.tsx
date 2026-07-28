@@ -181,12 +181,12 @@ export default function OrderProcessorPage() {
       </AnimatePresence>
 
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F1B16]/5 pb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-6">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] mb-2">
+          <h1 className="font-serif text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC] mb-2">
             Order Fulfillment
           </h1>
-          <p className="text-[#1F1B16]/50 text-xs font-semibold">
+          <p className="text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 text-xs font-semibold">
             Track customer invoicing, shipping status overrides, and send automated notifications.
           </p>
         </div>
@@ -196,14 +196,14 @@ export default function OrderProcessorPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         
         {/* Search */}
-        <div className="flex items-center bg-white border border-[#1F1B16]/10 rounded-full px-5 py-2.5 w-80 shadow-warm-sm">
-          <Search className="w-3.5 h-3.5 text-[#1F1B16]/40 mr-2.5" />
+        <div className="flex items-center bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full px-5 py-2.5 w-80 shadow-warm-sm">
+          <Search className="w-3.5 h-3.5 text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 mr-2.5" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search order ID or client email..."
-            className="bg-transparent text-xs focus:outline-none w-full text-[#1F1B16]"
+            className="bg-transparent text-xs focus:outline-none w-full text-[#1F1B16] dark:text-[#F7F3EC] placeholder:text-[#1F1B16]/40 dark:placeholder:text-[#F7F3EC]/40"
           />
         </div>
 
@@ -211,13 +211,15 @@ export default function OrderProcessorPage() {
         <div className="flex items-center gap-3">
           
           {/* Retail vs Wholesale Filter */}
-          <div className="flex bg-white border border-[#1F1B16]/10 rounded-full p-1 text-[10px] font-bold shadow-warm-sm">
+          <div className="flex bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full p-1 text-[10px] font-bold shadow-warm-sm">
             {(["All", "Retail", "Wholesale"] as const).map((type) => (
               <button
                 key={type}
                 onClick={() => setTypeFilter(type)}
                 className={`rounded-full px-4 py-1.5 transition-all ${
-                  typeFilter === type ? "bg-[#1F1B16] text-[#F7F3EC]" : "text-[#1F1B16]/50"
+                  typeFilter === type
+                    ? "bg-[#1F1B16] text-[#F7F3EC] dark:bg-accent-teal dark:text-white"
+                    : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 hover:text-accent-teal"
                 }`}
               >
                 {type}
@@ -230,7 +232,7 @@ export default function OrderProcessorPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border border-[#1F1B16]/10 rounded-full pl-5 pr-10 py-2.5 text-[10px] font-bold bg-white text-[#1F1B16] focus:outline-none cursor-pointer appearance-none shadow-warm-sm"
+              className="border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full pl-5 pr-10 py-2.5 text-[10px] font-bold bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none cursor-pointer appearance-none shadow-warm-sm"
             >
               <option value="All">All Statuses</option>
               <option value="Pending">Pending</option>
@@ -238,7 +240,7 @@ export default function OrderProcessorPage() {
               <option value="Shipped">Shipped</option>
               <option value="Delivered">Delivered</option>
             </select>
-            <SlidersHorizontal className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-[#1F1B16]/40" />
+            <SlidersHorizontal className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-[#1F1B16]/40 dark:text-[#F7F3EC]/40" />
           </div>
 
         </div>
@@ -250,11 +252,11 @@ export default function OrderProcessorPage() {
         
         {/* LEFT: Orders list (takes 7 or 12 cols depending if order is selected) */}
         <div className={selectedOrder ? "xl:col-span-7 flex flex-col gap-4" : "xl:col-span-12 flex flex-col gap-4"}>
-          <div className="bg-white border border-[#1F1B16]/10 rounded-[28px] overflow-hidden shadow-warm-sm">
+          <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[28px] overflow-hidden shadow-warm-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#FAF7F2] dark:bg-[#12100E] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">
+                  <tr className="bg-[#FAF7F2] dark:bg-[#12100E] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">
                     <th className="py-4 px-6">ID</th>
                     <th className="py-4 px-4">Date</th>
                     <th className="py-4 px-4">Customer & Contact</th>
@@ -265,7 +267,7 @@ export default function OrderProcessorPage() {
                     <th className="py-4 px-6 text-center">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1F1B16]/5">
+                <tbody className="divide-y divide-[#1F1B16]/5 dark:divide-[#F7F3EC]/10">
                   {filteredOrders.length > 0 ? (
                     filteredOrders.map((o) => {
                       const isSelected = selectedOrder?.id === o.id;
@@ -275,7 +277,9 @@ export default function OrderProcessorPage() {
                           key={o.id}
                           onClick={() => setSelectedOrder(o)}
                           className={`text-xs cursor-pointer transition-colors ${
-                            isSelected ? "bg-accent-teal/10" : "hover:bg-[#FAF7F2]/60 dark:hover:bg-[#12100E]/60"
+                            isSelected
+                              ? "bg-accent-teal/15 dark:bg-accent-teal/25"
+                              : "hover:bg-[#FAF7F2]/60 dark:hover:bg-[#12100E]/60"
                           }`}
                         >
                           <td className="py-5 px-6 font-mono font-extrabold text-accent-teal">{o.id}</td>
