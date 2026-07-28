@@ -58,8 +58,8 @@ export async function POST(request: Request) {
 
     ORDERS_DB.unshift(newOrder);
 
-    // Send 100% Free Automated WhatsApp Notification to Business (+91 94371 82931) via CallMeBot API
-    const waPhone = process.env.WHATSAPP_BUSINESS_PHONE || "919437182931";
+    // Send 100% Free Automated WhatsApp Notification to Business (+91 93343 09230) via CallMeBot API
+    const waPhone = process.env.WHATSAPP_BUSINESS_PHONE || "919334309230";
     const waApiKey = process.env.CALLMEBOT_API_KEY; // Optional free API key from CallMeBot
 
     if (waApiKey) {
