@@ -115,21 +115,6 @@ export default function AdminDashboardHome() {
             Live overview of active sales orders, wholesale B2B inquiries, automated recovery leads, and catalog inventory.
           </p>
         </div>
-
-        <div className="flex items-center gap-3 relative z-10 shrink-0">
-          <a
-            href="/admin/products"
-            className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" /> Add Product
-          </a>
-          <a
-            href="/admin/offers"
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-2xl transition-all backdrop-blur-md flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4 text-amber-400" /> Promos
-          </a>
-        </div>
       </div>
 
       {/* Executive KPI Cards */}
@@ -195,9 +180,9 @@ export default function AdminDashboardHome() {
         </div>
       </div>
 
-      {/* High-Contrast Cart Recovery Section */}
+      {/* Cart Recovery Queue */}
       <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-sm space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+        <div className="pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
               <Flame className="w-5 h-5" />
@@ -211,13 +196,6 @@ export default function AdminDashboardHome() {
               </p>
             </div>
           </div>
-
-          <button
-            onClick={() => showToast("WhatsApp 10% promo broadcasted to all pending leads!")}
-            className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-extrabold text-xs uppercase tracking-wider px-6 py-3 rounded-2xl transition-all shadow-lg hover:shadow-amber-500/25 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
-          >
-            <Send className="w-4 h-4" /> Broadcast All Promos (10% Off)
-          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
