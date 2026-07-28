@@ -19,6 +19,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useStore } from "../../../lib/store";
 
 // Format currency
@@ -107,6 +108,7 @@ const INITIAL_PRODUCTS = [
 ];
 
 export default function ProductCrudPage() {
+  const router = useRouter();
   const { products: storeProducts, addProduct, updateProduct, deleteProduct } = useStore();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -510,7 +512,7 @@ export default function ProductCrudPage() {
 
                           {/* Image Thumbnail & details */}
                           <td
-                            onClick={() => setSelectedViewProduct(p)}
+                            onClick={() => router.push(`/admin/products/${p.id}`)}
                             className="py-4 px-4 flex items-center gap-4 cursor-pointer group/row"
                           >
                             <div className="w-12 h-12 rounded-xl overflow-hidden p-0.5 border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 shrink-0 bg-white dark:bg-[#12100E] shadow-sm group-hover/row:scale-105 transition-transform">
@@ -571,9 +573,9 @@ export default function ProductCrudPage() {
                           <td className="py-4 px-6 text-center">
                             <div className="flex items-center justify-center gap-2">
                               <button
-                                onClick={() => setSelectedViewProduct(p)}
+                                onClick={() => router.push(`/admin/products/${p.id}`)}
                                 className="w-8 h-8 rounded-xl bg-accent-teal/10 border border-accent-teal/20 flex items-center justify-center text-accent-teal hover:bg-accent-teal hover:text-white transition-all"
-                                title="View product analytics & reviews"
+                                title="View dedicated product page"
                               >
                                 <Eye className="w-3.5 h-3.5" />
                               </button>

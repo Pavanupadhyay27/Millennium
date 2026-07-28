@@ -14,7 +14,10 @@ import {
   Lock,
   ShoppingBag,
   ShieldCheck,
-  Truck
+  Truck,
+  Plus,
+  Minus,
+  Trash2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -27,7 +30,7 @@ const formatPrice = (price: number) => {
 };
 
 export default function CheckoutPage() {
-  const { cart, clearCart } = useStore();
+  const { cart, clearCart, updateCartQuantity, removeFromCart } = useStore();
   const [step, setStep] = useState<"shipping" | "payment" | "review">("shipping");
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -412,7 +415,7 @@ export default function CheckoutPage() {
                     </h3>
 
                     {/* Items List */}
-                    <div className="space-y-3 mb-4 max-h-60 overflow-y-auto pr-1">
+                    <div className="space-y-3 mb-4 max-h-72 overflow-y-auto pr-1">
                       {cart.map((item) => (
                         <div key={item.id} className="flex justify-between items-center text-xs pb-3 border-b border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 last:border-0 last:pb-0">
                           <div className="flex items-center gap-3">
@@ -421,11 +424,44 @@ export default function CheckoutPage() {
                               <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                             </div>
                             <div>
-                              <h4 className="font-bold truncate max-w-[160px]">{item.name}</h4>
-                              <p className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">{item.color || "Natural"} • {item.quantity}x</p>
+                              <h4 className="font-bold truncate max-w-[130px] sm:max-w-[160px] text-[#1F1B16] dark:text-[#F7F3EC]">{item.name}</h4>
+                              <p className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 mb-1">{item.color || "Natural"}</p>
+
+                              {/* Interactive Stepper inside Checkout */}
+                              <div className="flex items-center gap-2">
+                                <div className="flex items-center bg-[#F7F3EC] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/20 rounded-full px-2 py-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
+                                    className="w-4 h-4 rounded-full flex items-center justify-center hover:bg-accent-teal hover:text-white transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
+                                  >
+                                    <Minus className="w-2.5 h-2.5" />
+                                  </button>
+                                  <span className="w-5 text-center text-[11px] font-bold font-mono">
+                                    {item.quantity}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
+                                    className="w-4 h-4 rounded-full flex items-center justify-center hover:bg-accent-teal hover:text-white transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
+                                  >
+                                    <Plus className="w-2.5 h-2.5" />
+                                  </button>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => removeFromCart(item.id)}
+                                  className="p-1 rounded-full text-red-500/50 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                                  title="Remove item"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
                             </div>
                           </div>
-                          <span className="font-serif font-bold text-xs">
+
+                          <span className="font-serif font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">
                             {formatPrice(item.price * item.quantity)}
                           </span>
                         </div>
