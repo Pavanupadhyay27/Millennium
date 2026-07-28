@@ -482,58 +482,63 @@ export default function CheckoutPage() {
           ) : (
             /* ORDER SUCCESS SCREEN */
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="py-16 text-center max-w-xl mx-auto bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-8 md:p-12 shadow-2xl"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="py-16 text-center max-w-lg mx-auto bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[36px] p-8 md:p-12 shadow-2xl space-y-6 relative overflow-hidden"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8" />
-              </div>
-              <h2 className="font-serif text-3xl font-bold mb-2">Order Confirmed!</h2>
-              <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mb-6 leading-relaxed">
-                Thank you for your order with Millennium Furniture. Your order has been registered under Cash on Delivery (COD).
-              </p>
+              {/* Glowing Background Radial */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-accent-teal/10 rounded-full blur-3xl pointer-events-none" />
 
-              {/* Instant WhatsApp Notification Button to Business */}
-              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 mb-6 text-left space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-md">
-                    💬
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Instant WhatsApp Confirmation</h4>
-                    <p className="text-[10px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">Send full order details directly to Millennium WhatsApp (+91 93343 09230)</p>
-                  </div>
-                </div>
-
-                <a
-                  href={`https://wa.me/919334309230?text=${encodeURIComponent(
-                    `*NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
-                    `----------------------------------------\n` +
-                    `👤 *Customer Name:* ${shippingForm.fullName}\n` +
-                    `📞 *Phone Number:* ${shippingForm.phone}\n` +
-                    `✉️ *Email:* ${shippingForm.email}\n` +
-                    `📍 *Delivery Address:* ${shippingForm.address}, ${shippingForm.city}, ${shippingForm.state} - ${shippingForm.postalCode}\n\n` +
-                    `🛍️ *ORDER ITEMS:*\n` +
-                    cart.map((item, idx) => `${idx + 1}. ${item.name} (${item.color || "Natural"}) - ${item.quantity}x @ ₹${item.price.toLocaleString("en-IN")}`).join("\n") +
-                    `\n----------------------------------------\n` +
-                    `💵 *Payment Method:* Cash on Delivery (COD)\n` +
-                    `💰 *TOTAL AMOUNT:* ₹${total.toLocaleString("en-IN")}`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider py-3 px-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+              {/* Premium Animated Success Checkmark Ring */}
+              <div className="relative inline-flex items-center justify-center">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [0, 1.2, 1] }}
+                  transition={{ duration: 0.5, ease: "backOut" }}
+                  className="w-24 h-24 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 p-1 shadow-xl shadow-emerald-500/20"
                 >
-                  Send Order via WhatsApp <ArrowRight className="w-4 h-4" />
+                  <div className="w-full h-full bg-white dark:bg-[#1C1814] rounded-full flex items-center justify-center text-emerald-500">
+                    <CheckCircle className="w-12 h-12 stroke-[2.2]" />
+                  </div>
+                </motion.div>
+                <span className="absolute -bottom-1 bg-emerald-500 text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full shadow-md">
+                  Confirmed
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                <h2 className="font-serif text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                  Order Successfully Placed!
+                </h2>
+                <p className="text-xs text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 leading-relaxed max-w-md mx-auto">
+                  Thank you for choosing <strong className="text-[#1F1B16] dark:text-[#F7F3EC]">Millennium Furniture</strong>. Your order has been registered under <span className="font-bold text-emerald-600 dark:text-emerald-400">Cash on Delivery (COD)</span>.
+                </p>
+              </div>
+
+              {/* Order Status Card */}
+              <div className="bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 text-left text-xs space-y-2.5">
+                <div className="flex justify-between items-center pb-2 border-b border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
+                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase tracking-wider text-[10px]">Delivery Mode</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                    <Truck className="w-3.5 h-3.5" /> Doorstep Direct Transit
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase tracking-wider text-[10px]">Payment Status</span>
+                  <span className="font-bold text-[#1F1B16] dark:text-[#F7F3EC]">Pay Cash Upon Arrival</span>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <a
+                  href="/"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#1F1B16] dark:bg-[#F7F3EC] text-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal dark:hover:bg-accent-teal hover:text-white dark:hover:text-white font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-full shadow-lg transition-all"
+                >
+                  Continue Shopping <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
-
-              <a
-                href="/"
-                className="inline-flex items-center gap-2 bg-[#1F1B16] dark:bg-[#F7F3EC] text-[#F7F3EC] dark:text-[#1F1B16] font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-full shadow-lg hover:bg-accent-teal hover:text-white transition-all"
-              >
-                Back To Home
-              </a>
             </motion.div>
           )}
         </main>
