@@ -194,74 +194,74 @@ export default function CustomerCrmPage() {
         
         {/* LEFT: Customer List Table */}
         <div className={selectedCustomer ? "xl:col-span-7 flex flex-col gap-4" : "xl:col-span-12 flex flex-col gap-4"}>
-          <div className="bg-white border border-[#1F1B16]/10 rounded-[28px] overflow-hidden shadow-warm-sm">
+          <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#1F1B16]/[0.01] border-b border-[#1F1B16]/10 text-[9px] font-bold uppercase tracking-wider text-[#1F1B16]/40">
-                    <th className="py-4 px-6">Client profile</th>
+                  <tr className="bg-[#FAF7F2] dark:bg-[#12100E] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">
+                    <th className="py-4 px-6">Client Profile</th>
                     <th className="py-4 px-4">Role Group</th>
                     <th className="py-4 px-4 text-center">Orders</th>
-                    <th className="py-4 px-4 text-right">Lifetime spend</th>
+                    <th className="py-4 px-4 text-right">Lifetime Spend</th>
                     <th className="py-4 px-4">Date Joined</th>
-                    <th className="py-4 px-6 text-center"></th>
+                    <th className="py-4 px-6 text-center">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1F1B16]/5">
+                <tbody className="divide-y divide-[#1F1B16]/5 dark:divide-[#F7F3EC]/10 text-xs font-semibold">
                   {filteredCustomers.map((c) => {
                     const isSelected = selectedCustomer?.id === c.id;
                     return (
                       <tr
                         key={c.id}
                         onClick={() => setSelectedCustomer(c)}
-                        className={`text-xs cursor-pointer transition-colors ${
-                          isSelected ? "bg-accent-teal/5" : "hover:bg-[#1F1B16]/[0.005]"
+                        className={`cursor-pointer transition-colors ${
+                          isSelected ? "bg-accent-teal/10" : "hover:bg-[#FAF7F2]/50 dark:hover:bg-[#12100E]/50"
                         }`}
                       >
                         {/* Avatar name details */}
                         <td className="py-5 px-6 flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-accent-teal/10 text-accent-teal font-bold flex items-center justify-center shadow-warm-sm">
-                            <User className="w-4 h-4" />
+                          <div className="w-10 h-10 rounded-2xl bg-accent-teal/10 text-accent-teal font-extrabold flex items-center justify-center shrink-0">
+                            <User className="w-5 h-5" />
                           </div>
                           <div>
-                            <h4 className="font-bold text-[#1F1B16]">{c.name}</h4>
-                            <p className="text-[10px] text-[#1F1B16]/40 leading-none mt-0.5">{c.email}</p>
+                            <h4 className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-xs">{c.name}</h4>
+                            <p className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono leading-none mt-1">{c.email}</p>
                             {c.company && (
-                              <p className="text-[9px] text-accent-teal font-semibold mt-0.5">{c.company}</p>
+                              <p className="text-[9px] text-accent-teal font-bold mt-1">{c.company}</p>
                             )}
                           </div>
                         </td>
 
                         {/* Authorization Role */}
-                        <td className="py-5 px-4 font-bold text-[#1F1B16]/75">
-                          <span className={`px-2 py-0.5 rounded text-[8px] font-extrabold uppercase ${
+                        <td className="py-5 px-4">
+                          <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${
                             c.role === "ADMIN"
-                              ? "bg-red-50 text-red-800 border border-red-200"
+                              ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
                               : c.role === "WHOLESALE"
                               ? "bg-accent-teal/10 text-accent-teal border border-accent-teal/20"
-                              : "bg-[#1F1B16]/5 text-[#1F1B16]/65 border border-[#1F1B16]/10"
+                              : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70"
                           }`}>
                             {c.role}
                           </span>
                         </td>
 
                         {/* Order count */}
-                        <td className="py-5 px-4 text-center font-bold text-[#1F1B16]">
+                        <td className="py-5 px-4 text-center font-extrabold text-[#1F1B16] dark:text-[#F7F3EC]">
                           {c.ordersCount}
                         </td>
 
                         {/* Monospace Lifetime value */}
-                        <td className="py-5 px-4 text-right font-mono font-bold text-[#1F1B16] tabular-nums">
+                        <td className="py-5 px-4 text-right font-mono font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] tabular-nums">
                           {formatPrice(c.lifetimeValue)}
                         </td>
 
                         {/* Join date */}
-                        <td className="py-5 px-4 text-[#1F1B16]/50 font-semibold">
+                        <td className="py-5 px-4 text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-medium text-[11px]">
                           {c.joinDate}
                         </td>
 
-                        <td className="py-5 px-6 text-center font-bold text-accent-teal">
-                          Profile
+                        <td className="py-5 px-6 text-center font-extrabold text-accent-teal hover:underline">
+                          Profile →
                         </td>
                       </tr>
                     );
