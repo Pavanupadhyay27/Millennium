@@ -58,29 +58,48 @@ export async function POST(request: Request) {
 
     ORDERS_DB.unshift(newOrder);
 
-    // Send 100% Free Automated WhatsApp Notification to Business (+91 93343 09230) via CallMeBot API
-    const waPhone = process.env.WHATSAPP_BUSINESS_PHONE || "919334309230";
-    const waApiKey = process.env.CALLMEBOT_API_KEY; // Optional free API key from CallMeBot
+    // 1. Send via Twilio WhatsApp API if configured
+    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+    const twilioToken = process.env.TWILIO_AUTH_TOKEN;
+    const twilioFrom = process.env.TWILIO_WHATSAPP_NUMBER || "whatsapp:+14155238886";
+    const twilioTo = process.env.MY_WHATSAPP_NUMBER || "whatsapp:+919334309230";
 
-    if (waApiKey) {
-      const itemsText = (items || [])
-        .map((i: any, idx: number) => `${idx + 1}. ${i.name} (${i.color || "Natural"}) x${i.quantity} @ Rs.${i.price}`)
-        .join("\n");
+    const itemsFormatted = (items || [])
+      .map((i: any, idx: number) => `${idx + 1}. ${i.name} (${i.color || "Natural"}) x${i.quantity} @ Rs.${i.price}`)
+      .join("\n");
 
-      const waMsg = encodeURIComponent(
-        `*NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
-        `----------------------------------------\n` +
-        `Ref: ${newOrder.orderNumber}\n` +
-        `Customer: ${customerName}\n` +
-        `Phone: ${customerPhone || "N/A"}\n` +
-        `Address: ${address}, ${city}, ${state} - ${postalCode}\n\n` +
-        `ITEMS:\n${itemsText}\n\n` +
-        `Payment: Cash on Delivery (COD)\n` +
-        `TOTAL: Rs.${Number(totalAmount).toLocaleString("en-IN")}`
-      );
+    const orderSummaryText =
+      `*NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
+      `----------------------------------------\n` +
+      `Ref: ${newOrder.orderNumber}\n` +
+      `Customer: ${customerName}\n` +
+      `Phone: ${customerPhone || "N/A"}\n` +
+      `Address: ${address}, ${city}, ${state} - ${postalCode}\n\n` +
+      `ITEMS:\n${itemsFormatted}\n\n` +
+      `Payment: Cash on Delivery (COD)\n` +
+      `TOTAL: Rs.${Number(totalAmount).toLocaleString("en-IN")}`;
 
-      fetch(`https://api.callmebot.com/whatsapp.php?phone=${waPhone}&text=${waMsg}&apikey=${waApiKey}`)
-        .catch((err) => console.error("WhatsApp CallMeBot notification error:", err));
+    if (twilioSid && twilioToken) {
+      fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: "Basic " + Buffer.from(`${twilioSid}:${twilioToken}`).toString("base64"),
+        },
+        body: new URLSearchParams({
+          From: twilioFrom,
+          To: twilioTo,
+          Body: orderSummaryText,
+        }),
+      }).catch((err) => console.error("Twilio WhatsApp error:", err));
+    } else {
+      // 2. Fallback: CallMeBot Free WhatsApp API
+      const waPhone = process.env.WHATSAPP_BUSINESS_PHONE || "919334309230";
+      const waApiKey = process.env.CALLMEBOT_API_KEY;
+      if (waApiKey) {
+        fetch(`https://api.callmebot.com/whatsapp.php?phone=${waPhone}&text=${encodeURIComponent(orderSummaryText)}&apikey=${waApiKey}`)
+          .catch((err) => console.error("WhatsApp CallMeBot notification error:", err));
+      }
     }
 
     return NextResponse.json(
