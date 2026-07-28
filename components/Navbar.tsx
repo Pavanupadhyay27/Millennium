@@ -92,7 +92,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
         <img
           src="/logo.png"
           alt="Millennium Furniture Logo"
-          className="h-28 md:h-32 lg:h-36 w-auto object-contain drop-shadow-2xl"
+          className="h-32 md:h-40 lg:h-44 w-auto object-contain drop-shadow-2xl"
         />
       </a>
 

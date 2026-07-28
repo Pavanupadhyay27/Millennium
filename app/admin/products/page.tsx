@@ -15,6 +15,7 @@ import {
   Box,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useStore } from "../../../lib/store";
 
 // Format currency
 const formatPrice = (price: number) => {
@@ -102,7 +103,7 @@ const INITIAL_PRODUCTS = [
 ];
 
 export default function ProductCrudPage() {
-  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const { products: storeProducts, addProduct, updateProduct, deleteProduct } = useStore();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -110,7 +111,24 @@ export default function ProductCrudPage() {
   // Form View State
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    id: string;
+    name: string;
+    slug: string;
+    category: string;
+    price: number;
+    wholesalePrice: number;
+    stock: number;
+    status: "active" | "draft";
+    featured: boolean;
+    description: string;
+    colors: string[];
+    materials: string[];
+    seoTitle: string;
+    seoDescription: string;
+    image: string;
+    bg: string;
+  }>({
     id: "",
     name: "",
     slug: "",
@@ -136,13 +154,13 @@ export default function ProductCrudPage() {
 
   // Filter & Search Products
   const filteredProducts = useMemo(() => {
-    return products.filter(
+    return storeProducts.filter(
       (p) =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.slug.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [products, searchQuery]);
+  }, [storeProducts, searchQuery]);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -161,18 +179,17 @@ export default function ProductCrudPage() {
   };
 
   const toggleStatus = (id: string) => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, status: p.status === "active" ? "draft" : "active" } : p
-      )
-    );
-    showToast("Product status updated successfully.");
+    const prod = storeProducts.find((p) => p.id === id);
+    if (prod) {
+      updateProduct(id, { status: prod.status === "active" ? "draft" : "active" });
+      showToast(`Status updated to ${prod.status === "active" ? "DRAFT" : "ACTIVE"}`);
+    }
   };
 
   // Bulk Operations
   const triggerBulkDelete = () => {
     if (selectedIds.length === 0) return;
-    setProducts((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
+    selectedIds.forEach((id) => deleteProduct(id));
     setSelectedIds([]);
     showToast("Selected products deleted.");
   };
@@ -181,19 +198,17 @@ export default function ProductCrudPage() {
     const percent = parseFloat(bulkPricePercent);
     if (isNaN(percent) || selectedIds.length === 0) return;
 
-    setProducts((prev) =>
-      prev.map((p) => {
-        if (selectedIds.includes(p.id)) {
-          const factor = 1 + percent / 100;
-          return {
-            ...p,
-            price: Math.round(p.price * factor),
-            wholesalePrice: Math.round(p.wholesalePrice * factor),
-          };
-        }
-        return p;
-      })
-    );
+    selectedIds.forEach((id) => {
+      const prod = storeProducts.find((p) => p.id === id);
+      if (prod) {
+        const factor = 1 + percent / 100;
+        updateProduct(id, {
+          price: Math.round(prod.price * factor),
+          wholesalePrice: Math.round(prod.wholesalePrice * factor),
+        });
+      }
+    });
+
     setBulkPricePercent("");
     setActiveBulkAction(null);
     setSelectedIds([]);
@@ -202,11 +217,9 @@ export default function ProductCrudPage() {
 
   const triggerBulkCategoryMove = () => {
     if (selectedIds.length === 0) return;
-    setProducts((prev) =>
-      prev.map((p) =>
-        selectedIds.includes(p.id) ? { ...p, category: bulkMoveCategory } : p
-      )
-    );
+    selectedIds.forEach((id) => {
+      updateProduct(id, { category: bulkMoveCategory });
+    });
     setActiveBulkAction(null);
     setSelectedIds([]);
     showToast(`Selected products moved to ${bulkMoveCategory}.`);
@@ -236,30 +249,46 @@ export default function ProductCrudPage() {
     setShowForm(true);
   };
 
-  const handleOpenEdit = (p: typeof INITIAL_PRODUCTS[0]) => {
-    setFormData({ ...p });
+  const handleOpenEdit = (p: any) => {
+    setFormData({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      category: p.category,
+      price: p.price,
+      wholesalePrice: p.wholesalePrice,
+      stock: p.stock,
+      status: p.status || "active",
+      featured: p.featured || false,
+      description: p.description || "",
+      colors: p.colors || ["Natural Wood"],
+      materials: p.materials || ["Teak Wood"],
+      seoTitle: p.seoTitle || "",
+      seoDescription: p.seoDescription || "",
+      image: p.image,
+      bg: p.bg || "bg-pastel-mint",
+    });
     setIsEditing(true);
     setShowForm(true);
   };
 
   const handleDeleteRow = (id: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+    deleteProduct(id);
     setSelectedIds((prev) => prev.filter((item) => item !== id));
     showToast("Product deleted.");
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Auto generate slug if empty
     const finalSlug = formData.slug.trim() || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
     const finalData = { ...formData, slug: finalSlug };
 
     if (isEditing) {
-      setProducts((prev) => prev.map((p) => (p.id === formData.id ? finalData : p)));
-      showToast("Product details updated.");
+      updateProduct(formData.id, finalData);
+      showToast(`Updated "${formData.name}" successfully!`);
     } else {
-      setProducts((prev) => [...prev, finalData]);
-      showToast("New product created.");
+      addProduct(finalData);
+      showToast(`Created "${formData.name}" and published to storefront!`);
     }
     setShowForm(false);
   };

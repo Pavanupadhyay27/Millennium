@@ -96,10 +96,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }`}
       >
         {/* Brand Header */}
-        <div className="h-20 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-5 flex items-center justify-between">
+        <div className="h-24 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-5 flex items-center justify-between">
           <a href="/admin" className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Millennium Admin" className="h-10 w-auto object-contain dark:brightness-0 dark:invert" />
+            <img src="/logo.png" alt="Millennium Admin" className="h-16 w-auto object-contain dark:brightness-0 dark:invert drop-shadow-md" />
           </a>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
