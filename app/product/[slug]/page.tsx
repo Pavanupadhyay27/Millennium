@@ -514,8 +514,13 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
                           {/* Star Rating */}
                           <div className="flex items-center gap-1 text-amber-500">
-                            {Array.from({ length: rev.rating }).map((_, i) => (
-                              <Star key={i} className="w-3.5 h-3.5 fill-amber-500" />
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-3.5 h-3.5 ${
+                                  i < rev.rating ? "text-amber-500 fill-amber-500" : "text-gray-300 dark:text-gray-600"
+                                }`}
+                              />
                             ))}
                           </div>
 
@@ -556,15 +561,21 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                         <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
                           Rating Rating *
                         </label>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
                               key={star}
                               type="button"
                               onClick={() => setReviewRating(star)}
-                              className="p-1 text-amber-500 transition-transform hover:scale-125"
+                              className="p-1 transition-transform hover:scale-125 focus:outline-none"
                             >
-                              <Star className={`w-5 h-5 ${star <= reviewRating ? "fill-amber-500" : "text-gray-300"}`} />
+                              <Star
+                                className={`w-5 h-5 ${
+                                  star <= reviewRating
+                                    ? "text-amber-500 fill-amber-500"
+                                    : "text-gray-300 dark:text-gray-600"
+                                }`}
+                              />
                             </button>
                           ))}
                         </div>
