@@ -71,12 +71,7 @@ export default function CartDrawer() {
               </button>
             </div>
 
-            {/* Free Delivery / Trust Header Banner */}
-            <div className="bg-accent-teal/10 dark:bg-accent-teal/20 px-6 py-2.5 flex items-center justify-between text-xs border-b border-accent-teal/15">
-              <span className="flex items-center gap-1.5 text-accent-teal font-bold text-[11px]">
-                <Truck className="w-3.5 h-3.5" /> Free Insured Transport Across Odisha
-              </span>
-            </div>
+
 
             {/* Cart Items Scroll Container */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
