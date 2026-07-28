@@ -49,10 +49,12 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         wholesalePrice: storeProduct.wholesalePrice,
         category: storeProduct.category,
         description: storeProduct.description || "Handcrafted with premium organic solid timber and precision joinery in Odisha.",
-        images: [
-          storeProduct.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
-          "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=800",
-        ],
+        images: (storeProduct.images && storeProduct.images.length > 0)
+          ? storeProduct.images
+          : [
+              storeProduct.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
+              "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=800",
+            ],
         colors: (storeProduct.colors && storeProduct.colors.length > 0)
           ? storeProduct.colors.map((c, i) => ({ name: c, value: i === 0 ? "#D97B3F" : "#1F1B16", priceDelta: 0, imgIdx: 0 }))
           : [{ name: "Natural Teak", value: "#D97B3F", priceDelta: 0, imgIdx: 0 }],

@@ -131,6 +131,7 @@ export default function ProductCrudPage() {
     seoTitle: string;
     seoDescription: string;
     image: string;
+    images?: string[];
     bg: string;
   }>({
     id: "",
@@ -152,6 +153,7 @@ export default function ProductCrudPage() {
     seoTitle: "",
     seoDescription: "",
     image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=200",
+    images: [],
     bg: "bg-pastel-mint",
   });
 
@@ -255,6 +257,7 @@ export default function ProductCrudPage() {
       seoTitle: "",
       seoDescription: "",
       image: "",
+      images: [],
       bg: "bg-pastel-blush",
     });
     setIsEditing(false);
@@ -282,6 +285,7 @@ export default function ProductCrudPage() {
       seoTitle: p.seoTitle || "",
       seoDescription: p.seoDescription || "",
       image: p.image,
+      images: p.images || [p.image].filter(Boolean),
       bg: p.bg || "bg-pastel-mint",
     });
     setIsEditing(true);
@@ -774,77 +778,128 @@ export default function ProductCrudPage() {
               </div>
             </div>
 
-            {/* 3. Product Media & File Manager Upload */}
+            {/* 3. Product Media & Multiple Image Gallery Upload */}
             <div className="bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-serif text-sm font-bold text-[#1F1B16] dark:text-[#F7F3EC] flex items-center gap-2">
-                  <Upload className="w-4 h-4 text-accent-teal" /> Product Media & Local File Upload
+                  <Upload className="w-4 h-4 text-accent-teal" /> Product Media & Multiple Images Gallery
                 </h4>
-                <span className="text-[10px] font-bold text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">PNG, JPG, WebP</span>
+                <span className="text-[10px] font-bold text-accent-teal uppercase tracking-wider bg-accent-teal/10 px-2.5 py-0.5 rounded-full">
+                  Select Multiple Files Supported
+                </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                {/* Native File Upload Trigger */}
+              <div className="flex flex-col gap-4">
+                {/* Native Multiple Files Input Trigger */}
                 <label className="border-2 border-dashed border-accent-teal/40 bg-white dark:bg-[#1C1814] rounded-2xl p-5 text-center flex flex-col items-center justify-center cursor-pointer hover:border-accent-teal transition-all group shadow-sm">
                   <Upload className="w-8 h-8 text-accent-teal mb-2 group-hover:scale-110 transition-transform" />
-                  <span className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Open File Manager to Choose Image</span>
-                  <span className="text-[10px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 mt-1">Select furniture photo from your computer</span>
+                  <span className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Choose One or Multiple Product Photos</span>
+                  <span className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 mt-1">Select all angle photos from your computer at once</span>
                   
-                  {/* Hidden Native File Input */}
+                  {/* Hidden Native File Input with multiple attribute */}
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     className="hidden"
                     onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      showToast(`Uploading ${file.name} to Cloudinary...`);
+                      const files = Array.from(e.target.files || []);
+                      if (files.length === 0) return;
+                      showToast(`Uploading ${files.length} images...`);
 
-                      try {
-                        const uploadData = new FormData();
-                        uploadData.append("file", file);
+                      const newUploadedUrls: string[] = [];
 
-                        const res = await fetch("/api/upload", {
-                          method: "POST",
-                          body: uploadData,
-                        });
-                        const data = await res.json();
+                      for (const file of files) {
+                        try {
+                          const uploadData = new FormData();
+                          uploadData.append("file", file);
 
-                        if (data.url) {
-                          setFormData((prev) => ({ ...prev, image: data.url }));
-                          showToast(`Image uploaded & saved permanently!`);
-                        } else {
-                          showToast(`Upload failed, fallback enabled.`);
+                          const res = await fetch("/api/upload", {
+                            method: "POST",
+                            body: uploadData,
+                          });
+                          const data = await res.json();
+                          if (data.url) {
+                            newUploadedUrls.push(data.url);
+                          } else {
+                            newUploadedUrls.push(URL.createObjectURL(file));
+                          }
+                        } catch {
+                          newUploadedUrls.push(URL.createObjectURL(file));
                         }
-                      } catch {
-                        const localUrl = URL.createObjectURL(file);
-                        setFormData((prev) => ({ ...prev, image: localUrl }));
-                        showToast(`Saved local preview.`);
                       }
+
+                      setFormData((prev) => {
+                        const combinedImages = [...(prev.images || []), ...newUploadedUrls];
+                        return {
+                          ...prev,
+                          image: prev.image || combinedImages[0] || "",
+                          images: combinedImages,
+                        };
+                      });
+
+                      showToast(`${files.length} image(s) added to gallery!`);
                     }}
                   />
                 </label>
 
-                {/* Current Image Preview Card (Rendered only if image uploaded) */}
-                {formData.image ? (
-                  <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-3 flex items-center gap-3">
-                    <div className="w-16 h-16 rounded-xl bg-accent-teal/10 overflow-hidden shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block mb-0.5">Active Main Image</span>
-                      <p className="text-[11px] font-mono truncate text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">{formData.image}</p>
+                {/* Uploaded Gallery Grid */}
+                {formData.images && formData.images.length > 0 ? (
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">
+                      Product Gallery ({formData.images.length} Photos Uploaded)
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {formData.images.map((imgUrl, idx) => {
+                        const isMain = formData.image === imgUrl || idx === 0;
+                        return (
+                          <div key={idx} className="relative group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl p-1.5 flex flex-col items-center">
+                            <div className="w-full aspect-square rounded-lg overflow-hidden bg-accent-teal/5 relative">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={imgUrl} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
+                              {isMain && (
+                                <span className="absolute top-1 left-1 bg-accent-teal text-white text-[8px] font-black uppercase px-1.5 py-0.5 rounded">
+                                  Cover
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 mt-2 w-full">
+                              {!isMain && (
+                                <button
+                                  type="button"
+                                  onClick={() => setFormData((prev) => ({ ...prev, image: imgUrl }))}
+                                  className="text-[9px] font-bold text-accent-teal hover:underline flex-1 text-center"
+                                >
+                                  Set Cover
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => {
+                                    const updated = (prev.images || []).filter((_, i) => i !== idx);
+                                    return {
+                                      ...prev,
+                                      images: updated,
+                                      image: prev.image === imgUrl ? updated[0] || "" : prev.image,
+                                    };
+                                  })
+                                }
+                                className="text-[9px] font-bold text-rose-500 hover:underline flex-1 text-center"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-white dark:bg-[#1C1814] border border-dashed border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 text-center">
+                  <div className="bg-white dark:bg-[#1C1814] border border-dashed border-[#1F1F1F]/10 rounded-2xl p-4 text-center">
                     <span className="text-[10px] font-bold text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 uppercase tracking-wider block">
-                      No Image Selected
+                      No Images Uploaded Yet
                     </span>
-                    <p className="text-[11px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mt-0.5">
-                      Upload photo via file manager on the left
-                    </p>
                   </div>
                 )}
               </div>

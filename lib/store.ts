@@ -60,6 +60,7 @@ export interface Product {
   featured: boolean;
   bg: string;
   image: string;
+  images?: string[];
   description: string;
   colors: string[];
   materials: string[];
