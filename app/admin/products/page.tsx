@@ -690,12 +690,31 @@ export default function ProductCrudPage() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.target.files?.[0];
-                      if (file) {
+                      if (!file) return;
+                      showToast(`Uploading ${file.name} to Cloudinary...`);
+
+                      try {
+                        const uploadData = new FormData();
+                        uploadData.append("file", file);
+
+                        const res = await fetch("/api/upload", {
+                          method: "POST",
+                          body: uploadData,
+                        });
+                        const data = await res.json();
+
+                        if (data.url) {
+                          setFormData((prev) => ({ ...prev, image: data.url }));
+                          showToast(`Image uploaded & saved permanently!`);
+                        } else {
+                          showToast(`Upload failed, fallback enabled.`);
+                        }
+                      } catch {
                         const localUrl = URL.createObjectURL(file);
                         setFormData((prev) => ({ ...prev, image: localUrl }));
-                        showToast(`Loaded image file: ${file.name}`);
+                        showToast(`Saved local preview.`);
                       }
                     }}
                   />
