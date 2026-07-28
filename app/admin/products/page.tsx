@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Sparkles,
   Upload,
+  Box,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -557,98 +558,169 @@ export default function ProductCrudPage() {
 
           <form onSubmit={handleFormSubmit} className="flex flex-col gap-6">
             
-            {/* 1. Core Metadata Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Product Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="e.g. Konark Teak Bench"
-                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
-                />
+            {/* 1. Core Info Card */}
+            <div className="bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 space-y-4">
+              <h4 className="font-serif text-sm font-bold text-[#1F1B16] dark:text-[#F7F3EC] flex items-center gap-2">
+                <Box className="w-4 h-4 text-accent-teal" /> General Product Information
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Product Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => {
+                      const name = e.target.value;
+                      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                      setFormData((prev) => ({ ...prev, name, slug }));
+                    }}
+                    placeholder="e.g. Konark Teak Bench"
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    URL Slug
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.slug}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+                    placeholder="e.g. konark-teak-bench"
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-mono font-semibold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Category *
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal cursor-pointer"
+                  >
+                    <option value="Seating">Seating</option>
+                    <option value="Tables">Tables</option>
+                    <option value="Storage">Storage</option>
+                    <option value="Decorations">Decorations</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">URL Slug (Auto or custom)</label>
-                <input
-                  type="text"
-                  value={formData.slug}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
-                  placeholder="e.g. konark-teak-bench"
-                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                  Description
+                </label>
+                <textarea
+                  rows={3}
+                  value={formData.description}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                  placeholder="Enter details about materials, joinery, and style..."
+                  className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-medium text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal resize-none"
                 />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Category *</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
-                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none cursor-pointer"
-                >
-                  <option value="Seating">Seating</option>
-                  <option value="Tables">Tables</option>
-                  <option value="Storage">Storage</option>
-                  <option value="Decorations">Decorations</option>
-                </select>
               </div>
             </div>
 
-            {/* 2. Description */}
-            <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Product Description (CMS editor)</label>
-              <textarea
-                rows={3}
-                value={formData.description}
-                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                placeholder="Enter rich details about joinery, materials, style..."
-                className="border border-[#1F1B16]/10 rounded-2xl px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal resize-none"
-              />
-            </div>
-
-            {/* 3. Pricing & Stock */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Retail Price (₹) *</label>
+            {/* 2. Pricing & Stock Card */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                  Retail Price (₹) *
+                </label>
                 <input
                   type="number"
                   required
                   value={formData.price}
                   onChange={(e) => setFormData((prev) => ({ ...prev, price: parseInt(e.target.value, 10) || 0 }))}
-                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                  className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Wholesale Rate (₹) *</label>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                  Wholesale Rate (₹) *
+                </label>
                 <input
                   type="number"
                   required
                   value={formData.wholesalePrice}
                   onChange={(e) => setFormData((prev) => ({ ...prev, wholesalePrice: parseInt(e.target.value, 10) || 0 }))}
-                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                  className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Initial Stock Quantity *</label>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                  Stock Quantity *
+                </label>
                 <input
                   type="number"
                   required
                   value={formData.stock}
                   onChange={(e) => setFormData((prev) => ({ ...prev, stock: parseInt(e.target.value, 10) || 0 }))}
-                  className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                  className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                 />
               </div>
             </div>
 
-            {/* 4. Variant Builder (Color/Materials) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-[#F7F3EC] rounded-2xl border border-[#1F1B16]/5">
-              <div className="flex flex-col gap-2.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55 block">Available Colors (Comma separated)</span>
+            {/* 3. Product Media & File Manager Upload */}
+            <div className="bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="font-serif text-sm font-bold text-[#1F1B16] dark:text-[#F7F3EC] flex items-center gap-2">
+                  <Upload className="w-4 h-4 text-accent-teal" /> Product Media & Local File Upload
+                </h4>
+                <span className="text-[10px] font-bold text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">PNG, JPG, WebP</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                {/* Native File Upload Trigger */}
+                <label className="border-2 border-dashed border-accent-teal/40 bg-white dark:bg-[#1C1814] rounded-2xl p-5 text-center flex flex-col items-center justify-center cursor-pointer hover:border-accent-teal transition-all group shadow-sm">
+                  <Upload className="w-8 h-8 text-accent-teal mb-2 group-hover:scale-110 transition-transform" />
+                  <span className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Open File Manager to Choose Image</span>
+                  <span className="text-[10px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 mt-1">Select furniture photo from your computer</span>
+                  
+                  {/* Hidden Native File Input */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const localUrl = URL.createObjectURL(file);
+                        setFormData((prev) => ({ ...prev, image: localUrl }));
+                        showToast(`Loaded image file: ${file.name}`);
+                      }
+                    }}
+                  />
+                </label>
+
+                {/* Current Image Preview Card */}
+                <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-3 flex items-center gap-3">
+                  <div className="w-16 h-16 rounded-xl bg-accent-teal/10 overflow-hidden shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block mb-0.5">Active Main Image</span>
+                    <p className="text-[11px] font-mono truncate text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">{formData.image}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Variants: Colors & Materials */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                  Colors (Comma Separated)
+                </label>
                 <input
                   type="text"
                   value={formData.colors.join(", ")}
@@ -656,11 +728,13 @@ export default function ProductCrudPage() {
                     setFormData((prev) => ({ ...prev, colors: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) }))
                   }
                   placeholder="e.g. Natural Wood, Charcoal Black"
-                  className="border border-[#1F1B16]/10 rounded-full px-5 py-2.5 text-xs bg-white text-[#1F1B16] focus:outline-none"
+                  className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                 />
               </div>
-              <div className="flex flex-col gap-2.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55 block">Available Materials (Comma separated)</span>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                  Materials (Comma Separated)
+                </label>
                 <input
                   type="text"
                   value={formData.materials.join(", ")}
@@ -668,100 +742,38 @@ export default function ProductCrudPage() {
                     setFormData((prev) => ({ ...prev, materials: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) }))
                   }
                   placeholder="e.g. Teak Wood, Walnut Veneer"
-                  className="border border-[#1F1B16]/10 rounded-full px-5 py-2.5 text-xs bg-white text-[#1F1B16] focus:outline-none"
+                  className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal"
                 />
               </div>
             </div>
 
-            {/* 5. Drag-Drop Mock Image Uploader */}
-            <div className="border border-dashed border-[#1F1B16]/20 rounded-2xl p-6 text-center flex flex-col items-center justify-center bg-[#F7F3EC]/50 hover:bg-[#F7F3EC] transition-colors cursor-pointer group">
-              <Upload className="w-8 h-8 text-[#1F1B16]/40 mb-3 group-hover:text-accent-teal transition-colors" />
-              <h5 className="font-bold text-xs text-[#1F1B16] mb-1">Drag and drop images here, or browse</h5>
-              <p className="text-[10px] text-[#1F1B16]/40">PNG, JPG formats accepted. Recommended size 1200x900px.</p>
-            </div>
-
-            {/* 6. SEO Meta & Settings */}
-            <div className="border-t border-[#1F1B16]/5 pt-6 flex flex-col gap-5">
-              <h4 className="font-serif text-sm font-bold text-[#1F1B16] flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-accent-teal" /> SEO Search Configuration
-              </h4>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Meta Search Title</label>
-                  <input
-                    type="text"
-                    value={formData.seoTitle}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, seoTitle: e.target.value }))}
-                    placeholder="e.g. Buy Odisha Teak Bench Online"
-                    className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/55">Meta Search Description</label>
-                  <input
-                    type="text"
-                    value={formData.seoDescription}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, seoDescription: e.target.value }))}
-                    placeholder="Short summary for Google search result listing..."
-                    className="border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs bg-[#F7F3EC] text-[#1F1B16] focus:outline-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* 7. Homepage Featured & Status Toggles */}
-            <div className="flex flex-wrap gap-8 items-center border-t border-[#1F1B16]/5 pt-6">
-              <label className="flex items-center gap-3 cursor-pointer select-none">
+            {/* 5. Publish Status & Form Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={formData.featured}
                   onChange={(e) => setFormData((prev) => ({ ...prev, featured: e.target.checked }))}
-                  className="w-4 h-4 rounded accent-accent-teal border-charcoal/20"
+                  className="w-4 h-4 rounded accent-accent-teal cursor-pointer"
                 />
-                <span className="text-xs font-bold text-[#1F1B16]/80">Featured on storefront homepage</span>
+                <span className="text-xs font-bold">Feature on Homepage Carousel</span>
               </label>
 
               <div className="flex items-center gap-3">
-                <span className="text-xs font-bold text-[#1F1B16]/80">Publish Status:</span>
-                <div className="flex bg-[#F7F3EC] border border-[#1F1B16]/10 rounded-full p-1 text-[10px] font-bold">
-                  <button
-                    type="button"
-                    onClick={() => setFormData((prev) => ({ ...prev, status: "active" }))}
-                    className={`rounded-full px-4 py-1.5 transition-all ${
-                      formData.status === "active" ? "bg-accent-teal text-white" : "text-[#1F1B16]/50"
-                    }`}
-                  >
-                    ACTIVE
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData((prev) => ({ ...prev, status: "draft" }))}
-                    className={`rounded-full px-4 py-1.5 transition-all ${
-                      formData.status === "draft" ? "bg-[#1F1B16] text-[#F7F3EC]" : "text-[#1F1B16]/50"
-                    }`}
-                  >
-                    DRAFT
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="px-6 py-2.5 rounded-xl border border-[#1F1B16]/20 text-xs font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold px-8 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-md transition-all"
+                >
+                  Save Product Entry
+                </button>
               </div>
-            </div>
-
-            {/* Submit & Cancel Actions */}
-            <div className="flex gap-4 border-t border-[#1F1B16]/5 pt-8 justify-end">
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="border border-[#1F1B16]/30 text-[#1F1B16] font-bold px-8 py-3.5 rounded-full text-xs"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold px-8 py-3.5 rounded-full text-xs flex items-center gap-2 shadow-warm-md hover:-translate-y-0.5 transition-all duration-300"
-              >
-                Save Product <ArrowRight className="w-4 h-4" />
-              </button>
             </div>
 
           </form>

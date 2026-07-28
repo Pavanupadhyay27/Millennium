@@ -171,15 +171,18 @@ export default function AdminDashboardHome() {
 
       {/* Cart Recovery Bar */}
       <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 shadow-sm space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-          <h3 className="font-serif text-base font-bold flex items-center gap-2">
-            <Flame className="w-4 h-4 text-amber-500" /> Cart Recovery Queue
-          </h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+          <div className="flex items-center gap-2">
+            <Flame className="w-5 h-5 text-amber-500 shrink-0" />
+            <h3 className="font-serif text-base md:text-lg font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+              Cart Recovery Queue
+            </h3>
+          </div>
           <button
             onClick={() => showToast("WhatsApp 10% promo sent to all pending leads!")}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] px-3.5 py-1.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+            className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-md flex items-center gap-2 self-start sm:self-auto cursor-pointer"
           >
-            <Send className="w-3 h-3" /> Auto Broadcast All (10% Off)
+            <Send className="w-3.5 h-3.5" /> Auto Broadcast All (10% Off)
           </button>
         </div>
 
