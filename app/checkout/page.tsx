@@ -106,11 +106,11 @@ export default function CheckoutPage() {
       <div>
         <Navbar />
 
-        <main className="max-w-[1300px] mx-auto px-6 md:px-12 pt-28 pb-20">
+        <main className="max-w-[1240px] mx-auto px-4 md:px-8 pt-24 pb-16">
           {!isCompleted ? (
             <div>
-              {/* Progress Indicator */}
-              <div className="max-w-2xl mx-auto mb-10">
+              {/* Progress Indicator Header */}
+              <div className="max-w-xl mx-auto mb-8">
                 <div className="flex justify-between items-center relative">
                   <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#1F1B16]/10 dark:bg-[#F7F3EC]/10 -translate-y-1/2 z-0" />
                   
@@ -129,9 +129,9 @@ export default function CheckoutPage() {
                       (step === "review" && (idx === 0 || idx === 1));
 
                     return (
-                      <div key={s.id} className="relative z-10 flex flex-col items-center gap-1.5">
+                      <div key={s.id} className="relative z-10 flex flex-col items-center gap-1">
                         <div
-                          className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
                             isActive
                               ? "bg-accent-teal border-accent-teal text-white shadow-md scale-110"
                               : isPassed
@@ -139,9 +139,9 @@ export default function CheckoutPage() {
                               : "bg-white dark:bg-[#1C1814] border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-[#1F1B16]/40 dark:text-[#F7F3EC]/40"
                           }`}
                         >
-                          <StepIcon className="w-4 h-4" />
+                          <StepIcon className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[10px] font-bold tracking-wider uppercase text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">
+                        <span className="text-[9px] font-bold tracking-wider uppercase text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                           {s.label}
                         </span>
                       </div>

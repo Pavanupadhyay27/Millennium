@@ -199,23 +199,23 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         </AnimatePresence>
 
         {/* Product View Area */}
-        <main className="max-w-[1400px] mx-auto px-6 md:px-12 pt-32 pb-24">
+        <main className="max-w-[1300px] mx-auto px-4 md:px-8 pt-24 pb-16">
           
           {/* Simulated role banner */}
-          <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 shadow-sm">
-            <div className="flex items-center gap-3">
-              <span className="flex h-2.5 w-2.5 relative">
+          <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-teal opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-teal"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-teal"></span>
               </span>
               <p className="text-xs font-medium text-[#1F1B16]/80 dark:text-[#F7F3EC]/80">
-                <span className="font-bold text-accent-teal">B2B Trade Pricing Preview:</span> Toggle role to view verified wholesale rates.
+                <span className="font-bold text-accent-teal">B2B Trade Pricing Preview:</span> Switch role to view verified wholesale rates.
               </p>
             </div>
             <div className="flex bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl p-1 text-[10px] font-bold">
               <button
                 onClick={() => setSimulatedRole("CUSTOMER")}
-                className={`rounded-lg px-3.5 py-1.5 transition-all ${
+                className={`rounded-lg px-3 py-1 transition-all ${
                   simulatedRole === "CUSTOMER" ? "bg-accent-teal text-white shadow-sm" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60"
                 }`}
               >
@@ -223,7 +223,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               </button>
               <button
                 onClick={() => setSimulatedRole("WHOLESALE")}
-                className={`rounded-lg px-3.5 py-1.5 transition-all ${
+                className={`rounded-lg px-3 py-1 transition-all ${
                   simulatedRole === "WHOLESALE" ? "bg-accent-teal text-white shadow-sm" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60"
                 }`}
               >
@@ -232,22 +232,22 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
             
             {/* LEFT: Product Image Gallery */}
-            <div className="lg:col-span-7 flex flex-col gap-5">
+            <div className="lg:col-span-6 flex flex-col gap-4">
               {/* Main Image Display */}
-              <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-4 md:p-6 aspect-[4/3] flex items-center justify-center overflow-hidden shadow-sm relative group">
+              <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-3 aspect-[4/3] flex items-center justify-center overflow-hidden shadow-sm relative group max-h-[460px]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={product.images[activeImgIdx] || product.images[0]}
                   alt={product.name}
-                  className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
 
                 <button
                   onClick={() => toggleWishlist({ id: product.id, slug: product.id, name: product.name, price: product.price, image: product.images[0], bg: "bg-cream" })}
-                  className="absolute top-6 right-6 p-3 rounded-full bg-white/90 dark:bg-[#1C1814]/90 backdrop-blur-md shadow-md text-[#1F1B16] dark:text-[#F7F3EC] hover:scale-110 transition-all border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10"
+                  className="absolute top-4 right-4 p-2.5 rounded-full bg-white/90 dark:bg-[#1C1814]/90 backdrop-blur-md shadow-md text-[#1F1B16] dark:text-[#F7F3EC] hover:scale-110 transition-all border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10"
                 >
                   <Heart className={`w-4 h-4 ${wishlist.some(w => w.id === product.id) ? "fill-accent-terracotta text-accent-terracotta" : "opacity-60"}`} />
                 </button>
@@ -274,7 +274,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             </div>
 
             {/* RIGHT: Product Specs & Customizer Panel */}
-            <div className="lg:col-span-5 flex flex-col items-start">
+            <div className="lg:col-span-6 flex flex-col items-start">
               
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-accent-teal text-[10px] font-extrabold uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
