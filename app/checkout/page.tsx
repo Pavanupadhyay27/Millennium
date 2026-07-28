@@ -33,7 +33,7 @@ const formatPrice = (price: number) => {
 };
 
 export default function CheckoutPage() {
-  const { cart, clearCart, updateCartQuantity, removeFromCart, addNotification } = useStore();
+  const { cart, clearCart, updateCartQuantity, removeFromCart, addNotification, addOrder } = useStore();
   const [step, setStep] = useState<"shipping" | "payment" | "review">("shipping");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "upi" | "card">("cod");
   const [isCompleted, setIsCompleted] = useState(false);
@@ -101,6 +101,20 @@ export default function CheckoutPage() {
     } catch (err) {
       console.error(err);
     }
+
+    // Push real order record into central Admin Orders state
+    addOrder({
+      id: orderId,
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      customerName: shippingForm.fullName || "Valued Customer",
+      email: shippingForm.email || "customer@domain.com",
+      type: "Retail",
+      total: total,
+      status: "Pending",
+      address: `${shippingForm.address}, ${shippingForm.city}, ${shippingForm.state} - ${shippingForm.postalCode}`,
+      phone: shippingForm.phone || "+91 93343 09230",
+      items: cart.map((i) => ({ name: i.name, color: i.color, quantity: i.quantity, price: i.price })),
+    });
 
     // Push live notification for Admin HQ Navbar
     addNotification({

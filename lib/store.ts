@@ -188,6 +188,83 @@ const INITIAL_PRODUCTS: Product[] = [
   }
 ];
 
+export interface OrderRecord {
+  id: string;
+  date: string;
+  customerName: string;
+  email: string;
+  type: "Wholesale" | "Retail";
+  total: number;
+  status: string;
+  address: string;
+  phone: string;
+  gstin?: string;
+  items: Array<{ name: string; color?: string; quantity: number; price: number }>;
+}
+
+const INITIAL_ORDERS_LIST: OrderRecord[] = [
+  {
+    id: "PO-2026-0925",
+    date: "July 18, 2026",
+    customerName: "Mohapatra Interiors",
+    email: "procurement@mohapatra.in",
+    type: "Wholesale",
+    total: 198000,
+    status: "Pending",
+    address: "Plot 42, Janpath Road, Bhubaneswar, Odisha - 751001",
+    phone: "+91 94371 82931",
+    gstin: "21AAAFM9283K1Z9",
+    items: [
+      { name: "Odisha Teak Lounge Chair", color: "Sage Green", quantity: 8, price: 18500 },
+      { name: "Kalinga Walnut Coffee Table", color: "Ebonized Oak", quantity: 4, price: 14000 }
+    ]
+  },
+  {
+    id: "RET-2026-4081",
+    date: "July 17, 2026",
+    customerName: "Sujata Mohanty",
+    email: "sujata.m@gmail.com",
+    type: "Retail",
+    total: 24500,
+    status: "Approved",
+    address: "Duplex 15, Kalinga Vihar, Patia, Bhubaneswar, Odisha - 751024",
+    phone: "+91 70081 29381",
+    items: [
+      { name: "Odisha Teak Lounge Chair", color: "Natural Wood", quantity: 1, price: 24500 }
+    ]
+  },
+  {
+    id: "RET-2026-4079",
+    date: "July 16, 2026",
+    customerName: "Bikram Keshari",
+    email: "bikram.k@yahoo.com",
+    type: "Retail",
+    total: 18900,
+    status: "Shipped",
+    address: "Block C, 3rd Floor, Mahanadi Towers, Cuttack, Odisha - 753001",
+    phone: "+91 82490 19283",
+    items: [
+      { name: "Kalinga Walnut Coffee Table", color: "Natural Walnut", quantity: 1, price: 18900 }
+    ]
+  },
+  {
+    id: "PO-2026-1082",
+    date: "July 12, 2026",
+    customerName: "Utkal Builders Ltd",
+    email: "purchase@utkalbuilders.com",
+    type: "Wholesale",
+    total: 284000,
+    status: "Delivered",
+    address: "Utkal Signature, Kalpana Square, Bhubaneswar, Odisha - 751006",
+    phone: "+91 99370 18273",
+    gstin: "21AAACU8291A1ZB",
+    items: [
+      { name: "Odisha Teak Lounge Chair", color: "Natural Wood", quantity: 10, price: 18500 },
+      { name: "Kalinga Walnut Coffee Table", color: "Natural Walnut", quantity: 5, price: 14000 }
+    ]
+  }
+];
+
 export interface AppNotification {
   id: string;
   orderId: string;
@@ -198,17 +275,14 @@ export interface AppNotification {
   read: boolean;
 }
 
-const INITIAL_NOTIFICATIONS: AppNotification[] = [
-  { id: "n1", orderId: "PO-2026-0925", customerName: "Mohapatra Interiors", type: "Wholesale", total: 198000, timeAgo: "Just Now", read: false },
-  { id: "n2", orderId: "RET-2026-4081", customerName: "Sujata Mohanty", type: "Retail", total: 24500, timeAgo: "15m ago", read: false },
-  { id: "n3", orderId: "PO-2026-1082", customerName: "Utkal Builders Ltd", type: "Wholesale", total: 284000, timeAgo: "1h ago", read: false },
-];
+const INITIAL_NOTIFICATIONS: AppNotification[] = [];
 
 interface AppState {
   cart: CartItem[];
   wishlist: WishlistItem[];
   offers: Offer[];
   products: Product[];
+  orders: OrderRecord[];
   notifications: AppNotification[];
   activePromoCode: string | null;
   cartDrawerOpen: boolean;
@@ -221,6 +295,8 @@ interface AppState {
   // Notification Actions
   markAllNotificationsRead: () => void;
   addNotification: (notif: Omit<AppNotification, "id" | "timeAgo" | "read">) => void;
+  addOrder: (order: OrderRecord) => void;
+  updateOrderStatus: (orderId: string, status: string) => void;
   
   // Cart Actions
   toggleCartDrawer: (isOpen?: boolean) => void;
@@ -260,6 +336,7 @@ export const useStore = create<AppState>()(
       wishlist: [],
       offers: INITIAL_OFFERS,
       products: INITIAL_PRODUCTS,
+      orders: INITIAL_ORDERS_LIST,
       notifications: INITIAL_NOTIFICATIONS,
       activePromoCode: null,
       cartDrawerOpen: false,
@@ -282,6 +359,16 @@ export const useStore = create<AppState>()(
         };
         set((state) => ({ notifications: [newNotif, ...state.notifications] }));
       },
+
+      addOrder: (newOrder) =>
+        set((state) => ({
+          orders: [newOrder, ...state.orders],
+        })),
+
+      updateOrderStatus: (orderId, status) =>
+        set((state) => ({
+          orders: state.orders.map((o) => (o.id === orderId ? { ...o, status } : o)),
+        })),
 
       login: (user) => set({ isAuthenticated: true, user }),
       logout: () => set({ isAuthenticated: false, user: null }),
@@ -439,6 +526,7 @@ export const useStore = create<AppState>()(
         wishlist: state.wishlist,
         offers: state.offers,
         products: state.products,
+        orders: state.orders,
         notifications: state.notifications,
         activePromoCode: state.activePromoCode,
         isAuthenticated: state.isAuthenticated,

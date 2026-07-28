@@ -16,6 +16,7 @@ import {
   User,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useStore, OrderRecord } from "../../../lib/store";
 
 // Format currency
 const formatPrice = (price: number) => {
@@ -91,8 +92,8 @@ const INITIAL_ORDERS = [
 ];
 
 export default function OrderProcessorPage() {
-  const [orders, setOrders] = useState(INITIAL_ORDERS);
-  const [selectedOrder, setSelectedOrder] = useState<typeof INITIAL_ORDERS[0] | null>(null);
+  const { orders, updateOrderStatus } = useStore();
+  const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
   
   // Filter States
   const [typeFilter, setTypeFilter] = useState<"All" | "Retail" | "Wholesale">("All");
@@ -102,7 +103,7 @@ export default function OrderProcessorPage() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const filteredOrders = useMemo(() => {
-    return orders.filter((o) => {
+    return orders.filter((o: OrderRecord) => {
       // Type Match
       if (typeFilter !== "All" && o.type !== typeFilter) return false;
       
@@ -124,16 +125,15 @@ export default function OrderProcessorPage() {
   }, [orders, typeFilter, statusFilter, searchQuery]);
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-    );
+    updateOrderStatus(orderId, newStatus);
+    
     // If selectedOrder is currently showing, update its status as well
     if (selectedOrder && selectedOrder.id === orderId) {
-      setSelectedOrder((prev) => (prev ? { ...prev, status: newStatus } : null));
+      setSelectedOrder((prev: OrderRecord | null) => (prev ? { ...prev, status: newStatus } : null));
     }
     
-    // Trigger mock email alert notification
-    const matched = orders.find((o) => o.id === orderId);
+    // Trigger email alert notification
+    const matched = orders.find((o: OrderRecord) => o.id === orderId);
     if (matched) {
       showToast(`Status updated to ${newStatus}. Email alert dispatched to ${matched.email} via Resend.`);
     }
@@ -269,7 +269,7 @@ export default function OrderProcessorPage() {
                 </thead>
                 <tbody className="divide-y divide-[#1F1B16]/5 dark:divide-[#F7F3EC]/10">
                   {filteredOrders.length > 0 ? (
-                    filteredOrders.map((o) => {
+                    filteredOrders.map((o: OrderRecord) => {
                       const isSelected = selectedOrder?.id === o.id;
                       const Icon = getStatusIcon(o.status);
                       return (
@@ -394,7 +394,7 @@ export default function OrderProcessorPage() {
               <div>
                 <span className="text-[9px] font-bold text-[#1F1B16]/40 uppercase tracking-wider block mb-3">Itemized items</span>
                 <div className="flex flex-col gap-2">
-                  {selectedOrder.items.map((item, idx) => (
+                  {selectedOrder.items.map((item: any, idx: number) => (
                     <div key={idx} className="flex justify-between items-center text-xs pb-2 border-b border-[#1F1B16]/5 last:border-0 last:pb-0">
                       <div>
                         <h6 className="font-bold text-[#1F1B16]">{item.name}</h6>
