@@ -26,6 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
@@ -215,10 +216,90 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
             </button>
 
-            <button className="w-9 h-9 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 flex items-center justify-center hover:bg-accent-teal hover:text-white transition-all text-[#1F1B16] dark:text-[#F7F3EC] relative">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-500 rounded-full" />
-            </button>
+            {/* Notifications Bell Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                aria-label="View Order Notifications"
+                className="w-9 h-9 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 flex items-center justify-center hover:bg-accent-teal hover:text-white transition-all text-[#1F1B16] dark:text-[#F7F3EC] relative"
+                title="Order Notifications"
+              >
+                <Bell className="w-4 h-4" />
+                <span className="absolute -top-1 -right-1 bg-amber-500 text-white rounded-full text-[9px] font-mono font-extrabold w-4.5 h-4.5 flex items-center justify-center border-2 border-white dark:border-[#1C1814] shadow-sm animate-pulse">
+                  3
+                </span>
+              </button>
+
+              {/* Notification Popover Dropdown */}
+              <AnimatePresence>
+                {notificationsOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 top-12 w-80 bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl shadow-2xl p-4 z-50 space-y-3"
+                  >
+                    <div className="flex items-center justify-between border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-2">
+                      <span className="font-serif font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC] flex items-center gap-1.5">
+                        <Bell className="w-3.5 h-3.5 text-accent-teal" /> Order Dispatch Alerts
+                      </span>
+                      <span className="text-[9px] font-extrabold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-full">
+                        3 Pending
+                      </span>
+                    </div>
+
+                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                      <a
+                        href="/admin/orders"
+                        onClick={() => setNotificationsOpen(false)}
+                        className="block bg-[#FAF7F2] dark:bg-[#12100E] p-2.5 rounded-xl border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 hover:border-accent-teal transition-all text-xs"
+                      >
+                        <div className="flex justify-between items-center mb-0.5">
+                          <span className="font-mono font-bold text-accent-teal text-[11px]">PO-2026-0925</span>
+                          <span className="text-[9px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-mono">Just Now</span>
+                        </div>
+                        <p className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-[11px]">Mohapatra Interiors (Wholesale)</p>
+                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">Total: ₹1,98,000</span>
+                      </a>
+
+                      <a
+                        href="/admin/orders"
+                        onClick={() => setNotificationsOpen(false)}
+                        className="block bg-[#FAF7F2] dark:bg-[#12100E] p-2.5 rounded-xl border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 hover:border-accent-teal transition-all text-xs"
+                      >
+                        <div className="flex justify-between items-center mb-0.5">
+                          <span className="font-mono font-bold text-accent-teal text-[11px]">RET-2026-4081</span>
+                          <span className="text-[9px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-mono">15m ago</span>
+                        </div>
+                        <p className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-[11px]">Sujata Mohanty (Retail)</p>
+                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">Total: ₹24,500</span>
+                      </a>
+
+                      <a
+                        href="/admin/orders"
+                        onClick={() => setNotificationsOpen(false)}
+                        className="block bg-[#FAF7F2] dark:bg-[#12100E] p-2.5 rounded-xl border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 hover:border-accent-teal transition-all text-xs"
+                      >
+                        <div className="flex justify-between items-center mb-0.5">
+                          <span className="font-mono font-bold text-accent-teal text-[11px]">PO-2026-1082</span>
+                          <span className="text-[9px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-mono">1h ago</span>
+                        </div>
+                        <p className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-[11px]">Utkal Builders Ltd (Wholesale)</p>
+                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">Total: ₹2,84,000</span>
+                      </a>
+                    </div>
+
+                    <a
+                      href="/admin/orders"
+                      onClick={() => setNotificationsOpen(false)}
+                      className="block text-center text-[10px] font-bold uppercase tracking-wider text-accent-teal hover:underline pt-1"
+                    >
+                      View Fulfillment Manager →
+                    </a>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </header>
 
