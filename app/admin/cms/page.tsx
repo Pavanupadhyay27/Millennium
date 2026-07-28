@@ -25,6 +25,26 @@ const INITIAL_CMS_SETTINGS = {
   primaryThemeColor: "#0D5C53",
   showAnnouncementBar: true,
   featuredProductIds: ["p1", "p6"],
+  promoBanners: [
+    {
+      id: "b1",
+      badge: "LIMITED OFFER",
+      discount: "40% OFF",
+      title: "Odisha Teak Cabinets & Storage",
+      link: "/spaces/storage",
+      image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=800",
+      bgColor: "#1C2B26",
+    },
+    {
+      id: "b2",
+      badge: "EXCLUSIVE DEAL",
+      discount: "25% OFF",
+      title: "Handcrafted Oak Lounge Seating",
+      link: "/spaces/seating",
+      image: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=800",
+      bgColor: "#291A14",
+    },
+  ],
   testimonials: [
     { id: "t1", author: "Dr. Alok Mohapatra", role: "Interior Architect, Cuttack", quote: "The grade of teak wood and the joinery details are absolute world-class. Highly recommended for commercial projects." },
     { id: "t2", author: "Priyanka Patnaik", role: "Home Owner, Patia", quote: "Beautiful organic cream styling. The Lounge Chair has become the cozy centerpiece of our study corner." }
@@ -37,7 +57,7 @@ export default function HomepageCmsPage() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   // Active tab inside CMS editor
-  const [activeTab, setActiveTab] = useState<"hero" | "branding" | "carousel" | "testimonials">("hero");
+  const [activeTab, setActiveTab] = useState<"hero" | "banners" | "branding" | "carousel" | "testimonials">("hero");
 
   const handleHeroSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +136,7 @@ export default function HomepageCmsPage() {
       <div className="flex border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-4 gap-8 overflow-x-auto">
         {([
           { id: "hero", name: "Hero Block & Banners", icon: FileEdit },
+          { id: "banners", name: "Promo Banners CMS", icon: Layout },
           { id: "branding", name: "Branding & Theme", icon: Palette },
           { id: "carousel", name: "Featured Showcase", icon: ShoppingBag },
           { id: "testimonials", name: "Client Testimonials", icon: UserCheck },
@@ -199,6 +220,133 @@ export default function HomepageCmsPage() {
               <Sparkles className="w-4 h-4" /> Publish Hero & Announcement
             </button>
           </form>
+        )}
+
+        {/* Tab: Promo Banners Editor */}
+        {activeTab === "banners" && (
+          <div className="flex flex-col gap-6">
+            <div className="pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+              <h3 className="font-serif text-xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                Customize Homepage Promo Banners
+              </h3>
+              <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mt-1">
+                Edit deal badges, discounts, promo titles, image URLs, and button destinations for homepage cards.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-6">
+              {cmsData.promoBanners.map((banner, index) => (
+                <div key={banner.id} className="bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-accent-teal bg-accent-teal/10 px-3 py-1 rounded-full">
+                      Promo Banner #{index + 1}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                        Offer Badge Tag
+                      </label>
+                      <input
+                        type="text"
+                        value={banner.badge}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setCmsData((prev) => ({
+                            ...prev,
+                            promoBanners: prev.promoBanners.map((b) => (b.id === banner.id ? { ...b, badge: val } : b)),
+                          }));
+                        }}
+                        className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                        Discount Headline
+                      </label>
+                      <input
+                        type="text"
+                        value={banner.discount}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setCmsData((prev) => ({
+                            ...prev,
+                            promoBanners: prev.promoBanners.map((b) => (b.id === banner.id ? { ...b, discount: val } : b)),
+                          }));
+                        }}
+                        className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs font-serif font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                      Banner Subtitle / Category Description
+                    </label>
+                    <input
+                      type="text"
+                      value={banner.title}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCmsData((prev) => ({
+                          ...prev,
+                          promoBanners: prev.promoBanners.map((b) => (b.id === banner.id ? { ...b, title: val } : b)),
+                        }));
+                      }}
+                      className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs font-medium text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                        Target Page Link
+                      </label>
+                      <input
+                        type="text"
+                        value={banner.link}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setCmsData((prev) => ({
+                            ...prev,
+                            promoBanners: prev.promoBanners.map((b) => (b.id === banner.id ? { ...b, link: val } : b)),
+                          }));
+                        }}
+                        className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs font-mono font-semibold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                        Banner Image URL
+                      </label>
+                      <input
+                        type="text"
+                        value={banner.image}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setCmsData((prev) => ({
+                            ...prev,
+                            promoBanners: prev.promoBanners.map((b) => (b.id === banner.id ? { ...b, image: val } : b)),
+                          }));
+                        }}
+                        className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs font-mono font-semibold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => showToast("Promo Banners updated live on storefront!")}
+              className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 self-start px-8 transition-all"
+            >
+              <Sparkles className="w-4 h-4" /> Publish Promo Banners
+            </button>
+          </div>
         )}
 
         {/* Tab 2: Branding & Theme Colors */}
