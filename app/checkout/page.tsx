@@ -586,57 +586,79 @@ export default function CheckoutPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-              className="py-16 text-center max-w-lg mx-auto bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[36px] p-8 md:p-12 shadow-2xl space-y-6 relative overflow-hidden"
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="py-12 md:py-16 text-center max-w-lg mx-auto bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[40px] p-8 md:p-12 shadow-2xl space-y-7 relative overflow-hidden"
             >
-              {/* Glowing Background Radial */}
-              <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-accent-teal/10 rounded-full blur-3xl pointer-events-none" />
+              {/* Glowing Background Radials */}
+              <div className="absolute -top-20 -left-20 w-56 h-56 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-20 -right-20 w-56 h-56 bg-accent-teal/15 rounded-full blur-3xl pointer-events-none" />
 
-              {/* Premium Animated Success Checkmark Ring */}
-              <div className="relative inline-flex items-center justify-center">
+              {/* Premium Animated Success Checkmark Ring with Continuous Slow Floating Bounce */}
+              <div className="flex flex-col items-center justify-center space-y-3 pt-2">
                 <motion.div
                   initial={{ scale: 0 }}
-                  animate={{ scale: [0, 1.2, 1] }}
+                  animate={{ scale: 1 }}
                   transition={{ duration: 0.5, ease: "backOut" }}
-                  className="w-24 h-24 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 p-1 shadow-xl shadow-emerald-500/20"
                 >
-                  <div className="w-full h-full bg-white dark:bg-[#1C1814] rounded-full flex items-center justify-center text-emerald-500">
-                    <CheckCircle className="w-12 h-12 stroke-[2.2]" />
-                  </div>
+                  <motion.div
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 p-1.5 shadow-2xl shadow-emerald-500/30 flex items-center justify-center"
+                  >
+                    <div className="w-full h-full bg-white dark:bg-[#1C1814] rounded-full flex items-center justify-center text-emerald-500 shadow-inner">
+                      <CheckCircle className="w-12 h-12 stroke-[2.2]" />
+                    </div>
+                  </motion.div>
                 </motion.div>
-                <span className="absolute -bottom-1 bg-emerald-500 text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full shadow-md">
-                  Confirmed
-                </span>
+
+                {/* Visible Confirmed Pill Badge */}
+                <motion.span
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-emerald-600 dark:bg-emerald-500 text-white font-mono font-extrabold text-[11px] uppercase tracking-widest px-4 py-1 rounded-full shadow-lg border border-emerald-400/30 inline-block"
+                >
+                  ✓ ORDER CONFIRMED
+                </motion.span>
               </div>
 
               <div className="space-y-2">
-                <h2 className="font-serif text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1F1B16] dark:text-[#F7F3EC] tracking-tight">
                   Order Successfully Placed!
                 </h2>
-                <p className="text-xs text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 leading-relaxed max-w-md mx-auto">
-                  Thank you for choosing <strong className="text-[#1F1B16] dark:text-[#F7F3EC]">Millennium Furniture</strong>. Your order has been registered under <span className="font-bold text-emerald-600 dark:text-emerald-400">Cash on Delivery (COD)</span>.
+                <p className="text-xs md:text-sm text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 leading-relaxed max-w-md mx-auto">
+                  Thank you for choosing <strong className="text-[#1F1B16] dark:text-[#F7F3EC]">Millennium Furniture</strong>. Your handcrafted piece is now being registered for delivery.
                 </p>
               </div>
 
-              {/* Order Status Card */}
-              <div className="bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 text-left text-xs space-y-2.5">
-                <div className="flex justify-between items-center pb-2 border-b border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
-                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase tracking-wider text-[10px]">Delivery Mode</span>
+              {/* Order Details & Logistics Card */}
+              <div className="bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 text-left text-xs space-y-3 shadow-inner">
+                <div className="flex justify-between items-center pb-2.5 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono font-bold uppercase tracking-wider text-[10px]">Payment Method</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                    <Truck className="w-3.5 h-3.5" /> Doorstep Direct Transit
+                    <ShieldCheck className="w-3.5 h-3.5" /> Cash on Delivery (COD)
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pb-2.5 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono font-bold uppercase tracking-wider text-[10px]">Delivery Mode</span>
+                  <span className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] flex items-center gap-1">
+                    <Truck className="w-3.5 h-3.5 text-accent-teal" /> Doorstep Direct Transit
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase tracking-wider text-[10px]">Payment Status</span>
-                  <span className="font-bold text-[#1F1B16] dark:text-[#F7F3EC]">Pay Cash Upon Arrival</span>
+                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono font-bold uppercase tracking-wider text-[10px]">Logistics Alert</span>
+                  <span className="font-bold text-accent-teal">Automated Notification Sent</span>
                 </div>
               </div>
 
               <div className="pt-2">
                 <a
                   href="/"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#1F1B16] dark:bg-[#F7F3EC] text-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal dark:hover:bg-accent-teal hover:text-white dark:hover:text-white font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-full shadow-lg transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#1F1B16] dark:bg-[#F7F3EC] text-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal dark:hover:bg-accent-teal hover:text-white dark:hover:text-white font-extrabold text-xs uppercase tracking-widest px-9 py-4 rounded-full shadow-xl transition-all"
                 >
                   Continue Shopping <ArrowRight className="w-4 h-4" />
                 </a>
