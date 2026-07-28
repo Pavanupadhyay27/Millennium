@@ -594,7 +594,7 @@ export default function CheckoutPage() {
               <div className="absolute -bottom-20 -right-20 w-56 h-56 bg-accent-teal/15 rounded-full blur-3xl pointer-events-none" />
 
               {/* Premium Animated Success Checkmark Ring with Continuous Slow Floating Bounce */}
-              <div className="flex flex-col items-center justify-center space-y-3 pt-2">
+              <div className="flex flex-col items-center justify-center space-y-4 pt-2">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -607,22 +607,22 @@ export default function CheckoutPage() {
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}
-                    className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 p-1.5 shadow-2xl shadow-emerald-500/30 flex items-center justify-center"
+                    className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700 p-1.5 shadow-2xl shadow-emerald-500/30 flex items-center justify-center"
                   >
-                    <div className="w-full h-full bg-white dark:bg-[#1C1814] rounded-full flex items-center justify-center text-emerald-500 shadow-inner">
-                      <CheckCircle className="w-12 h-12 stroke-[2.2]" />
+                    <div className="w-full h-full bg-emerald-50 dark:bg-[#12100E] rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-inner">
+                      <CheckCircle className="w-12 h-12 stroke-[2.5]" />
                     </div>
                   </motion.div>
                 </motion.div>
 
-                {/* Visible Confirmed Pill Badge */}
+                {/* Ultra High-Contrast Confirmed Pill Badge */}
                 <motion.span
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-emerald-600 dark:bg-emerald-500 text-white font-mono font-extrabold text-[11px] uppercase tracking-widest px-4 py-1 rounded-full shadow-lg border border-emerald-400/30 inline-block"
+                  className="bg-emerald-600 text-white font-mono font-extrabold text-[11px] uppercase tracking-widest px-5 py-1.5 rounded-full shadow-lg border border-emerald-400/40 inline-flex items-center gap-1.5 z-10"
                 >
-                  ✓ ORDER CONFIRMED
+                  <Check className="w-3.5 h-3.5 stroke-[3]" /> ORDER CONFIRMED
                 </motion.span>
               </div>
 
