@@ -16,7 +16,8 @@ import {
   MessageSquarePlus,
   User,
   Heart,
-  RotateCcw
+  RotateCcw,
+  Zap
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore, Offer, Review } from "../../../lib/store";
@@ -32,7 +33,7 @@ const formatPrice = (price: number) => {
 
 export default function ProductDetailPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
-  const { products: storeProducts, addToCart, offers, addProductReview, toggleWishlist, wishlist } = useStore();
+  const { products: storeProducts, addToCart, offers, addProductReview, toggleWishlist, wishlist, toggleCartDrawer } = useStore();
 
   // Find product from live Zustand store or fallback
   const storeProduct = useMemo(() => {
@@ -393,13 +394,25 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                       </button>
                     </div>
 
-                    {/* Action button */}
-                    <button
-                      onClick={handleAddToCart}
-                      className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-4 px-8 rounded-2xl flex items-center justify-center gap-2 shadow-md uppercase tracking-wider text-xs transition-all active:scale-95"
-                    >
-                      <ShoppingBag className="w-4 h-4" /> Add Item To Cart
-                    </button>
+                    {/* Action buttons: Add to Cart & Buy Now */}
+                    <div className="flex-1 flex flex-col sm:flex-row items-center gap-3">
+                      <button
+                        onClick={handleAddToCart}
+                        className="w-full sm:w-auto flex-1 bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 hover:border-accent-teal font-bold py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-sm uppercase tracking-wider text-xs transition-all active:scale-95"
+                      >
+                        <ShoppingBag className="w-4 h-4 text-accent-teal" /> Add To Cart
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          handleAddToCart();
+                          toggleCartDrawer(true);
+                        }}
+                        className="w-full sm:w-auto flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-md uppercase tracking-wider text-xs transition-all active:scale-95"
+                      >
+                        <Zap className="w-4 h-4 text-amber-300 fill-amber-300" /> Buy Now
+                      </button>
+                    </div>
                   </div>
                 </div>
 

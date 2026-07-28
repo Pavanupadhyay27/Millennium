@@ -570,7 +570,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                       transition={{ duration: 0.3 }}
                       className="group relative bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[24px] overflow-hidden shadow-warm-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between"
                     >
-                      <div onClick={() => setQuickViewProduct(product)} className="cursor-pointer">
+                      <a href={`/product/${product.id}`} className="cursor-pointer block">
                         {/* Image Frame with Aspect Ratio & Badges */}
                         <div className="relative aspect-[4/3] overflow-hidden bg-[#1F1B16]/5">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -595,6 +595,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                             </span>
                             <button
                               onClick={(e) => {
+                                e.preventDefault();
                                 e.stopPropagation();
                                 toggleWishlist({
                                   id: product.id,
@@ -611,17 +612,11 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                             </button>
                           </div>
 
-                          {/* Quick View Button on Hover */}
+                          {/* View Dedicated Product Page Button on Hover */}
                           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setQuickViewProduct(product);
-                              }}
-                              className="bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal px-4 py-2 rounded-full text-xs font-bold shadow-xl backdrop-blur-md flex items-center gap-2 transition-all border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10"
-                            >
-                              <Eye className="w-3.5 h-3.5" /> Quick Preview
-                            </button>
+                            <span className="bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal px-4 py-2 rounded-full text-xs font-bold shadow-xl backdrop-blur-md flex items-center gap-2 transition-all border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                              <Eye className="w-3.5 h-3.5" /> View Product Page
+                            </span>
                           </div>
                         </div>
 
@@ -639,7 +634,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                             {product.name}
                           </h3>
                         </div>
-                      </div>
+                      </a>
 
                       {/* Premium Card Footer with Restored Add to Cart + */}
                       <div className="px-5 pb-5 pt-2 flex items-center justify-between border-t border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
