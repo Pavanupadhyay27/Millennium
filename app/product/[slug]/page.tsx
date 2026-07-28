@@ -512,14 +512,20 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                           </div>
 
                           {/* Star Rating */}
-                          <div className="flex items-center gap-1 text-amber-500">
+                          <div className="flex items-center gap-1">
                             {Array.from({ length: 5 }).map((_, i) => (
-                              <Star
+                              <svg
                                 key={i}
-                                className={`w-3.5 h-3.5 ${
-                                  i < rev.rating ? "text-amber-500 fill-amber-500" : "text-gray-300 dark:text-gray-600"
-                                }`}
-                              />
+                                className="w-4 h-4 shrink-0"
+                                viewBox="0 0 24 24"
+                                fill={i < rev.rating ? "#F59E0B" : "none"}
+                                stroke={i < rev.rating ? "#F59E0B" : "#D1D5DB"}
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                              </svg>
                             ))}
                           </div>
 
@@ -568,13 +574,17 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                               onClick={() => setReviewRating(star)}
                               className="p-1 transition-transform hover:scale-125 focus:outline-none"
                             >
-                              <Star
-                                className={`w-5 h-5 ${
-                                  star <= reviewRating
-                                    ? "text-amber-500 fill-amber-500"
-                                    : "text-gray-300 dark:text-gray-600"
-                                }`}
-                              />
+                              <svg
+                                className="w-5 h-5 shrink-0"
+                                viewBox="0 0 24 24"
+                                fill={star <= reviewRating ? "#F59E0B" : "none"}
+                                stroke={star <= reviewRating ? "#F59E0B" : "#D1D5DB"}
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                              </svg>
                             </button>
                           ))}
                         </div>
