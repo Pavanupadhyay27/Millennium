@@ -606,6 +606,59 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
           </div>
 
+          {/* SIMILAR PRODUCT SUGGESTIONS (YOU MAY ALSO LIKE) */}
+          <div className="mt-20 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pt-14">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal bg-accent-teal/10 px-3 py-1 rounded-full inline-block mb-1">
+                  Curated Recommendations
+                </span>
+                <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                  You May Also Like
+                </h3>
+              </div>
+              <a
+                href="/spaces/home"
+                className="text-xs font-bold text-accent-teal hover:underline flex items-center gap-1"
+              >
+                Browse Full Catalog <ArrowRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {storeProducts
+                .filter((p) => p.id !== product.id && p.status === "active")
+                .slice(0, 4)
+                .map((item) => (
+                  <a
+                    key={item.id}
+                    href={`/product/${item.id}`}
+                    className="group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF7F2] dark:bg-[#12100E]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400"}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-4 flex flex-col gap-1">
+                      <span className="text-[9px] font-extrabold uppercase tracking-wider text-accent-teal">
+                        {item.category}
+                      </span>
+                      <h4 className="font-serif font-bold text-sm text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors line-clamp-1">
+                        {item.name}
+                      </h4>
+                      <span className="font-mono font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC] mt-1">
+                        {formatPrice(item.price)}
+                      </span>
+                    </div>
+                  </a>
+                ))}
+            </div>
+          </div>
+
         </main>
       </div>
       <Footer />

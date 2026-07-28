@@ -611,13 +611,6 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                               <Heart className={`w-3.5 h-3.5 ${wishlist.some(w => w.id === product.id) ? "fill-accent-terracotta text-accent-terracotta" : "opacity-60"}`} />
                             </button>
                           </div>
-
-                          {/* View Dedicated Product Page Button on Hover */}
-                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                            <span className="bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal px-4 py-2 rounded-full text-xs font-bold shadow-xl backdrop-blur-md flex items-center gap-2 transition-all border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                              <Eye className="w-3.5 h-3.5" /> View Product Page
-                            </span>
-                          </div>
                         </div>
 
                         {/* Card Info Content */}
