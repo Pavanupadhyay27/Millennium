@@ -447,11 +447,11 @@ export default function ProductCrudPage() {
           </AnimatePresence>
 
           {/* Denser Products Table */}
-          <div className="bg-white border border-[#1F1B16]/10 rounded-[28px] overflow-hidden shadow-warm-sm">
+          <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#1F1B16]/[0.01] border-b border-[#1F1B16]/10 text-[9px] font-bold uppercase tracking-wider text-[#1F1B16]/40">
+                  <tr className="bg-[#FAF7F2] dark:bg-[#12100E] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">
                     <th className="py-4 px-6 text-center w-12">
                       <input
                         type="checkbox"
@@ -460,7 +460,7 @@ export default function ProductCrudPage() {
                         className="rounded accent-accent-teal cursor-pointer"
                       />
                     </th>
-                    <th className="py-4 px-4">Item details</th>
+                    <th className="py-4 px-4">Item Details</th>
                     <th className="py-4 px-4">Category</th>
                     <th className="py-4 px-4 text-right">Retail Rate</th>
                     <th className="py-4 px-4 text-right">Wholesale Rate</th>
@@ -469,12 +469,12 @@ export default function ProductCrudPage() {
                     <th className="py-4 px-6 text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1F1B16]/5">
+                <tbody className="divide-y divide-[#1F1B16]/5 dark:divide-[#F7F3EC]/10 text-xs font-semibold">
                   {filteredProducts.length > 0 ? (
                     filteredProducts.map((p) => {
                       const isChecked = selectedIds.includes(p.id);
                       return (
-                        <tr key={p.id} className={`text-xs hover:bg-[#1F1B16]/[0.005] ${isChecked ? "bg-accent-teal/5" : ""}`}>
+                        <tr key={p.id} className={`hover:bg-[#FAF7F2]/50 dark:hover:bg-[#12100E]/50 transition-colors ${isChecked ? "bg-accent-teal/10" : ""}`}>
                           {/* Bulk Checkbox */}
                           <td className="py-4 px-6 text-center">
                             <input
@@ -487,35 +487,35 @@ export default function ProductCrudPage() {
 
                           {/* Image Thumbnail & details */}
                           <td className="py-4 px-4 flex items-center gap-4">
-                            <div className={`${p.bg} w-11 h-11 rounded-xl overflow-hidden p-1 flex items-center justify-center shadow-warm-sm flex-shrink-0`}>
+                            <div className="w-12 h-12 rounded-xl overflow-hidden p-0.5 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shrink-0 bg-accent-teal/10">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img src={p.image} alt={p.name} className="w-full h-full object-cover rounded-lg" />
                             </div>
                             <div>
-                              <h4 className="font-bold text-[#1F1B16] leading-tight mb-0.5">{p.name}</h4>
-                              <p className="font-mono text-[9px] text-[#1F1B16]/40 uppercase leading-none">{p.slug}</p>
+                              <h4 className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-xs leading-tight mb-0.5">{p.name}</h4>
+                              <p className="font-mono text-[9px] text-accent-teal font-extrabold uppercase leading-none">{p.slug}</p>
                             </div>
                           </td>
 
                           {/* Category */}
-                          <td className="py-4 px-4 font-bold text-[#1F1B16]/60">
+                          <td className="py-4 px-4 font-bold text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">
                             {p.category}
                           </td>
 
                           {/* Retail Price */}
-                          <td className="py-4 px-4 text-right font-mono font-bold text-[#1F1B16] tabular-nums">
+                          <td className="py-4 px-4 text-right font-mono font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] tabular-nums">
                             {formatPrice(p.price)}
                           </td>
 
                           {/* Wholesale Price */}
-                          <td className="py-4 px-4 text-right font-mono font-bold text-accent-teal tabular-nums">
+                          <td className="py-4 px-4 text-right font-mono font-extrabold text-accent-teal tabular-nums">
                             {formatPrice(p.wholesalePrice)}
                           </td>
 
                           {/* Stock level */}
                           <td className="py-4 px-4 text-center">
-                            <span className={`font-mono font-bold px-2 py-0.5 rounded ${
-                              p.stock <= 2 ? "text-accent-terracotta bg-accent-terracotta/10" : "text-[#1F1B16]/60 bg-[#1F1B16]/5"
+                            <span className={`font-mono font-bold px-2.5 py-0.5 rounded-full text-xs ${
+                              p.stock <= 2 ? "text-red-500 bg-red-500/10" : "text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10"
                             }`}>
                               {p.stock}
                             </span>
@@ -525,10 +525,10 @@ export default function ProductCrudPage() {
                           <td className="py-4 px-4 text-center">
                             <button
                               onClick={() => toggleStatus(p.id)}
-                              className={`px-3 py-1 border rounded-full text-[9px] font-extrabold uppercase transition-all ${
+                              className={`px-3 py-1 border rounded-full text-[9px] font-black uppercase tracking-wider transition-all ${
                                 p.status === "active"
-                                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                                  : "bg-charcoal/10 text-charcoal/80 border-charcoal/15"
+                                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                  : "bg-[#1F1B16]/10 text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 border-transparent"
                               }`}
                             >
                               {p.status}
@@ -540,14 +540,14 @@ export default function ProductCrudPage() {
                             <div className="flex items-center justify-center gap-2">
                               <button
                                 onClick={() => handleOpenEdit(p)}
-                                className="w-8 h-8 rounded-full flex items-center justify-center text-[#1F1B16]/50 hover:bg-[#1F1B16]/5"
+                                className="w-8 h-8 rounded-xl bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex items-center justify-center text-[#1F1B16] dark:text-[#F7F3EC] hover:border-accent-teal transition-all"
                                 title="Edit specs"
                               >
                                 <Edit2 className="w-3.5 h-3.5" />
                               </button>
                               <button
                                 onClick={() => handleDeleteRow(p.id)}
-                                className="w-8 h-8 rounded-full flex items-center justify-center text-red-500 hover:bg-red-50"
+                                className="w-8 h-8 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 hover:bg-red-500/20 transition-all"
                                 title="Delete product"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -559,7 +559,7 @@ export default function ProductCrudPage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={8} className="py-16 text-center text-[#1F1B16]/40 font-serif">
+                      <td colSpan={8} className="py-16 text-center text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-serif">
                         No product matches found.
                       </td>
                     </tr>
