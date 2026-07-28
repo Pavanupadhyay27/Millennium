@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+import { motion, AnimatePresence } from "framer-motion";
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -133,7 +135,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* Logout Footer */}
-        <div className="p-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 bg-white dark:bg-[#1C1814]">
+        <div className="p-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 bg-[#FAF7F2] dark:bg-[#12100E]">
           <button
             onClick={handleLogout}
             className="w-full border border-red-500/20 text-red-500 hover:bg-red-500/10 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition-all"
@@ -161,9 +163,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        {/* Child Pages Container */}
-        <main className="p-6 md:p-10 flex-1">
-          {children}
+        {/* Smooth Page Landing Transition Wrapper */}
+        <main className="p-6 md:p-10 flex-1 overflow-x-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 12, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.99 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>
