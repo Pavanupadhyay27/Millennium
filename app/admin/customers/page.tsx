@@ -11,6 +11,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useStore, CustomerRecord } from "../../../lib/store";
 
 // Format currency
 const formatPrice = (price: number) => {
@@ -21,87 +22,9 @@ const formatPrice = (price: number) => {
   }).format(price);
 };
 
-interface CustomerHistory {
-  id: string;
-  date: string;
-  value: number;
-  status: string;
-}
-
-interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  ordersCount: number;
-  lifetimeValue: number;
-  joinDate: string;
-  company: string;
-  gstin?: string;
-  history: CustomerHistory[];
-  customDiscountCode?: string;
-}
-
-// Initial B2B & Retail Customers database
-const INITIAL_CUSTOMERS: Customer[] = [
-  {
-    id: "u1",
-    name: "Rajesh Mohapatra",
-    email: "rajesh@mohapatrainteriors.com",
-    role: "WHOLESALE",
-    ordersCount: 4,
-    lifetimeValue: 482000,
-    joinDate: "Jan 12, 2026",
-    company: "Mohapatra Interiors Ltd",
-    gstin: "21AAAFM9283K1Z9",
-    history: [
-      { id: "PO-2026-0925", date: "July 18, 2026", value: 198000, status: "Pending" },
-      { id: "PO-2026-1082", date: "July 12, 2026", value: 284000, status: "Delivered" }
-    ],
-    customDiscountCode: "MOHAPATRA5"
-  },
-  {
-    id: "u2",
-    name: "Sujata Mohanty",
-    email: "sujata.m@gmail.com",
-    role: "CUSTOMER",
-    ordersCount: 1,
-    lifetimeValue: 24500,
-    joinDate: "March 15, 2026",
-    company: "",
-    history: [
-      { id: "RET-2026-4081", date: "July 17, 2026", value: 24500, status: "Approved" }
-    ]
-  },
-  {
-    id: "u3",
-    name: "Bikram Keshari",
-    email: "bikram.k@yahoo.com",
-    role: "CUSTOMER",
-    ordersCount: 1,
-    lifetimeValue: 18900,
-    joinDate: "Feb 22, 2026",
-    company: "",
-    history: [
-      { id: "RET-2026-4079", date: "July 16, 2026", value: 18900, status: "Shipped" }
-    ]
-  },
-  {
-    id: "u4",
-    name: "Admin Manager",
-    email: "hq@millenniumfurniture.in",
-    role: "ADMIN",
-    ordersCount: 0,
-    lifetimeValue: 0,
-    joinDate: "Jan 01, 2026",
-    company: "Millennium Studio Core",
-    history: []
-  }
-];
-
 export default function CustomerCrmPage() {
-  const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const { customers, updateCustomerDiscount } = useStore();
+  const [selectedCustomer, setSelectedCustomer] = useState<CustomerRecord | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   
   // Custom discount input state
@@ -110,19 +33,16 @@ export default function CustomerCrmPage() {
 
   const filteredCustomers = useMemo(() => {
     return customers.filter(
-      (c) =>
+      (c: CustomerRecord) =>
         c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (c.company && c.company.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   }, [customers, searchQuery]);
 
-  const handleRoleChange = (id: string, newRole: string) => {
-    setCustomers((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, role: newRole } : c))
-    );
+  const handleRoleChange = (id: string, newRole: any) => {
     if (selectedCustomer && selectedCustomer.id === id) {
-      setSelectedCustomer((prev) => (prev ? { ...prev, role: newRole } : null));
+      setSelectedCustomer((prev: CustomerRecord | null) => (prev ? { ...prev, role: newRole } : null));
     }
     showToast(`Account authorization group updated to ${newRole}.`);
   };
@@ -132,11 +52,9 @@ export default function CustomerCrmPage() {
     if (!discountCodeInput.trim()) return;
 
     const code = discountCodeInput.trim().toUpperCase();
-    setCustomers((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, customDiscountCode: code } : c))
-    );
+    updateCustomerDiscount(id, code);
     if (selectedCustomer && selectedCustomer.id === id) {
-      setSelectedCustomer((prev) => (prev ? { ...prev, customDiscountCode: code } : null));
+      setSelectedCustomer((prev: CustomerRecord | null) => (prev ? { ...prev, customDiscountCode: code } : null));
     }
     setDiscountCodeInput("");
     showToast(`Custom discount code '${code}' attached to profile.`);
@@ -208,64 +126,69 @@ export default function CustomerCrmPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1F1B16]/5 dark:divide-[#F7F3EC]/10 text-xs font-semibold">
-                  {filteredCustomers.map((c) => {
-                    const isSelected = selectedCustomer?.id === c.id;
-                    return (
-                      <tr
-                        key={c.id}
-                        onClick={() => setSelectedCustomer(c)}
-                        className={`cursor-pointer transition-colors ${
-                          isSelected ? "bg-accent-teal/10" : "hover:bg-[#FAF7F2]/50 dark:hover:bg-[#12100E]/50"
-                        }`}
-                      >
-                        {/* Avatar name details */}
-                        <td className="py-5 px-6 flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-2xl bg-accent-teal/10 text-accent-teal font-extrabold flex items-center justify-center shrink-0">
-                            <User className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-xs">{c.name}</h4>
-                            <p className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono leading-none mt-1">{c.email}</p>
-                            {c.company && (
-                              <p className="text-[9px] text-accent-teal font-bold mt-1">{c.company}</p>
-                            )}
-                          </div>
-                        </td>
+                  {filteredCustomers.length > 0 ? (
+                    filteredCustomers.map((c: CustomerRecord) => {
+                      const isSelected = selectedCustomer?.id === c.id;
+                      return (
+                        <tr
+                          key={c.id}
+                          onClick={() => setSelectedCustomer(c)}
+                          className={`cursor-pointer transition-colors ${
+                            isSelected ? "bg-accent-teal/10" : "hover:bg-[#FAF7F2]/50 dark:hover:bg-[#12100E]/50"
+                          }`}
+                        >
+                          {/* Avatar name details */}
+                          <td className="py-5 px-6 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-accent-teal/10 text-accent-teal font-extrabold flex items-center justify-center shrink-0">
+                              <User className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-xs">{c.name}</h4>
+                              <p className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono leading-none mt-1">{c.email}</p>
+                              {c.company && (
+                                <p className="text-[9px] text-accent-teal font-bold mt-1">{c.company}</p>
+                              )}
+                            </div>
+                          </td>
 
-                        {/* Authorization Role */}
-                        <td className="py-5 px-4">
-                          <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${
-                            c.role === "ADMIN"
-                              ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
-                              : c.role === "WHOLESALE"
-                              ? "bg-accent-teal/10 text-accent-teal border border-accent-teal/20"
-                              : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70"
-                          }`}>
-                            {c.role}
-                          </span>
-                        </td>
+                          {/* Authorization Role */}
+                          <td className="py-5 px-4">
+                            <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                              c.role === "WHOLESALE"
+                                ? "bg-teal-500/10 text-teal-600 border border-teal-500/20"
+                                : c.role === "ADMIN"
+                                ? "bg-amber-500/10 text-amber-600 border border-amber-500/20"
+                                : "bg-gray-500/10 text-gray-600 border border-gray-500/20"
+                            }`}>
+                              {c.role}
+                            </span>
+                          </td>
 
-                        {/* Order count */}
-                        <td className="py-5 px-4 text-center font-extrabold text-[#1F1B16] dark:text-[#F7F3EC]">
-                          {c.ordersCount}
-                        </td>
+                          <td className="py-5 px-4 text-center font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                            {c.ordersCount}
+                          </td>
 
-                        {/* Monospace Lifetime value */}
-                        <td className="py-5 px-4 text-right font-mono font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] tabular-nums">
-                          {formatPrice(c.lifetimeValue)}
-                        </td>
+                          <td className="py-5 px-4 text-right font-mono font-extrabold text-[#1F1B16] dark:text-[#F7F3EC]">
+                            {formatPrice(c.lifetimeValue)}
+                          </td>
 
-                        {/* Join date */}
-                        <td className="py-5 px-4 text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-medium text-[11px]">
-                          {c.joinDate}
-                        </td>
+                          <td className="py-5 px-4 text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 text-[11px]">
+                            {c.joinDate}
+                          </td>
 
-                        <td className="py-5 px-6 text-center font-extrabold text-accent-teal hover:underline">
-                          Profile →
-                        </td>
-                      </tr>
-                    );
-                  })}
+                          <td className="py-5 px-6 text-center font-extrabold text-accent-teal hover:underline">
+                            Profile →
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={6} className="py-12 text-center text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-serif">
+                        No registered customers yet. New customers will appear here automatically when orders are placed!
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

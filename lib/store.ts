@@ -202,68 +202,23 @@ export interface OrderRecord {
   items: Array<{ name: string; color?: string; quantity: number; price: number }>;
 }
 
-const INITIAL_ORDERS_LIST: OrderRecord[] = [
-  {
-    id: "PO-2026-0925",
-    date: "July 18, 2026",
-    customerName: "Mohapatra Interiors",
-    email: "procurement@mohapatra.in",
-    type: "Wholesale",
-    total: 198000,
-    status: "Pending",
-    address: "Plot 42, Janpath Road, Bhubaneswar, Odisha - 751001",
-    phone: "+91 94371 82931",
-    gstin: "21AAAFM9283K1Z9",
-    items: [
-      { name: "Odisha Teak Lounge Chair", color: "Sage Green", quantity: 8, price: 18500 },
-      { name: "Kalinga Walnut Coffee Table", color: "Ebonized Oak", quantity: 4, price: 14000 }
-    ]
-  },
-  {
-    id: "RET-2026-4081",
-    date: "July 17, 2026",
-    customerName: "Sujata Mohanty",
-    email: "sujata.m@gmail.com",
-    type: "Retail",
-    total: 24500,
-    status: "Approved",
-    address: "Duplex 15, Kalinga Vihar, Patia, Bhubaneswar, Odisha - 751024",
-    phone: "+91 70081 29381",
-    items: [
-      { name: "Odisha Teak Lounge Chair", color: "Natural Wood", quantity: 1, price: 24500 }
-    ]
-  },
-  {
-    id: "RET-2026-4079",
-    date: "July 16, 2026",
-    customerName: "Bikram Keshari",
-    email: "bikram.k@yahoo.com",
-    type: "Retail",
-    total: 18900,
-    status: "Shipped",
-    address: "Block C, 3rd Floor, Mahanadi Towers, Cuttack, Odisha - 753001",
-    phone: "+91 82490 19283",
-    items: [
-      { name: "Kalinga Walnut Coffee Table", color: "Natural Walnut", quantity: 1, price: 18900 }
-    ]
-  },
-  {
-    id: "PO-2026-1082",
-    date: "July 12, 2026",
-    customerName: "Utkal Builders Ltd",
-    email: "purchase@utkalbuilders.com",
-    type: "Wholesale",
-    total: 284000,
-    status: "Delivered",
-    address: "Utkal Signature, Kalpana Square, Bhubaneswar, Odisha - 751006",
-    phone: "+91 99370 18273",
-    gstin: "21AAACU8291A1ZB",
-    items: [
-      { name: "Odisha Teak Lounge Chair", color: "Natural Wood", quantity: 10, price: 18500 },
-      { name: "Kalinga Walnut Coffee Table", color: "Natural Walnut", quantity: 5, price: 14000 }
-    ]
-  }
-];
+export interface CustomerRecord {
+  id: string;
+  name: string;
+  email: string;
+  role: "CUSTOMER" | "WHOLESALE" | "ADMIN";
+  ordersCount: number;
+  lifetimeValue: number;
+  joinDate: string;
+  company: string;
+  gstin?: string;
+  phone?: string;
+  history: Array<{ id: string; date: string; value: number; status: string }>;
+  customDiscountCode?: string;
+}
+
+const INITIAL_ORDERS_LIST: OrderRecord[] = [];
+const INITIAL_CUSTOMERS_LIST: CustomerRecord[] = [];
 
 export interface AppNotification {
   id: string;
@@ -283,6 +238,7 @@ interface AppState {
   offers: Offer[];
   products: Product[];
   orders: OrderRecord[];
+  customers: CustomerRecord[];
   notifications: AppNotification[];
   activePromoCode: string | null;
   cartDrawerOpen: boolean;
@@ -297,6 +253,10 @@ interface AppState {
   addNotification: (notif: Omit<AppNotification, "id" | "timeAgo" | "read">) => void;
   addOrder: (order: OrderRecord) => void;
   updateOrderStatus: (orderId: string, status: string) => void;
+
+  // Customer CRM Actions
+  registerCustomerOnOrder: (order: OrderRecord) => void;
+  updateCustomerDiscount: (customerId: string, code: string) => void;
   
   // Cart Actions
   toggleCartDrawer: (isOpen?: boolean) => void;
@@ -337,6 +297,7 @@ export const useStore = create<AppState>()(
       offers: INITIAL_OFFERS,
       products: INITIAL_PRODUCTS,
       orders: INITIAL_ORDERS_LIST,
+      customers: INITIAL_CUSTOMERS_LIST,
       notifications: INITIAL_NOTIFICATIONS,
       activePromoCode: null,
       cartDrawerOpen: false,
@@ -360,15 +321,68 @@ export const useStore = create<AppState>()(
         set((state) => ({ notifications: [newNotif, ...state.notifications] }));
       },
 
-      addOrder: (newOrder) =>
+      addOrder: (newOrder) => {
         set((state) => ({
           orders: [newOrder, ...state.orders],
-        })),
+        }));
+        get().registerCustomerOnOrder(newOrder);
+      },
 
       updateOrderStatus: (orderId, status) =>
         set((state) => ({
           orders: state.orders.map((o) => (o.id === orderId ? { ...o, status } : o)),
         })),
+
+      registerCustomerOnOrder: (order) => {
+        set((state) => {
+          const existingIdx = state.customers.findIndex(
+            (c) => c.email.toLowerCase() === order.email.toLowerCase()
+          );
+
+          const orderEntry = {
+            id: order.id,
+            date: order.date,
+            value: order.total,
+            status: order.status,
+          };
+
+          if (existingIdx > -1) {
+            const updated = [...state.customers];
+            const target = updated[existingIdx];
+            updated[existingIdx] = {
+              ...target,
+              ordersCount: target.ordersCount + 1,
+              lifetimeValue: target.lifetimeValue + order.total,
+              history: [orderEntry, ...target.history],
+              phone: order.phone || target.phone,
+            };
+            return { customers: updated };
+          } else {
+            const newCustomer: CustomerRecord = {
+              id: `c-${Date.now()}`,
+              name: order.customerName,
+              email: order.email,
+              role: order.type === "Wholesale" ? "WHOLESALE" : "CUSTOMER",
+              ordersCount: 1,
+              lifetimeValue: order.total,
+              joinDate: order.date,
+              company: order.type === "Wholesale" ? order.customerName : "Individual Buyer",
+              phone: order.phone,
+              gstin: order.gstin,
+              history: [orderEntry],
+            };
+            return { customers: [newCustomer, ...state.customers] };
+          }
+        });
+      },
+
+      updateCustomerDiscount: (customerId, code) => {
+        set((state) => ({
+          customers: state.customers.map((c) =>
+            c.id === customerId ? { ...c, customDiscountCode: code } : c
+          ),
+        }));
+      },
 
       login: (user) => set({ isAuthenticated: true, user }),
       logout: () => set({ isAuthenticated: false, user: null }),
@@ -527,6 +541,7 @@ export const useStore = create<AppState>()(
         offers: state.offers,
         products: state.products,
         orders: state.orders,
+        customers: state.customers,
         notifications: state.notifications,
         activePromoCode: state.activePromoCode,
         isAuthenticated: state.isAuthenticated,
