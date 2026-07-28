@@ -249,7 +249,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
   const currentSpaceKey = SPACE_DETAILS[rawSpace] ? rawSpace : "home";
   const spaceInfo = SPACE_DETAILS[currentSpaceKey];
 
-  const { addToCart, toggleCartDrawer, toggleWishlist, wishlist } = useStore();
+  const { addToCart, toggleCartDrawer, toggleWishlist, wishlist, products: storeProducts } = useStore();
 
   // Filters Criteria State
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -257,27 +257,50 @@ export default function SpacePage({ params }: { params: { space: string } }) {
   const [selectedMaterial, setSelectedMaterial] = useState<string>("all");
   const [maxPrice, setMaxPrice] = useState<number>(200000);
   const [sortBy, setSortBy] = useState<"featured" | "price-low" | "price-high" | "rating">("featured");
-  
+
   const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
   const [rotationAngle, setRotationAngle] = useState<number>(0);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  // Combine static catalog items with live admin products
+  const allCatalogProducts = useMemo(() => {
+    const liveItems = storeProducts
+      .filter((p) => p.status === "active")
+      .map((p) => ({
+        id: p.id,
+        name: p.name,
+        space: "home",
+        category: p.category,
+        price: p.price,
+        rating: 5.0,
+        material: p.materials?.[0] || "Solid Teak Wood",
+        colorId: "natural",
+        colorName: p.colors?.[0] || "Natural Teak",
+        colorHex: "#a66838",
+        inStock: p.stock > 0,
+        customizable: true,
+        image: p.image,
+        isNew: true,
+      }));
+    return [...liveItems, ...SPACE_PRODUCTS];
+  }, [storeProducts]);
+
   // Categories for current space
   const categories = useMemo(() => {
-    const spaceProds = SPACE_PRODUCTS.filter((p) => p.space === currentSpaceKey);
+    const spaceProds = allCatalogProducts.filter((p) => p.space === currentSpaceKey);
     return Array.from(new Set(spaceProds.map((p) => p.category)));
-  }, [currentSpaceKey]);
+  }, [allCatalogProducts, currentSpaceKey]);
 
   // Materials for current space
   const materials = useMemo(() => {
-    const spaceProds = SPACE_PRODUCTS.filter((p) => p.space === currentSpaceKey);
+    const spaceProds = allCatalogProducts.filter((p) => p.space === currentSpaceKey);
     return Array.from(new Set(spaceProds.map((p) => p.material)));
-  }, [currentSpaceKey]);
+  }, [allCatalogProducts, currentSpaceKey]);
 
   // Filtered & Sorted Products
   const filteredProducts = useMemo(() => {
-    return SPACE_PRODUCTS.filter((p) => {
-      if (p.space !== currentSpaceKey) return false;
+    return allCatalogProducts.filter((p) => {
+      if (p.space !== currentSpaceKey && currentSpaceKey !== "home") return false;
       if (selectedCategory !== "all" && p.category !== selectedCategory) return false;
       if (selectedColor !== "all" && p.colorId !== selectedColor) return false;
       if (selectedMaterial !== "all" && p.material !== selectedMaterial) return false;
@@ -289,7 +312,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
       if (sortBy === "rating") return b.rating - a.rating;
       return 0;
     });
-  }, [currentSpaceKey, selectedCategory, selectedColor, selectedMaterial, maxPrice, sortBy]);
+  }, [allCatalogProducts, currentSpaceKey, selectedCategory, selectedColor, selectedMaterial, maxPrice, sortBy]);
 
   const resetFilters = () => {
     setSelectedCategory("all");
