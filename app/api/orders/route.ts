@@ -58,6 +58,39 @@ export async function POST(request: Request) {
 
     ORDERS_DB.unshift(newOrder);
 
+    // Send Free Automated Instant Order Push to Telegram Bot
+    const botToken = process.env.TELEGRAM_BOT_TOKEN || "8984065109:AAGkQ__Pl3zoH1-47BrRUhiaiXjF_3RA5GE";
+    const chatId = process.env.TELEGRAM_CHAT_ID; // Auto-sent if CHAT_ID configured
+
+    if (botToken && chatId) {
+      const itemsList = (items || [])
+        .map((i: any, idx: number) => `${idx + 1}. *${i.name}* (${i.color || "Natural"}) x${i.quantity} @ ₹${i.price}`)
+        .join("\n");
+
+      const telegramMsg =
+        `🚨 *NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
+        `----------------------------------------\n` +
+        `🆔 *Order Reference:* \`${newOrder.orderNumber}\`\n` +
+        `👤 *Customer:* ${customerName}\n` +
+        `📞 *Phone:* ${customerPhone || "N/A"}\n` +
+        `✉️ *Email:* ${customerEmail || "N/A"}\n` +
+        `📍 *Address:* ${address}, ${city}, ${state} - ${postalCode}\n\n` +
+        `🛍️ *ITEMS ORDERED:*\n${itemsList}\n\n` +
+        `----------------------------------------\n` +
+        `💵 *Payment Method:* Cash on Delivery (COD)\n` +
+        `💰 *TOTAL AMOUNT:* ₹${Number(totalAmount).toLocaleString("en-IN")}`;
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: telegramMsg,
+          parse_mode: "Markdown",
+        }),
+      }).catch((err) => console.error("Telegram notification error:", err));
+    }
+
     return NextResponse.json(
       {
         success: true,
