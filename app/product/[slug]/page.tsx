@@ -116,7 +116,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
   // New Review Form States
   const [reviewAuthor, setReviewAuthor] = useState("");
-  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
@@ -152,7 +152,10 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reviewAuthor.trim() || !reviewComment.trim()) return;
+    if (!reviewAuthor.trim() || !reviewComment.trim() || reviewRating === 0) {
+      showToast("Please select a star rating between 1 and 5!");
+      return;
+    }
 
     addProductReview(product.id, {
       author: reviewAuthor.trim(),
@@ -163,6 +166,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
     setReviewAuthor("");
     setReviewComment("");
+    setReviewRating(0);
     showToast("Thank you! Your verified review has been published.");
   };
 

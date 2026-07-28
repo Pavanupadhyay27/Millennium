@@ -106,11 +106,11 @@ export default function CheckoutPage() {
       <div>
         <Navbar />
 
-        <main className="max-w-[1240px] mx-auto px-4 md:px-8 pt-36 md:pt-40 pb-20">
+        <main className="max-w-[1240px] mx-auto px-4 md:px-8 pt-48 md:pt-52 mt-4 pb-20">
           {!isCompleted ? (
             <div>
               {/* Progress Indicator Header */}
-              <div className="max-w-xl mx-auto mb-12">
+              <div className="max-w-xl mx-auto mb-14">
                 <div className="flex justify-between items-center relative">
                   <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#1F1B16]/10 dark:bg-[#F7F3EC]/10 -translate-y-1/2 z-0" />
                   
