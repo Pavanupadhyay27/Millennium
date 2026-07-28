@@ -570,7 +570,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                       transition={{ duration: 0.3 }}
                       className="group relative bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[24px] overflow-hidden shadow-warm-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between"
                     >
-                      <div>
+                      <div onClick={() => setQuickViewProduct(product)} className="cursor-pointer">
                         {/* Image Frame with Aspect Ratio & Badges */}
                         <div className="relative aspect-[4/3] overflow-hidden bg-[#1F1B16]/5">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -581,12 +581,12 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           
-                          {/* Color Swatch Indicator */}
-                          <span
-                            className="absolute top-4 left-4 w-5 h-5 rounded-full border-2 border-white shadow-lg transform group-hover:scale-110 transition-transform"
-                            style={{ backgroundColor: product.colorHex }}
-                            title={product.colorName}
-                          />
+                          {/* Customization Granted Badge on Photo if set by Admin */}
+                          {product.customizable !== false && (
+                            <span className="absolute top-4 left-4 bg-emerald-600/90 text-white backdrop-blur-md text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border border-white/20">
+                              <Sparkles className="w-3 h-3 text-amber-300" /> Customisable
+                            </span>
+                          )}
 
                           {/* Top Right Badges: Rating & Wishlist */}
                           <div className="absolute top-4 right-4 flex items-center gap-2">
@@ -594,14 +594,17 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                               <span className="text-amber-500">★</span> {product.rating}
                             </span>
                             <button
-                              onClick={() => toggleWishlist({
-                                id: product.id,
-                                slug: product.id,
-                                name: product.name,
-                                price: product.price,
-                                image: product.image,
-                                bg: "bg-cream"
-                              })}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleWishlist({
+                                  id: product.id,
+                                  slug: product.id,
+                                  name: product.name,
+                                  price: product.price,
+                                  image: product.image,
+                                  bg: "bg-cream"
+                                });
+                              }}
                               className="p-2 rounded-full bg-white/90 dark:bg-[#1C1814]/90 backdrop-blur-md shadow-sm hover:bg-white text-[#1F1B16] dark:text-[#F7F3EC] transition-all hover:scale-110 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10"
                             >
                               <Heart className={`w-3.5 h-3.5 ${wishlist.some(w => w.id === product.id) ? "fill-accent-terracotta text-accent-terracotta" : "opacity-60"}`} />
@@ -611,7 +614,10 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                           {/* Quick View Button on Hover */}
                           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                             <button
-                              onClick={() => setQuickViewProduct(product)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setQuickViewProduct(product);
+                              }}
                               className="bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal px-4 py-2 rounded-full text-xs font-bold shadow-xl backdrop-blur-md flex items-center gap-2 transition-all border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10"
                             >
                               <Eye className="w-3.5 h-3.5" /> Quick Preview
@@ -635,7 +641,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                         </div>
                       </div>
 
-                      {/* Premium Card Footer */}
+                      {/* Premium Card Footer with Restored Add to Cart + */}
                       <div className="px-5 pb-5 pt-2 flex items-center justify-between border-t border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
                         <div>
                           <span className="text-[9px] uppercase tracking-wider text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 block font-bold">Crafted Price</span>
@@ -644,10 +650,13 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                           </span>
                         </div>
                         <button
-                          onClick={() => setQuickViewProduct(product)}
-                          className="bg-accent-teal hover:bg-accent-teal/90 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(product);
+                          }}
+                          className="bg-[#1F1B16] text-[#F7F3EC] dark:bg-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal dark:hover:bg-accent-teal hover:text-white dark:hover:text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg active:scale-95"
                         >
-                          <Sparkles className="w-3.5 h-3.5" /> Customize & Order
+                          Add To Cart +
                         </button>
                       </div>
                     </motion.div>
