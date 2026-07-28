@@ -90,18 +90,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] font-sans selection:bg-accent-teal/20 flex transition-colors duration-300">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] font-sans selection:bg-accent-teal/20 flex transition-colors duration-300 relative">
+      
+      {/* MOBILE BACKDROP OVERLAY */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* 1. SIDEBAR PANEL */}
       <aside
-        className={`bg-white dark:bg-[#1C1814] border-r border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 fixed inset-y-0 left-0 z-40 lg:static flex flex-col transition-all ${
-          sidebarOpen ? "w-64" : "w-20"
+        className={`bg-white dark:bg-[#1C1814] border-r border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 lg:static ${
+          sidebarOpen ? "w-64 translate-x-0" : "-translate-x-full lg:translate-x-0 lg:w-20"
         }`}
       >
         {/* Brand Header */}
-        <div className="h-24 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-5 flex items-center justify-between">
+        <div className="h-20 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-5 flex items-center justify-between">
           <a href="/admin" className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Millennium Admin" className="h-16 w-auto object-contain dark:brightness-0 dark:invert drop-shadow-md" />
+            <img src="/logo.png" alt="Millennium Admin" className="h-12 w-auto object-contain dark:brightness-0 dark:invert drop-shadow-md" />
           </a>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -113,34 +127,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Links list */}
-        <nav className="p-4 flex flex-col gap-1.5 flex-1">
+        <nav className="p-3 flex flex-col gap-1.5 flex-1 overflow-y-auto">
           {navigationItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <a
                 key={item.name}
                 href={item.href}
+                onClick={() => {
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }}
                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
                   isActive
                     ? "bg-accent-teal text-white shadow-sm"
                     : "text-[#1F1B16]/75 dark:text-[#F7F3EC]/75 hover:bg-accent-teal/10 hover:text-accent-teal"
-                } ${sidebarOpen ? "justify-start" : "justify-center"}`}
+                } ${sidebarOpen ? "justify-start" : "lg:justify-center"}`}
                 title={item.name}
               >
                 <item.icon className="w-4 h-4 flex-shrink-0" />
-                {sidebarOpen && <span>{item.name}</span>}
+                <span className={`${!sidebarOpen ? "lg:hidden" : "block"}`}>{item.name}</span>
               </a>
             );
           })}
         </nav>
 
         {/* Logout Footer */}
-        <div className="p-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 bg-[#FAF7F2] dark:bg-[#12100E]">
+        <div className="p-3 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 bg-[#FAF7F2] dark:bg-[#12100E]">
           <button
             onClick={handleLogout}
             className="w-full border border-red-500/20 text-red-500 hover:bg-red-500/10 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition-all"
           >
-            <LogOut className="w-4 h-4" /> {sidebarOpen && "Sign Out Admin"}
+            <LogOut className="w-4 h-4" /> <span className={`${!sidebarOpen ? "lg:hidden" : "block"}`}>Sign Out Admin</span>
           </button>
         </div>
       </aside>
@@ -148,8 +165,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* 2. MAIN CONTENT PANEL */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Navbar */}
-        <header className="h-20 bg-white dark:bg-[#1C1814] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-6 flex items-center justify-between sticky top-0 z-30">
+        <header className="h-20 bg-white dark:bg-[#1C1814] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 rounded-xl bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white transition-all lg:hidden"
+              aria-label="Open mobile menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
             <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
               Millennium HQ Admin
             </span>

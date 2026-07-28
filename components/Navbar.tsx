@@ -81,7 +81,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
     : "text-charcoal/80 hover:bg-charcoal/5 hover:text-charcoal dark:text-cream/80 dark:hover:bg-cream/5 dark:hover:text-cream";
 
   return (
-    <header className="fixed top-1 left-0 w-full z-50 px-6 md:px-12 flex items-center justify-between pointer-events-none">
+    <header className="fixed top-1 left-0 w-full z-50 px-3 md:px-12 flex items-center justify-between pointer-events-none">
       
       {/* 1. SEPARATE LOGO (Floats on left, responsive size) */}
       <a
@@ -92,7 +92,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
         <img
           src="/logo.png"
           alt="Millennium Furniture Logo"
-          className="h-32 md:h-40 lg:h-44 w-auto object-contain drop-shadow-2xl"
+          className="h-20 sm:h-28 md:h-40 lg:h-44 w-auto object-contain drop-shadow-2xl"
         />
       </a>
 
