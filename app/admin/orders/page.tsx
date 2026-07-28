@@ -254,14 +254,15 @@ export default function OrderProcessorPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#1F1B16]/[0.01] border-b border-[#1F1B16]/10 text-[9px] font-bold uppercase tracking-wider text-[#1F1B16]/40">
+                  <tr className="bg-[#FAF7F2] dark:bg-[#12100E] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">
                     <th className="py-4 px-6">ID</th>
                     <th className="py-4 px-4">Date</th>
-                    <th className="py-4 px-4">Customer</th>
+                    <th className="py-4 px-4">Customer & Contact</th>
+                    <th className="py-4 px-4">Mobile Number</th>
                     <th className="py-4 px-4 text-center">Type</th>
                     <th className="py-4 px-4 text-right">Invoice Total</th>
                     <th className="py-4 px-4 text-center">Status</th>
-                    <th className="py-4 px-6 text-center"></th>
+                    <th className="py-4 px-6 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1F1B16]/5">
@@ -274,33 +275,38 @@ export default function OrderProcessorPage() {
                           key={o.id}
                           onClick={() => setSelectedOrder(o)}
                           className={`text-xs cursor-pointer transition-colors ${
-                            isSelected ? "bg-accent-teal/5" : "hover:bg-[#1F1B16]/[0.005]"
+                            isSelected ? "bg-accent-teal/10" : "hover:bg-[#FAF7F2]/60 dark:hover:bg-[#12100E]/60"
                           }`}
                         >
-                          <td className="py-5 px-6 font-mono font-bold text-[#1F1B16]">{o.id}</td>
-                          <td className="py-5 px-4 font-semibold text-[#1F1B16]/60">{o.date}</td>
+                          <td className="py-5 px-6 font-mono font-extrabold text-accent-teal">{o.id}</td>
+                          <td className="py-5 px-4 font-semibold text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">{o.date}</td>
                           <td className="py-5 px-4">
-                            <div className="font-bold text-[#1F1B16]">{o.customerName}</div>
-                            <div className="text-[10px] text-[#1F1B16]/40 leading-none mt-0.5">{o.email}</div>
+                            <div className="font-bold text-[#1F1B16] dark:text-[#F7F3EC]">{o.customerName}</div>
+                            <div className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono leading-none mt-1">{o.email}</div>
                           </td>
-                          <td className="py-5 px-4 text-center font-bold text-[#1F1B16]/55">{o.type}</td>
-                          <td className="py-5 px-4 text-right font-mono font-bold text-[#1F1B16] tabular-nums">
+                          <td className="py-5 px-4">
+                            <div className="inline-flex items-center gap-1.5 bg-accent-teal/10 text-accent-teal px-3 py-1 rounded-full text-xs font-mono font-extrabold shadow-sm border border-accent-teal/20">
+                              📞 {o.phone}
+                            </div>
+                          </td>
+                          <td className="py-5 px-4 text-center font-extrabold text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">{o.type}</td>
+                          <td className="py-5 px-4 text-right font-mono font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] tabular-nums">
                             {formatPrice(o.total)}
                           </td>
                           <td className="py-5 px-4 text-center">
-                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[8px] font-extrabold uppercase border ${getStatusBadgeClass(o.status)}`}>
+                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${getStatusBadgeClass(o.status)}`}>
                               <Icon className="w-3 h-3" /> {o.status}
                             </span>
                           </td>
-                          <td className="py-5 px-6 text-center font-bold text-accent-teal">
-                            Select
+                          <td className="py-5 px-6 text-center font-extrabold text-accent-teal hover:underline">
+                            Inspect →
                           </td>
                         </tr>
                       );
                     })
                   ) : (
                     <tr>
-                      <td colSpan={7} className="py-16 text-center text-[#1F1B16]/40 font-serif">
+                      <td colSpan={8} className="py-16 text-center text-[#1F1B16]/40 font-serif">
                         No orders match filter queries.
                       </td>
                     </tr>
