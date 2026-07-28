@@ -502,12 +502,12 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Instant WhatsApp Confirmation</h4>
-                    <p className="text-[10px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">Send full order details directly to Millennium Business WhatsApp (+91 94371 82931)</p>
+                    <p className="text-[10px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">Send full order details directly to Millennium WhatsApp (+91 93343 09230)</p>
                   </div>
                 </div>
 
                 <a
-                  href={`https://wa.me/919437182931?text=${encodeURIComponent(
+                  href={`https://wa.me/919334309230?text=${encodeURIComponent(
                     `*NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
                     `----------------------------------------\n` +
                     `👤 *Customer Name:* ${shippingForm.fullName}\n` +
