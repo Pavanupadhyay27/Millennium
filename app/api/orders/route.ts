@@ -58,37 +58,29 @@ export async function POST(request: Request) {
 
     ORDERS_DB.unshift(newOrder);
 
-    // Send Free Automated Instant Order Push to Telegram Bot
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID; // Auto-sent if CHAT_ID configured
+    // Send 100% Free Automated WhatsApp Notification to Business (+91 94371 82931) via CallMeBot API
+    const waPhone = process.env.WHATSAPP_BUSINESS_PHONE || "919437182931";
+    const waApiKey = process.env.CALLMEBOT_API_KEY; // Optional free API key from CallMeBot
 
-    if (botToken && chatId) {
-      const itemsList = (items || [])
-        .map((i: any, idx: number) => `${idx + 1}. *${i.name}* (${i.color || "Natural"}) x${i.quantity} @ ₹${i.price}`)
+    if (waApiKey) {
+      const itemsText = (items || [])
+        .map((i: any, idx: number) => `${idx + 1}. ${i.name} (${i.color || "Natural"}) x${i.quantity} @ Rs.${i.price}`)
         .join("\n");
 
-      const telegramMsg =
-        `🚨 *NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
+      const waMsg = encodeURIComponent(
+        `*NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
         `----------------------------------------\n` +
-        `🆔 *Order Reference:* \`${newOrder.orderNumber}\`\n` +
-        `👤 *Customer:* ${customerName}\n` +
-        `📞 *Phone:* ${customerPhone || "N/A"}\n` +
-        `✉️ *Email:* ${customerEmail || "N/A"}\n` +
-        `📍 *Address:* ${address}, ${city}, ${state} - ${postalCode}\n\n` +
-        `🛍️ *ITEMS ORDERED:*\n${itemsList}\n\n` +
-        `----------------------------------------\n` +
-        `💵 *Payment Method:* Cash on Delivery (COD)\n` +
-        `💰 *TOTAL AMOUNT:* ₹${Number(totalAmount).toLocaleString("en-IN")}`;
+        `Ref: ${newOrder.orderNumber}\n` +
+        `Customer: ${customerName}\n` +
+        `Phone: ${customerPhone || "N/A"}\n` +
+        `Address: ${address}, ${city}, ${state} - ${postalCode}\n\n` +
+        `ITEMS:\n${itemsText}\n\n` +
+        `Payment: Cash on Delivery (COD)\n` +
+        `TOTAL: Rs.${Number(totalAmount).toLocaleString("en-IN")}`
+      );
 
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: telegramMsg,
-          parse_mode: "Markdown",
-        }),
-      }).catch((err) => console.error("Telegram notification error:", err));
+      fetch(`https://api.callmebot.com/whatsapp.php?phone=${waPhone}&text=${waMsg}&apikey=${waApiKey}`)
+        .catch((err) => console.error("WhatsApp CallMeBot notification error:", err));
     }
 
     return NextResponse.json(
