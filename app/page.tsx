@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Star,
@@ -238,10 +238,25 @@ const TESTIMONIALS = [
 ];
 
 export default function HomePage() {
-  const { wishlist, toggleWishlist } = useStore();
+  const { wishlist, toggleWishlist, products: storeProducts } = useStore();
   const [heroImageIdx, setHeroImageIdx] = useState(0);
   const [activeRoomTab, setActiveRoomTab] = useState<"Living Room" | "Study" | "Media Room" | "Dining Room">("Living Room");
   const [activeTestimonial, setActiveTestimonial] = useState(1);
+
+  // Combine static fallback products with dynamic store products added via Admin
+  const displayProducts = useMemo(() => {
+    const activeStoreItems = storeProducts
+      .filter((p) => p.status === "active")
+      .map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        category: p.category,
+        bg: "bg-[#FAF8F5]",
+        image: p.image,
+      }));
+    return activeStoreItems.length > 0 ? activeStoreItems : POPULAR_PRODUCTS;
+  }, [storeProducts]);
 
   const productCarouselRef = useRef<HTMLDivElement>(null);
 
@@ -376,7 +391,7 @@ export default function HomePage() {
             className="flex gap-6 overflow-x-auto pb-8 scrollbar-none snap-x snap-mandatory"
             style={{ scrollbarWidth: "none" }}
           >
-            {POPULAR_PRODUCTS.map((prod) => (
+            {displayProducts.map((prod) => (
               <div
                 key={prod.id}
                 className="min-w-[280px] sm:min-w-[340px] max-w-[340px] snap-start flex flex-col group cursor-pointer"
