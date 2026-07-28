@@ -79,26 +79,34 @@ export async function POST(request: Request) {
       `Payment: Cash on Delivery (COD)\n` +
       `TOTAL: Rs.${Number(totalAmount).toLocaleString("en-IN")}`;
 
+    // 1. Send via Twilio WhatsApp API
     if (twilioSid && twilioToken) {
-      fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: "Basic " + Buffer.from(`${twilioSid}:${twilioToken}`).toString("base64"),
-        },
-        body: new URLSearchParams({
-          From: twilioFrom,
-          To: twilioTo,
-          Body: orderSummaryText,
-        }),
-      }).catch((err) => console.error("Twilio WhatsApp error:", err));
-    } else {
-      // 2. Fallback: CallMeBot Free WhatsApp API
-      const waPhone = process.env.WHATSAPP_BUSINESS_PHONE || "919334309230";
-      const waApiKey = process.env.CALLMEBOT_API_KEY;
-      if (waApiKey) {
-        fetch(`https://api.callmebot.com/whatsapp.php?phone=${waPhone}&text=${encodeURIComponent(orderSummaryText)}&apikey=${waApiKey}`)
-          .catch((err) => console.error("WhatsApp CallMeBot notification error:", err));
+      try {
+        await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: "Basic " + Buffer.from(`${twilioSid}:${twilioToken}`).toString("base64"),
+          },
+          body: new URLSearchParams({
+            From: twilioFrom,
+            To: twilioTo,
+            Body: orderSummaryText,
+          }),
+        });
+      } catch (err) {
+        console.error("Twilio WhatsApp dispatch error:", err);
+      }
+    }
+
+    // 2. Also trigger CallMeBot WhatsApp API
+    const waPhone = process.env.WHATSAPP_BUSINESS_PHONE || "919334309230";
+    const waApiKey = process.env.CALLMEBOT_API_KEY || "933430230";
+    if (waPhone && waApiKey) {
+      try {
+        await fetch(`https://api.callmebot.com/whatsapp.php?phone=${waPhone}&text=${encodeURIComponent(orderSummaryText)}&apikey=${waApiKey}`);
+      } catch (err) {
+        console.error("WhatsApp CallMeBot notification error:", err);
       }
     }
 
