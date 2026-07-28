@@ -286,11 +286,11 @@ export default function HomePage() {
       {/* 2. HERO SECTION */}
       <section
         id="home"
-        className="relative h-screen w-full overflow-hidden flex items-center bg-[#1F1B16]"
+        className="relative h-screen w-full overflow-hidden flex items-center bg-[#FAF7F2] dark:bg-[#12100E]"
       >
-        {/* Full-size slideshow background with Ken-Burns fade/zoom transition */}
+        {/* Full-size slideshow background with smooth cross-fade transition */}
         <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             <motion.div
               key={heroImageIdx}
               initial={{ opacity: 0, scale: 1.05 }}
@@ -301,7 +301,7 @@ export default function HomePage() {
               style={{ backgroundImage: `url(${currentSlide.image})` }}
             />
           </AnimatePresence>
-          {/* Crisp background imagery without heavy black shadow overlay */}
+          {/* Subtle overlay without heavy black shadow */}
           <div className="absolute inset-0 bg-black/20" />
         </div>
 
