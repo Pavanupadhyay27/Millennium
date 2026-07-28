@@ -245,7 +245,7 @@ export default function ProductCrudPage() {
       materials: ["Teak Wood"],
       seoTitle: "",
       seoDescription: "",
-      image: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=200",
+      image: "",
       bg: "bg-pastel-blush",
     });
     setIsEditing(false);
@@ -753,17 +753,28 @@ export default function ProductCrudPage() {
                   />
                 </label>
 
-                {/* Current Image Preview Card */}
-                <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-3 flex items-center gap-3">
-                  <div className="w-16 h-16 rounded-xl bg-accent-teal/10 overflow-hidden shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                {/* Current Image Preview Card (Rendered only if image uploaded) */}
+                {formData.image ? (
+                  <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-3 flex items-center gap-3">
+                    <div className="w-16 h-16 rounded-xl bg-accent-teal/10 overflow-hidden shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block mb-0.5">Active Main Image</span>
+                      <p className="text-[11px] font-mono truncate text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">{formData.image}</p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block mb-0.5">Active Main Image</span>
-                    <p className="text-[11px] font-mono truncate text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">{formData.image}</p>
+                ) : (
+                  <div className="bg-white dark:bg-[#1C1814] border border-dashed border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 text-center">
+                    <span className="text-[10px] font-bold text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 uppercase tracking-wider block">
+                      No Image Selected
+                    </span>
+                    <p className="text-[11px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mt-0.5">
+                      Upload photo via file manager on the left
+                    </p>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
