@@ -77,8 +77,7 @@ export default function WholesaleLandingPage() {
           companyName: formData.businessName,
           name: formData.contactPerson,
           email: formData.email,
-          phone: formData.phone,
-          quantity: formData.orderVolume,
+          expectedVolume: formData.expectedVolume,
         }),
       });
     } catch (err) {

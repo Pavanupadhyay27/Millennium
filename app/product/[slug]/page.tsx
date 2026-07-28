@@ -14,6 +14,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useStore, Offer } from "../../../lib/store";
 
 // Helper to format currency
 const formatPrice = (price: number) => {
@@ -150,18 +151,58 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
   const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
   const [quantity, setQuantity] = useState(1);
 
+  // Customization Specs State
+  const [customSpecs, setCustomSpecs] = useState({
+    finish: "Natural Organic Teak",
+    upholstery: "Breathable Organic Linen",
+    width: 72,
+    depth: 80,
+    height: 85,
+    engraving: "",
+  });
+
+  const { addToCart, offers } = useStore();
+
+  // Active Promo Offer calculation
+  const activeOffer = useMemo(() => {
+    return offers.find((o: Offer) => o.active && (o.targetProductId === undefined || o.targetProductId === slug));
+  }, [offers, slug]);
+
   // Simulation Role State (Dev Mode toggle to show Wholesale Price)
   const [simulatedRole, setSimulatedRole] = useState<"CUSTOMER" | "WHOLESALE">("CUSTOMER");
 
   // Tab State
   const [activeTab, setActiveTab] = useState<"description" | "specs" | "shipping">("description");
 
-  // Calculate dynamic price based on variants selection
+  // Calculate dynamic price based on variants & custom specs selection
   const calculatedPrice = useMemo(() => {
     const base = simulatedRole === "WHOLESALE" ? product.wholesalePrice : product.price;
-    const delta = (selectedColor.priceDelta || 0) + (selectedMaterial.priceDelta || 0);
+    const finishDelta = customSpecs.finish === "Charcoal Ebonized Black" ? 1500 : customSpecs.finish === "Aged Rosewood Polish" ? 2500 : customSpecs.finish === "Warm Honey Teak Polish" ? 1000 : 0;
+    const upholsteryDelta = customSpecs.upholstery === "Top-Grain Italian Leather" ? 6500 : customSpecs.upholstery === "Plush Velvet Upholstery" ? 2000 : customSpecs.upholstery === "Textured Bouclé Fabric" ? 3500 : 0;
+    const delta = (selectedColor.priceDelta || 0) + finishDelta + upholsteryDelta;
     return base + delta;
-  }, [product, selectedColor, selectedMaterial, simulatedRole]);
+  }, [product, selectedColor, customSpecs, simulatedRole]);
+
+  const handleAddToCart = () => {
+    addToCart({
+      productId: slug,
+      name: product.name,
+      price: calculatedPrice,
+      originalPrice: product.price,
+      quantity,
+      color: selectedColor.name,
+      material: customSpecs.upholstery,
+      image: product.images[activeImgIdx],
+      slug: slug,
+      customSpecs: {
+        finish: customSpecs.finish,
+        upholstery: customSpecs.upholstery,
+        dimensions: { width: customSpecs.width, depth: customSpecs.depth, height: customSpecs.height },
+        engraving: customSpecs.engraving,
+        priceDelta: calculatedPrice - product.price,
+      },
+    });
+  };
 
   // Handle color change and auto-swap gallery image if color maps to one
   const handleColorChange = (color: ProductColor) => {
@@ -281,6 +322,117 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
               <div className="w-full border-t border-charcoal/5 pt-6 mb-6 flex flex-col gap-6">
                 
+                {/* Bespoke Customization Studio Panel */}
+                <div className="bg-pastel-mint/40 border border-accent-teal/20 rounded-3xl p-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
+                      ✨ Bespoke Furniture Customizer
+                    </span>
+                    <span className="text-[10px] font-bold text-charcoal/60">Tailored In Bhubaneswar</span>
+                  </div>
+
+                  {/* Wood Timber Finish */}
+                  <div>
+                    <label className="text-[11px] font-bold text-charcoal block mb-1.5">
+                      1. Custom Wood Finish: <span className="text-accent-teal">{customSpecs.finish}</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { name: "Natural Organic Teak", delta: 0 },
+                        { name: "Charcoal Ebonized Black", delta: 1500 },
+                        { name: "Warm Honey Teak Polish", delta: 1000 },
+                        { name: "Aged Rosewood Polish", delta: 2500 },
+                      ].map((f) => (
+                        <button
+                          key={f.name}
+                          type="button"
+                          onClick={() => setCustomSpecs((prev) => ({ ...prev, finish: f.name }))}
+                          className={`px-3 py-2 rounded-xl text-[10px] font-bold text-left border transition-all ${
+                            customSpecs.finish === f.name
+                              ? "bg-accent-teal text-white border-accent-teal shadow-sm"
+                              : "bg-cream text-charcoal border-charcoal/10 hover:border-accent-teal/50"
+                          }`}
+                        >
+                          {f.name} {f.delta > 0 ? `(+${formatPrice(f.delta)})` : ""}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Upholstery Choice */}
+                  <div>
+                    <label className="text-[11px] font-bold text-charcoal block mb-1.5">
+                      2. Luxury Upholstery Fabric: <span className="text-accent-teal">{customSpecs.upholstery}</span>
+                    </label>
+                    <select
+                      value={customSpecs.upholstery}
+                      onChange={(e) => setCustomSpecs((prev) => ({ ...prev, upholstery: e.target.value }))}
+                      className="w-full bg-cream border border-charcoal/10 rounded-xl px-3 py-2 text-[11px] font-bold text-charcoal focus:outline-none focus:border-accent-teal"
+                    >
+                      <option value="Breathable Organic Linen">Breathable Organic Linen (+₹0)</option>
+                      <option value="Plush Velvet Upholstery">Plush Velvet Upholstery (+₹2,000)</option>
+                      <option value="Top-Grain Italian Leather">Top-Grain Italian Leather (+₹6,500)</option>
+                      <option value="Textured Bouclé Fabric">Textured Bouclé Fabric (+₹3,500)</option>
+                    </select>
+                  </div>
+
+                  {/* Custom Dimensions */}
+                  <div>
+                    <label className="text-[11px] font-bold text-charcoal block mb-1">
+                      3. Custom Dimensions (Width: {customSpecs.width}cm | Depth: {customSpecs.depth}cm | Height: {customSpecs.height}cm)
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <span className="text-[9px] font-bold text-charcoal/50 block">Width (cm)</span>
+                        <input
+                          type="range"
+                          min={60}
+                          max={120}
+                          value={customSpecs.width}
+                          onChange={(e) => setCustomSpecs((prev) => ({ ...prev, width: Number(e.target.value) }))}
+                          className="w-full accent-accent-teal cursor-pointer"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-charcoal/50 block">Depth (cm)</span>
+                        <input
+                          type="range"
+                          min={50}
+                          max={100}
+                          value={customSpecs.depth}
+                          onChange={(e) => setCustomSpecs((prev) => ({ ...prev, depth: Number(e.target.value) }))}
+                          className="w-full accent-accent-teal cursor-pointer"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold text-charcoal/50 block">Height (cm)</span>
+                        <input
+                          type="range"
+                          min={70}
+                          max={110}
+                          value={customSpecs.height}
+                          onChange={(e) => setCustomSpecs((prev) => ({ ...prev, height: Number(e.target.value) }))}
+                          className="w-full accent-accent-teal cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Laser Engraving */}
+                  <div>
+                    <label className="text-[11px] font-bold text-charcoal block mb-1">
+                      4. Custom Laser Engraving (Initials / Family Name)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Handmade for Patnaik Family"
+                      value={customSpecs.engraving}
+                      onChange={(e) => setCustomSpecs((prev) => ({ ...prev, engraving: e.target.value }))}
+                      className="w-full bg-cream border border-charcoal/10 rounded-xl px-3 py-2 text-[11px] font-bold text-charcoal focus:outline-none focus:border-accent-teal"
+                    />
+                  </div>
+                </div>
+
                 {/* Variant Selector: Colors */}
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-widest text-charcoal/40 mb-3">
@@ -305,32 +457,6 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     })}
                   </div>
                 </div>
-
-                {/* Variant Selector: Material */}
-                {product.materials.length > 0 && (
-                  <div>
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-charcoal/40 mb-3">
-                      Material Choice
-                    </h4>
-                    <div className="relative w-full sm:w-64">
-                      <select
-                        value={selectedMaterial.name}
-                        onChange={(e) => {
-                          const matObj = product.materials.find((m: ProductMaterial) => m.name === e.target.value);
-                          if (matObj) setSelectedMaterial(matObj);
-                        }}
-                        className="w-full border border-charcoal/10 rounded-full px-5 py-3 text-xs font-bold bg-cream text-charcoal appearance-none focus:outline-none focus:border-accent-teal cursor-pointer"
-                      >
-                        {product.materials.map((mat: ProductMaterial) => (
-                          <option key={mat.name} value={mat.name}>
-                            {mat.name} {mat.priceDelta > 0 ? `(+${formatPrice(mat.priceDelta)})` : ""}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-charcoal/50" />
-                    </div>
-                  </div>
-                )}
 
                 {/* Quantity and Actions */}
                 <div>
@@ -358,15 +484,13 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     </div>
 
                     {/* Action buttons */}
-                    <button className="flex-1 bg-charcoal text-cream font-bold px-8 py-4 rounded-full flex items-center justify-center gap-2 hover:bg-charcoal-light hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-300">
-                      <ShoppingBag className="w-4 h-4" /> Add to Cart
+                    <button
+                      onClick={handleAddToCart}
+                      className="flex-1 bg-accent-teal text-white font-bold px-8 py-4 rounded-full flex items-center justify-center gap-2 hover:bg-accent-teal/90 shadow-warm-md hover:-translate-y-0.5 transition-all duration-300"
+                    >
+                      <ShoppingBag className="w-4 h-4" /> Add Customized Item To Cart
                     </button>
                   </div>
-
-                  {/* Bulk quote button */}
-                  <button className="w-full mt-3 border border-charcoal/30 text-charcoal font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:bg-charcoal hover:text-cream hover:-translate-y-0.5 transition-all duration-300">
-                    Request Bulk Quote (B2B)
-                  </button>
                 </div>
 
               </div>
