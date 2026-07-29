@@ -115,10 +115,19 @@ export default function Navbar({ transparent = false }: NavbarProps) {
 
   return (
     <>
-      {/* LIVE CMS ANNOUNCEMENT BAR BANNER */}
+      {/* LIVE CMS ANNOUNCEMENT BAR BANNER WITH DISMISS BUTTON */}
       {cmsSettings?.showAnnouncementBar && cmsSettings?.announcementBarText && (
-        <div className="fixed top-0 left-0 w-full z-50 bg-[#1F1B16] text-[#F7F3EC] py-1.5 px-4 text-center text-[10px] sm:text-xs font-bold tracking-wide flex items-center justify-center gap-2 shadow-md">
-          <span className="truncate max-w-4xl">{cmsSettings.announcementBarText}</span>
+        <div className="fixed top-0 left-0 w-full z-50 bg-[#1F1B16] text-[#F7F3EC] py-1.5 px-4 text-center text-[10px] sm:text-xs font-bold tracking-wide flex items-center justify-between shadow-md">
+          <div className="flex-1 text-center truncate max-w-4xl mx-auto">
+            {cmsSettings.announcementBarText}
+          </div>
+          <button
+            onClick={() => useStore.getState().updateCmsSettings({ showAnnouncementBar: false })}
+            className="w-5 h-5 rounded-full hover:bg-white/20 text-[#F7F3EC] flex items-center justify-center transition-colors shrink-0"
+            title="Dismiss Announcement"
+          >
+            <X className="w-3 h-3" />
+          </button>
         </div>
       )}
 

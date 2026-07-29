@@ -258,12 +258,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               <Menu className="w-5 h-5" />
             </button>
-
-            {/* Live Clock Component */}
-            <AdminLiveClock />
           </div>
 
+          {/* Right Action Icons & Live Clock */}
           <div className="flex items-center gap-3">
+            {/* Live Clock Component on Right Side */}
+            <AdminLiveClock />
+
             <button
               onClick={toggleTheme}
               aria-label="Toggle Dark Mode"
@@ -364,10 +365,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <AnimatePresence mode="wait">
             <motion.div
               key={pathname}
-              initial={{ opacity: 0, y: 12, scale: 0.99 }}
+              initial={{ opacity: 0, y: 14, scale: 0.985 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12, scale: 0.99 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
+              exit={{ opacity: 0, y: -10, scale: 0.985 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             >
               {children}
             </motion.div>
