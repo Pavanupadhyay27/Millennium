@@ -36,7 +36,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   
-  const { cart, toggleCartDrawer, products } = useStore();
+  const { cart, toggleCartDrawer, products, cmsSettings } = useStore();
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
@@ -114,7 +114,15 @@ export default function Navbar({ transparent = false }: NavbarProps) {
     : "text-[#1F1B16]/80 hover:bg-[#1F1B16]/5 hover:text-[#1F1B16] dark:text-[#F7F3EC]/80 dark:hover:bg-[#F7F3EC]/5 dark:hover:text-[#F7F3EC]";
 
   return (
-    <header className="fixed top-3 left-0 w-full z-50 px-4 sm:px-8 md:px-12 flex items-center justify-between pointer-events-none">
+    <>
+      {/* LIVE CMS ANNOUNCEMENT BAR BANNER */}
+      {cmsSettings?.showAnnouncementBar && cmsSettings?.announcementBarText && (
+        <div className="fixed top-0 left-0 w-full z-50 bg-[#1F1B16] text-[#F7F3EC] py-1.5 px-4 text-center text-[10px] sm:text-xs font-bold tracking-wide flex items-center justify-center gap-2 shadow-md">
+          <span className="truncate max-w-4xl">{cmsSettings.announcementBarText}</span>
+        </div>
+      )}
+
+      <header className={`fixed ${cmsSettings?.showAnnouncementBar ? "top-8" : "top-3"} left-0 w-full z-50 px-4 sm:px-8 md:px-12 flex items-center justify-between pointer-events-none transition-all duration-300`}>
       
       {/* BRAND LOGO */}
       <a
@@ -471,5 +479,6 @@ export default function Navbar({ transparent = false }: NavbarProps) {
         )}
       </AnimatePresence>
     </header>
+    </>
   );
 }

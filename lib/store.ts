@@ -73,6 +73,13 @@ export interface Product {
   seoDescription?: string;
 }
 
+export interface CmsSettings {
+  announcementBarText: string;
+  showAnnouncementBar: boolean;
+  heroHeadline: string;
+  heroSubtext: string;
+}
+
 export interface WishlistItem {
   id: string;
   name: string;
@@ -81,6 +88,13 @@ export interface WishlistItem {
   slug: string;
   bg: string;
 }
+
+const INITIAL_CMS_SETTINGS: CmsSettings = {
+  announcementBarText: "⚡ Monsoon Special: Up to 20% OFF on Teak Seating & Free Delivery Across Odisha!",
+  showAnnouncementBar: true,
+  heroHeadline: "Transform Your Home into a Cozy Nest",
+  heroSubtext: "Discover our premium handcrafted organic solid teak and walnut wood collections, manufactured locally in Bhubaneswar, Odisha.",
+};
 
 const INITIAL_OFFERS: Offer[] = [
   {
@@ -248,6 +262,9 @@ interface AppState {
   isAuthenticated: boolean;
   user: { name: string; email: string } | null;
   
+  cmsSettings: CmsSettings;
+  updateCmsSettings: (settings: Partial<CmsSettings>) => void;
+
   // Notification Actions
   markAllNotificationsRead: () => void;
   addNotification: (notif: Omit<AppNotification, "id" | "timeAgo" | "read">) => void;
@@ -305,6 +322,12 @@ export const useStore = create<AppState>()(
       lastAddedItem: null,
       isAuthenticated: false,
       user: null,
+
+      cmsSettings: INITIAL_CMS_SETTINGS,
+      updateCmsSettings: (newSettings) =>
+        set((state) => ({
+          cmsSettings: { ...state.cmsSettings, ...newSettings },
+        })),
 
       markAllNotificationsRead: () =>
         set((state) => ({
@@ -544,6 +567,7 @@ export const useStore = create<AppState>()(
         customers: state.customers,
         notifications: state.notifications,
         activePromoCode: state.activePromoCode,
+        cmsSettings: state.cmsSettings,
         isAuthenticated: state.isAuthenticated,
         user: state.user,
       }),

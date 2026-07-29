@@ -116,17 +116,14 @@ export default function AdminDashboardHome() {
       )}
 
       {/* Hero Welcome Banner */}
-      <div className="bg-gradient-to-r from-[#1C1814] via-[#2D2620] to-accent-teal/80 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1.5 relative z-10">
-          <span className="text-[10px] font-black uppercase tracking-widest bg-white/10 text-emerald-400 px-3 py-1 rounded-full inline-block backdrop-blur-md">
+      <div className="bg-[#1C1814] text-[#F7F3EC] rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#F7F3EC]/10">
+        <div className="space-y-1 relative z-10">
+          <span className="text-[9px] font-black uppercase tracking-widest bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full inline-block">
             Store Operations HQ
           </span>
-          <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight">
+          <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight">
             {greeting.text}, Administrator {greeting.icon}
           </h1>
-          <p className="text-xs text-white/70 font-medium max-w-xl">
-            Live overview of active sales orders, wholesale B2B inquiries, automated recovery leads, and catalog inventory.
-          </p>
         </div>
       </div>
 

@@ -52,8 +52,14 @@ const INITIAL_CMS_SETTINGS = {
 };
 
 export default function HomepageCmsPage() {
-  const { products: storeProducts } = useStore();
-  const [cmsData, setCmsData] = useState(INITIAL_CMS_SETTINGS);
+  const { products: storeProducts, cmsSettings, updateCmsSettings } = useStore();
+  const [cmsData, setCmsData] = useState({
+    ...INITIAL_CMS_SETTINGS,
+    announcementBarText: cmsSettings?.announcementBarText || INITIAL_CMS_SETTINGS.announcementBarText,
+    heroHeadline: cmsSettings?.heroHeadline || INITIAL_CMS_SETTINGS.heroHeadline,
+    heroSubtext: cmsSettings?.heroSubtext || INITIAL_CMS_SETTINGS.heroSubtext,
+    showAnnouncementBar: cmsSettings?.showAnnouncementBar ?? true,
+  });
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   // Active tab inside CMS editor
@@ -61,7 +67,13 @@ export default function HomepageCmsPage() {
 
   const handleHeroSave = (e: React.FormEvent) => {
     e.preventDefault();
-    showToast("Hero section & announcement banner published live to storefront!");
+    updateCmsSettings({
+      announcementBarText: cmsData.announcementBarText,
+      heroHeadline: cmsData.heroHeadline,
+      heroSubtext: cmsData.heroSubtext,
+      showAnnouncementBar: cmsData.showAnnouncementBar,
+    });
+    showToast("Hero section & announcement bar updated live across the entire storefront!");
   };
 
   const handleBrandingSave = (e: React.FormEvent) => {
