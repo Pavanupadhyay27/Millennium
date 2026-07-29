@@ -52,7 +52,19 @@ const INITIAL_CMS_SETTINGS = {
 };
 
 export default function HomepageCmsPage() {
-  const { products: storeProducts, cmsSettings, updateCmsSettings, brandPartners, addBrandPartner, updateBrandPartner, deleteBrandPartner } = useStore();
+  const {
+    products: storeProducts,
+    cmsSettings,
+    updateCmsSettings,
+    brandPartners,
+    addBrandPartner,
+    updateBrandPartner,
+    deleteBrandPartner,
+    customerTestimonials,
+    addCustomerTestimonial,
+    updateCustomerTestimonial,
+    deleteCustomerTestimonial,
+  } = useStore();
   const [cmsData, setCmsData] = useState({
     ...INITIAL_CMS_SETTINGS,
     announcementBarText: cmsSettings?.announcementBarText || INITIAL_CMS_SETTINGS.announcementBarText,
@@ -598,55 +610,117 @@ export default function HomepageCmsPage() {
           </div>
         )}
 
-        {/* Tab 4: Client Testimonials */}
+        {/* Tab 4: Client Testimonials Full CRUD Editor */}
         {activeTab === "testimonials" && (
           <div className="flex flex-col gap-6">
-            <h3 className="font-serif text-xl font-bold text-[#1F1B16] dark:text-[#F7F3EC] pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-              Edit Client Testimonials & Architect Reviews
-            </h3>
+            <div className="pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+              <h3 className="font-serif text-xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                Manage Client Testimonials & Buyer Reviews
+              </h3>
+              <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mt-1">
+                Full CRUD control: Add new reviews, edit existing quotes/names/ratings in real-time, or delete unwanted feedback.
+              </p>
+            </div>
 
-            <div className="flex flex-col gap-6 divide-y divide-[#1F1B16]/10 dark:divide-[#F7F3EC]/10">
-              {cmsData.testimonials.map((t, index) => (
-                <div key={t.id} className={`flex flex-col gap-4 ${index > 0 ? "pt-6" : ""}`}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-2">
-                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">Author Name</label>
-                      <input
-                        type="text"
-                        value={t.author}
-                        onChange={(e) => handleTestimonialChange(t.id, "author", e.target.value)}
-                        className="border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none font-bold"
-                      />
+            {/* List of All Testimonial Cards with Inline Edit & Delete */}
+            <div className="space-y-4">
+              <h4 className="font-serif text-sm font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                Active Customer Reviews ({customerTestimonials?.length || 0})
+              </h4>
+
+              <div className="grid grid-cols-1 gap-4">
+                {customerTestimonials?.map((t) => (
+                  <div
+                    key={t.id}
+                    className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 shadow-sm space-y-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+                          ✓ Verified Review
+                        </span>
+                        {t.date && (
+                          <span className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono">
+                            {t.date}
+                          </span>
+                        )}
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          deleteCustomerTestimonial(t.id);
+                          showToast(`Review by "${t.name}" deleted.`);
+                        }}
+                        className="px-3 py-1 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl text-xs font-bold transition-all"
+                      >
+                        Delete Review
+                      </button>
                     </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">Role / Location</label>
-                      <input
-                        type="text"
-                        value={t.role}
-                        onChange={(e) => handleTestimonialChange(t.id, "role", e.target.value)}
-                        className="border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none font-medium"
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                          Author Name
+                        </label>
+                        <input
+                          type="text"
+                          value={t.name}
+                          onChange={(e) => updateCustomerTestimonial(t.id, { name: e.target.value })}
+                          className="w-full border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] font-bold focus:outline-none focus:border-accent-teal"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                          Role / Location
+                        </label>
+                        <input
+                          type="text"
+                          value={t.role}
+                          onChange={(e) => updateCustomerTestimonial(t.id, { role: e.target.value })}
+                          className="w-full border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                          Star Rating (1-5)
+                        </label>
+                        <select
+                          value={t.rating}
+                          onChange={(e) => updateCustomerTestimonial(t.id, { rating: Number(e.target.value) })}
+                          className="w-full border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] font-bold focus:outline-none focus:border-accent-teal"
+                        >
+                          <option value={5}>5 Stars ★★★★★</option>
+                          <option value={4}>4 Stars ★★★★☆</option>
+                          <option value={3}>3 Stars ★★★☆☆</option>
+                          <option value={2}>2 Stars ★★☆☆☆</option>
+                          <option value={1}>1 Star ★☆☆☆☆</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                        Testimonial Quote / Review Text
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={t.quote}
+                        onChange={(e) => updateCustomerTestimonial(t.id, { quote: e.target.value })}
+                        className="w-full border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] font-medium leading-relaxed focus:outline-none focus:border-accent-teal resize-none"
                       />
                     </div>
                   </div>
-
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">Testimonial Quote</label>
-                    <textarea
-                      rows={2}
-                      value={t.quote}
-                      onChange={(e) => handleTestimonialChange(t.id, "quote", e.target.value)}
-                      className="border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2.5 text-xs bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none resize-none leading-relaxed font-medium"
-                    />
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             <button
-              onClick={handleTestimonialsSave}
+              onClick={() => showToast("Testimonials updated live on storefront!")}
               className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 self-start px-8 transition-all"
             >
-              <Sparkles className="w-4 h-4" /> Publish Testimonials
+              <Sparkles className="w-4 h-4" /> Save & Sync Testimonials
             </button>
           </div>
         )}

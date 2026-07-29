@@ -370,6 +370,8 @@ interface AppState {
 
   // Testimonial Actions
   addCustomerTestimonial: (testimonial: Omit<CustomerTestimonial, "id" | "date" | "verified">) => void;
+  updateCustomerTestimonial: (id: string, testimonial: Partial<CustomerTestimonial>) => void;
+  deleteCustomerTestimonial: (id: string) => void;
 
   // Notification Actions
   markAllNotificationsRead: () => void;
@@ -467,7 +469,19 @@ export const useStore = create<AppState>()(
           date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
         };
         set((state) => ({
-          customerTestimonials: [newTestimonial, ...state.customerTestimonials],
+          customerTestimonials: [newTestimonial, ...(state.customerTestimonials || [])],
+        }));
+      },
+
+      updateCustomerTestimonial: (id, fields) => {
+        set((state) => ({
+          customerTestimonials: (state.customerTestimonials || []).map((t) => (t.id === id ? { ...t, ...fields } : t)),
+        }));
+      },
+
+      deleteCustomerTestimonial: (id) => {
+        set((state) => ({
+          customerTestimonials: (state.customerTestimonials || []).filter((t) => t.id !== id),
         }));
       },
 
