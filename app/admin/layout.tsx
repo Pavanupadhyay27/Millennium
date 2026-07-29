@@ -31,6 +31,50 @@ const formatPrice = (price: number) => {
   }).format(price);
 };
 
+function AdminLiveClock() {
+  const [timeStr, setTimeStr] = useState<string>("");
+  const [dateStr, setDateStr] = useState<string>("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTimeStr(
+        now.toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        })
+      );
+      setDateStr(
+        now.toLocaleDateString("en-IN", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        })
+      );
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!timeStr) return null;
+
+  return (
+    <div className="flex items-center gap-2 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/15 rounded-full px-3.5 py-1.5 shadow-inner">
+      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+      <span className="font-mono text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+        {timeStr}
+      </span>
+      <span className="text-[10px] font-bold text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 border-l border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pl-2 hidden md:inline">
+        {dateStr}
+      </span>
+    </div>
+  );
+}
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { notifications, markAllNotificationsRead } = useStore();
@@ -214,7 +258,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               <Menu className="w-5 h-5" />
             </button>
-            <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
+
+            {/* Live Clock Component */}
+            <AdminLiveClock />
+
+            <span className="hidden sm:inline-block text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
               Millennium HQ Admin
             </span>
           </div>

@@ -90,6 +90,17 @@ export default function AdminDashboardHome() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  // Time-based dynamic greeting calculation
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return { text: "Good Morning", icon: "☀️" };
+    if (hour >= 12 && hour < 17) return { text: "Good Afternoon", icon: "🌤️" };
+    if (hour >= 17 && hour < 22) return { text: "Good Evening", icon: "🌆" };
+    return { text: "Good Night", icon: "🌙" };
+  };
+
+  const greeting = getGreeting();
+
   return (
     <div className="space-y-8">
       {/* Toast Alert */}
@@ -110,7 +121,9 @@ export default function AdminDashboardHome() {
           <span className="text-[10px] font-black uppercase tracking-widest bg-white/10 text-emerald-400 px-3 py-1 rounded-full inline-block backdrop-blur-md">
             Store Operations HQ
           </span>
-          <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight">Executive Dashboard</h1>
+          <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight">
+            {greeting.text}, Administrator {greeting.icon}
+          </h1>
           <p className="text-xs text-white/70 font-medium max-w-xl">
             Live overview of active sales orders, wholesale B2B inquiries, automated recovery leads, and catalog inventory.
           </p>

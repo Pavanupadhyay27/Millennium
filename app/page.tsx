@@ -639,63 +639,76 @@ export default function HomePage() {
       </section>
 
       {/* SPECIAL OFFERS */}
-      <section id="offer" className="py-16 md:py-32">
+      <section id="offer" className="py-12 md:py-32">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="mb-6 md:mb-12">
+            <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1.5 block">
+              Exclusive Deals
+            </span>
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+              Seasonal Special Offers
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
             {/* Promo Card 1 */}
-            <div className="bg-pastel-mint rounded-3xl p-6 sm:p-10 relative overflow-hidden flex flex-col justify-between min-h-[300px] sm:min-h-[380px] shadow-md group">
-              <div className="max-w-[55%] sm:max-w-[50%] z-10">
-                <span className="text-accent-teal text-[10px] font-extrabold uppercase tracking-widest bg-white/80 rounded-full px-2.5 py-1 inline-block mb-3">
+            <div className="bg-[#E6F4F1] dark:bg-[#1A2624] rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex flex-row sm:flex-col items-center sm:items-start justify-between gap-4 shadow-md group">
+              <div className="flex-1 min-w-0 z-10">
+                <span className="text-accent-teal text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest bg-white/90 dark:bg-black/60 rounded-full px-2.5 py-1 inline-block mb-2 sm:mb-3">
                   Limited Offer
                 </span>
-                <h3 className="font-serif text-2xl sm:text-4xl md:text-5xl font-extrabold text-charcoal leading-none mb-2 sm:mb-3">
+                <h3 className="font-serif text-xl sm:text-4xl md:text-5xl font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] leading-none mb-1 sm:mb-3">
                   40% OFF
                 </h3>
-                <p className="font-serif text-sm sm:text-lg font-semibold text-charcoal/80 mb-5">
+                <p className="font-serif text-xs sm:text-lg font-semibold text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-3 sm:mb-5 line-clamp-2">
                   Odisha Teak Cabinets & Storage
                 </p>
                 <a
                   href="#collections"
-                  className="bg-charcoal text-cream rounded-full px-5 py-2.5 text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-charcoal-light transition-all"
+                  className="bg-[#1F1B16] text-[#F7F3EC] dark:bg-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal rounded-full px-4 py-2 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-bold inline-flex items-center gap-1.5 transition-all active:scale-95"
                 >
-                  Shop Now <ArrowRight className="w-3.5 h-3.5" />
+                  Shop Deal <ArrowRight className="w-3.5 h-3.5 text-accent-teal" />
                 </a>
               </div>
 
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=700"
-                alt="Teak Cabinet Promo"
-                className="absolute right-0 bottom-0 w-[48%] sm:w-[55%] h-[85%] sm:h-[90%] object-cover object-left rounded-tl-3xl group-hover:scale-105 transition-transform duration-500 shadow-md"
-              />
+              <div className="w-28 h-28 sm:w-full sm:h-auto sm:aspect-[16/9] rounded-xl sm:rounded-2xl overflow-hidden shrink-0 relative border border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=700"
+                  alt="Teak Cabinet Promo"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
             </div>
 
             {/* Promo Card 2 */}
-            <div className="bg-pastel-blush rounded-3xl p-6 sm:p-10 relative overflow-hidden flex flex-col justify-between min-h-[300px] sm:min-h-[380px] shadow-md group">
-              <div className="max-w-[55%] sm:max-w-[50%] z-10">
-                <span className="text-accent-terracotta text-[10px] font-extrabold uppercase tracking-widest bg-white/80 rounded-full px-2.5 py-1 inline-block mb-3">
+            <div className="bg-[#FBF0EA] dark:bg-[#281F1A] rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex flex-row sm:flex-col items-center sm:items-start justify-between gap-4 shadow-md group">
+              <div className="flex-1 min-w-0 z-10">
+                <span className="text-amber-600 dark:text-amber-400 text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest bg-white/90 dark:bg-black/60 rounded-full px-2.5 py-1 inline-block mb-2 sm:mb-3">
                   Exclusive Deal
                 </span>
-                <h3 className="font-serif text-2xl sm:text-4xl md:text-5xl font-extrabold text-charcoal leading-none mb-2 sm:mb-3">
+                <h3 className="font-serif text-xl sm:text-4xl md:text-5xl font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] leading-none mb-1 sm:mb-3">
                   25% OFF
                 </h3>
-                <p className="font-serif text-sm sm:text-lg font-semibold text-charcoal/80 mb-5">
+                <p className="font-serif text-xs sm:text-lg font-semibold text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-3 sm:mb-5 line-clamp-2">
                   Handcrafted Oak Lounge Seating
                 </p>
                 <a
                   href="#collections"
-                  className="bg-charcoal text-cream rounded-full px-5 py-2.5 text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-charcoal-light transition-all"
+                  className="bg-[#1F1B16] text-[#F7F3EC] dark:bg-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal rounded-full px-4 py-2 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-bold inline-flex items-center gap-1.5 transition-all active:scale-95"
                 >
-                  Shop Now <ArrowRight className="w-3.5 h-3.5" />
+                  Shop Deal <ArrowRight className="w-3.5 h-3.5 text-accent-teal" />
                 </a>
               </div>
 
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=700"
-                alt="Lounge Seat Promo"
-                className="absolute right-0 bottom-0 w-[48%] sm:w-[55%] h-[85%] sm:h-[90%] object-cover object-left rounded-tl-3xl group-hover:scale-105 transition-transform duration-500 shadow-md"
-              />
+              <div className="w-28 h-28 sm:w-full sm:h-auto sm:aspect-[16/9] rounded-xl sm:rounded-2xl overflow-hidden shrink-0 relative border border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=700"
+                  alt="Lounge Seat Promo"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
             </div>
           </div>
         </div>
