@@ -252,6 +252,7 @@ export default function HomePage() {
   }, [storeProducts]);
 
   const productCarouselRef = useRef<HTMLDivElement>(null);
+  const testimonialCarouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const heroInterval = setInterval(() => {
@@ -259,7 +260,18 @@ export default function HomePage() {
     }, 4500);
 
     const testimonialInterval = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+      setActiveTestimonial((prev) => {
+        const nextIdx = (prev + 1) % TESTIMONIALS.length;
+        if (testimonialCarouselRef.current) {
+          const container = testimonialCarouselRef.current;
+          const cardWidth = container.scrollWidth / TESTIMONIALS.length;
+          container.scrollTo({
+            left: cardWidth * nextIdx,
+            behavior: "smooth",
+          });
+        }
+        return nextIdx;
+      });
     }, 4000);
 
     return () => {
@@ -347,10 +359,47 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* FLOATING VERIFIED BRAND BADGES BAR (SLEEPWELL, CENTURYPLY, FEATHERLITE, GODREJ) */}
+      <section className="bg-white dark:bg-[#1C1814] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 py-4 shadow-sm relative z-20">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">
+              Verified Brand Partners & Materials
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4 sm:gap-8 overflow-x-auto w-full md:w-auto justify-between md:justify-end pb-1 md:pb-0 scrollbar-none" style={{ scrollbarWidth: "none" }}>
+            {[
+              { name: "Sleepwell", tag: "Mattress Tech Partner" },
+              { name: "CenturyPly", tag: "Marine Teak Grade" },
+              { name: "Featherlite", tag: "Ergonomic Hardware" },
+              { name: "Godrej Interio", tag: "Steel Joinery" },
+              { name: "Pepperfry", tag: "Verified Merchant" },
+            ].map((brand) => (
+              <div
+                key={brand.name}
+                className="flex items-center gap-2 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full px-3.5 py-1.5 shrink-0 shadow-sm hover:border-accent-teal transition-all group"
+              >
+                <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[9px] font-black">
+                  ✓
+                </span>
+                <span className="font-serif text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors">
+                  {brand.name}
+                </span>
+                <span className="text-[9px] font-mono text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 hidden sm:inline">
+                  • {brand.tag}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* POPULAR PRODUCTS CATALOG */}
       <section
         id="collections"
-        className="py-16 md:py-32 bg-[#FAF8F5] dark:bg-[#1A1612] border-y border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 transition-colors duration-300"
+        className="py-10 md:py-16 bg-[#FAF8F5] dark:bg-[#1A1612] border-y border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 transition-colors duration-300"
       >
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
@@ -561,9 +610,9 @@ export default function HomePage() {
       </section>
 
       {/* TESTIMONIALS */}
-      <section id="about-us" className="py-16 md:py-32 bg-[#F7F3EC] dark:bg-[#12100e] transition-colors duration-300">
+      <section id="about-us" className="py-10 md:py-16 bg-[#F7F3EC] dark:bg-[#12100e] transition-colors duration-300">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
-          <div className="text-center max-w-xl mx-auto mb-10 md:mb-16">
+          <div className="text-center max-w-xl mx-auto mb-6 md:mb-10">
             <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1.5 block">
               Testimonials
             </span>
@@ -573,46 +622,50 @@ export default function HomePage() {
           </div>
 
           {/* Horizontal Auto-Sliding Carousel Track on Mobile & Grid on Desktop */}
-          <div className="flex flex-row overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-3.5 sm:gap-6 pb-4 md:pb-0 scrollbar-none" style={{ scrollbarWidth: "none" }}>
+          <div
+            ref={testimonialCarouselRef}
+            className="flex flex-row overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-4 sm:gap-8 pb-4 md:pb-0 scrollbar-none scroll-smooth"
+            style={{ scrollbarWidth: "none" }}
+          >
             {TESTIMONIALS.map((test, index) => {
               const isActive = index === activeTestimonial;
               return (
                 <div
                   key={test.id}
                   onClick={() => setActiveTestimonial(index)}
-                  className={`min-w-[270px] max-w-[290px] sm:min-w-[320px] md:min-w-0 md:max-w-none snap-center rounded-2xl sm:rounded-3xl p-4 sm:p-6 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 ${
+                  className={`min-w-[280px] max-w-[300px] sm:min-w-[340px] md:min-w-0 md:max-w-none snap-center rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 min-h-[220px] md:min-h-[280px] ${
                     isActive
-                      ? "bg-accent-teal text-white border-accent-teal shadow-lg scale-[1.01]"
-                      : "bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm opacity-90 hover:opacity-100"
+                      ? "bg-accent-teal text-white border-accent-teal shadow-xl md:scale-[1.03]"
+                      : "bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm opacity-90 hover:opacity-100 hover:border-accent-teal"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center gap-1 mb-2.5">
+                    <div className="flex items-center gap-1.5 mb-3.5">
                       {[...Array(test.rating)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-3 h-3 fill-current ${
+                          className={`w-3.5 h-3.5 md:w-4 md:h-4 fill-current ${
                             isActive ? "text-[#FDF3D8]" : "text-amber-500"
                           }`}
                         />
                       ))}
                     </div>
 
-                    <p className={`font-serif italic text-xs sm:text-sm leading-relaxed mb-4 ${isActive ? "text-white" : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80"}`}>
+                    <p className={`font-serif italic text-xs sm:text-sm md:text-base leading-relaxed mb-6 ${isActive ? "text-white" : "text-[#1F1B16]/85 dark:text-[#F7F3EC]/85"}`}>
                       &ldquo;{test.quote}&rdquo;
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2.5 pt-2 border-t border-white/20 dark:border-[#F7F3EC]/10">
+                  <div className="flex items-center gap-3 pt-3 border-t border-white/20 dark:border-[#F7F3EC]/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={test.avatar}
                       alt={test.name}
-                      className="w-8 h-8 rounded-full object-cover border-2 border-white/50 shrink-0"
+                      className="w-9 h-9 md:w-11 md:h-11 rounded-full object-cover border-2 border-white/60 shrink-0"
                     />
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-xs leading-tight truncate">{test.name}</h4>
-                      <p className={`text-[10px] mt-0.5 truncate ${isActive ? "text-white/80" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60"}`}>
+                      <h4 className="font-bold text-xs md:text-sm leading-tight truncate">{test.name}</h4>
+                      <p className={`text-[10px] md:text-xs mt-0.5 truncate ${isActive ? "text-white/80" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60"}`}>
                         {test.role}
                       </p>
                     </div>
@@ -639,7 +692,7 @@ export default function HomePage() {
       </section>
 
       {/* SPECIAL OFFERS */}
-      <section id="offer" className="py-12 md:py-32">
+      <section id="offer" className="py-10 md:py-16">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
           <div className="mb-6 md:mb-12">
             <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1.5 block">

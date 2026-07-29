@@ -261,10 +261,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {/* Live Clock Component */}
             <AdminLiveClock />
-
-            <span className="hidden sm:inline-block text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-3 py-1 rounded-full">
-              Millennium HQ Admin
-            </span>
           </div>
 
           <div className="flex items-center gap-3">

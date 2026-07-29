@@ -116,11 +116,8 @@ export default function AdminDashboardHome() {
       )}
 
       {/* Hero Welcome Banner */}
-      <div className="bg-[#1C1814] text-[#F7F3EC] rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#F7F3EC]/10">
-        <div className="space-y-1 relative z-10">
-          <span className="text-[9px] font-black uppercase tracking-widest bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full inline-block">
-            Store Operations HQ
-          </span>
+      <div className="bg-[#1C1814] text-[#F7F3EC] rounded-3xl p-5 md:p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#F7F3EC]/10">
+        <div className="relative z-10">
           <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight">
             {greeting.text}, Administrator {greeting.icon}
           </h1>
