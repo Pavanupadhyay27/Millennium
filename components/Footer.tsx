@@ -15,7 +15,7 @@ export default function Footer() {
             <img
               src="/logo.png"
               alt="Millennium Furniture"
-              className="h-14 md:h-20 w-auto object-contain dark:brightness-0 dark:invert"
+              className="h-20 md:h-28 w-auto object-contain dark:brightness-0 dark:invert"
             />
           </a>
           <p className="text-[#1F1B16]/75 dark:text-[#F7F3EC]/75 text-[11px] md:text-sm leading-relaxed max-w-sm font-light">
