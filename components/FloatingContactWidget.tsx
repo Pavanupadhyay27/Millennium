@@ -61,7 +61,7 @@ export default function FloatingContactWidget() {
           >
             {/* Ambient Animated Glow Header Background */}
             <div className="relative bg-gradient-to-br from-[#1F1B16] via-[#2A241E] to-[#141210] text-cream p-6 pb-7 overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent-teal/30 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/30 rounded-full blur-2xl pointer-events-none" />
               
               {/* Close Button */}
               <button
@@ -78,17 +78,17 @@ export default function FloatingContactWidget() {
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
                 </span>
                 <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
-                  <Sparkles className="w-3 h-3" /> Concierge Online
+                  <Sparkles className="w-3 h-3" /> Live Business Support
                 </span>
               </div>
               <h4 className="font-serif text-xl font-bold tracking-tight">Millennium Studio</h4>
               <p className="text-xs text-cream/70 mt-1 font-light leading-relaxed">
-                Handcrafted Teak Furniture Experts & B2B Trade Advisors
+                Handcrafted Teak Furniture & Custom B2B Advisors
               </p>
 
               {/* Response Time Badge */}
               <div className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-semibold text-cream/90 border border-white/10">
-                <Clock className="w-3 h-3 text-accent-teal" /> Typical callback within 15 mins
+                <Clock className="w-3 h-3 text-emerald-400" /> Instant Response via WhatsApp / Phone
               </div>
             </div>
 
@@ -98,25 +98,25 @@ export default function FloatingContactWidget() {
                 onClick={() => setActiveTab("quick")}
                 className={`flex-1 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === "quick"
-                    ? "bg-white dark:bg-charcoal text-accent-teal shadow-md"
+                    ? "bg-white dark:bg-charcoal text-emerald-600 dark:text-emerald-400 shadow-md"
                     : "text-charcoal/60 dark:text-cream/60 hover:text-charcoal dark:hover:text-cream"
                 }`}
               >
-                <MessageSquare className="w-3.5 h-3.5" /> Fast Callback
+                <MessageSquare className="w-3.5 h-3.5" /> Callback Request
               </button>
               <button
                 onClick={() => setActiveTab("call")}
                 className={`flex-1 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === "call"
-                    ? "bg-white dark:bg-charcoal text-accent-teal shadow-md"
+                    ? "bg-white dark:bg-charcoal text-emerald-600 dark:text-emerald-400 shadow-md"
                     : "text-charcoal/60 dark:text-cream/60 hover:text-charcoal dark:hover:text-cream"
                 }`}
               >
-                <Phone className="w-3.5 h-3.5" /> Call & Email
+                <Phone className="w-3.5 h-3.5" /> Direct Call & Chat
               </button>
             </div>
 
-            {/* Form Content */}
+            {/* Form & Actions Body */}
             <div className="p-5 sm:p-6">
               {activeTab === "quick" ? (
                 !submitted ? (
@@ -128,7 +128,7 @@ export default function FloatingContactWidget() {
                         placeholder="Your Full Name *"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-accent-teal transition-all"
+                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                       />
                     </div>
                     <div>
@@ -138,7 +138,7 @@ export default function FloatingContactWidget() {
                         placeholder="Phone Number *"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-accent-teal transition-all"
+                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                       />
                     </div>
                     <div>
@@ -147,19 +147,19 @@ export default function FloatingContactWidget() {
                         placeholder="Furniture item or custom enquiry (Optional)..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-accent-teal resize-none transition-all"
+                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none transition-all"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-accent-teal hover:bg-teal-700 text-white py-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-accent-teal/20 active:scale-95 disabled:opacity-50"
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-95 disabled:opacity-50"
                     >
                       {isSubmitting ? "Connecting..." : "Request Instant Callback"} <Send className="w-3.5 h-3.5" />
                     </button>
 
                     <p className="text-[10px] text-center text-charcoal/50 dark:text-cream/50 flex items-center justify-center gap-1">
-                      <ShieldCheck className="w-3 h-3 text-accent-teal" /> 100% Privacy Protected & No Spam
+                      <ShieldCheck className="w-3 h-3 text-emerald-500" /> 100% Secure & Confidential Inquiry
                     </p>
                   </form>
                 ) : (
@@ -169,7 +169,7 @@ export default function FloatingContactWidget() {
                     </div>
                     <h5 className="font-serif font-bold text-lg">Inquiry Received!</h5>
                     <p className="text-xs text-charcoal/70 dark:text-cream/70 max-w-xs mx-auto leading-relaxed">
-                      Thank you <strong>{name}</strong>! Our teak furniture consultant will call you shortly at <strong>{phone}</strong>.
+                      Thank you <strong>{name}</strong>! Our consultant will connect with you at <strong>{phone}</strong> shortly.
                     </p>
                     <button
                       onClick={handleReset}
@@ -180,29 +180,47 @@ export default function FloatingContactWidget() {
                   </div>
                 )
               ) : (
-                <div className="space-y-3.5 py-1">
+                <div className="space-y-3 py-1">
+                  {/* WhatsApp Business Option */}
                   <a
-                    href="tel:+919876543210"
-                    className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-accent-teal/10 hover:bg-accent-teal/20 border border-accent-teal/20 text-accent-teal transition-all group shadow-sm"
+                    href="https://wa.me/919337721647?text=Hello%20Millennium%20Furniture,%20I%20am%20interested%20in%20your%20solid%20teak%20wood%20designs."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 transition-all group shadow-sm"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-accent-teal text-white flex items-center justify-center shadow-md">
-                      <Phone className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                    <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shrink-0">
+                      <MessageCircle className="w-5 h-5 fill-white/20" />
                     </div>
                     <div>
-                      <div className="text-[10px] uppercase font-bold text-charcoal/50 dark:text-cream/50">Call Showroom Directly</div>
-                      <div className="text-xs font-extrabold text-charcoal dark:text-cream">+91 98765 43210</div>
+                      <div className="text-[10px] uppercase font-mono font-extrabold tracking-wider text-emerald-700 dark:text-emerald-400">WhatsApp Business Chat</div>
+                      <div className="text-xs font-extrabold text-charcoal dark:text-cream">+91 93377 21647</div>
                     </div>
                   </a>
 
+                  {/* Direct Phone Call Option */}
+                  <a
+                    href="tel:+919337721647"
+                    className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-charcoal/5 dark:bg-cream/5 hover:bg-charcoal/10 dark:hover:bg-cream/10 border border-charcoal/10 dark:border-cream/10 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-2xl bg-charcoal text-cream dark:bg-cream dark:text-charcoal flex items-center justify-center shadow-md shrink-0">
+                      <Phone className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase font-bold text-charcoal/50 dark:text-cream/50">Call Sales Hotline</div>
+                      <div className="text-xs font-extrabold text-charcoal dark:text-cream">+91 93377 21647</div>
+                    </div>
+                  </a>
+
+                  {/* Email Link */}
                   <a
                     href="mailto:contact@millenniumfurniture.in"
                     className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-charcoal/5 dark:bg-cream/5 hover:bg-charcoal/10 dark:hover:bg-cream/10 border border-charcoal/10 dark:border-cream/10 transition-all group"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-charcoal text-cream dark:bg-cream dark:text-charcoal flex items-center justify-center shadow-md">
+                    <div className="w-10 h-10 rounded-2xl bg-charcoal/80 text-cream dark:bg-cream/80 dark:text-charcoal flex items-center justify-center shadow-md shrink-0">
                       <Mail className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-[10px] uppercase font-bold text-charcoal/50 dark:text-cream/50">Send Official Email</div>
+                      <div className="text-[10px] uppercase font-bold text-charcoal/50 dark:text-cream/50">Official Email</div>
                       <div className="text-xs font-bold text-charcoal dark:text-cream">contact@millenniumfurniture.in</div>
                     </div>
                   </a>
@@ -210,9 +228,9 @@ export default function FloatingContactWidget() {
                   <button
                     onClick={() => {
                       setIsOpen(false);
-                      openLeadModal({ actionType: "Floating Luxury Widget Customization" });
+                      openLeadModal({ actionType: "Floating WhatsApp / Custom Inquiry" });
                     }}
-                    className="w-full text-center py-2.5 text-xs font-bold text-accent-teal hover:underline tracking-wide border border-accent-teal/30 rounded-2xl bg-accent-teal/5"
+                    className="w-full text-center py-2.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline tracking-wide border border-emerald-500/20 rounded-2xl bg-emerald-500/5"
                   >
                     Need B2B Wholesale / Trade Pricing? Click &rarr;
                   </button>
@@ -223,19 +241,19 @@ export default function FloatingContactWidget() {
         )}
       </AnimatePresence>
 
-      {/* Modern Floating Trigger Button with Glassmorphism & Micro-Pulsing Ring */}
+      {/* Floating Trigger Button with WhatsApp Icon integration */}
       <motion.button
         whileHover={{ scale: 1.05, y: -2 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-3 px-5 py-3.5 rounded-full bg-[#1F1B16] dark:bg-[#FAF7F2] text-cream dark:text-[#1F1B16] shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:shadow-accent-teal/40 transition-all duration-300 border border-white/20 dark:border-black/20"
-        aria-label="Contact Us"
+        className="group relative flex items-center gap-3 px-5 py-3.5 rounded-full bg-[#1F1B16] dark:bg-[#FAF7F2] text-cream dark:text-[#1F1B16] shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:shadow-emerald-500/40 transition-all duration-300 border border-white/20 dark:border-black/20"
+        aria-label="Contact Us & WhatsApp"
       >
         {/* Glow halo animation */}
-        <span className="absolute -inset-1 rounded-full bg-accent-teal/40 animate-pulse pointer-events-none opacity-40 blur-sm" />
+        <span className="absolute -inset-1 rounded-full bg-emerald-500/30 animate-pulse pointer-events-none opacity-40 blur-sm" />
 
         {/* Dynamic Icon */}
-        <div className="relative w-7 h-7 rounded-full bg-accent-teal text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
+        <div className="relative w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
           {isOpen ? (
             <X className="w-4 h-4 transition-transform duration-200 rotate-90" />
           ) : (

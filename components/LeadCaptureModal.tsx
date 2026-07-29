@@ -119,7 +119,7 @@ export default function LeadCaptureModal() {
                       <input
                         type="tel"
                         required
-                        placeholder="+91 98765 43210"
+                        placeholder="+91 93377 21647"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-accent-teal"
