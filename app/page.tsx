@@ -728,7 +728,7 @@ export default function HomePage() {
       </section>
 
       {/* TESTIMONIALS & CUSTOMER REVIEWS */}
-      <section id="about-us" className="py-10 md:py-16 bg-[#F7F3EC] dark:bg-[#12100e] transition-colors duration-300 relative overflow-hidden">
+      <section id="about-us" className="py-10 md:py-16 bg-[#F7F3EC] dark:bg-[#12100e] transition-colors duration-300 relative">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 md:mb-10">
             <div>
@@ -742,11 +742,9 @@ export default function HomePage() {
             
             <button
               onClick={() => setReviewModalOpen(true)}
-              className="group relative inline-flex items-center gap-2.5 bg-gradient-to-r from-accent-teal to-emerald-700 hover:from-emerald-700 hover:to-accent-teal text-white rounded-full px-6 py-3 text-xs font-extrabold uppercase tracking-wider shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 border border-white/20 self-start sm:self-auto"
+              className="inline-flex items-center gap-2.5 bg-accent-teal hover:bg-accent-teal/90 text-white rounded-full px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider transition-all duration-300 active:scale-95 border border-accent-teal self-start sm:self-auto"
             >
-              <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:rotate-12 transition-transform">
-                <Star className="w-3 h-3 fill-white text-white" />
-              </span>
+              <Star className="w-3.5 h-3.5 fill-white text-white" />
               <span>+ Write a Review</span>
             </button>
           </div>
@@ -765,7 +763,7 @@ export default function HomePage() {
                   onClick={() => setActiveTestimonial(index)}
                   className={`min-w-[280px] sm:min-w-[340px] md:min-w-[380px] max-w-[400px] snap-start rounded-3xl p-6 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 ${
                     isActive
-                      ? "bg-white dark:bg-[#1C1814] border-accent-teal ring-2 ring-accent-teal/40 shadow-xl scale-[1.02]"
+                      ? "bg-white dark:bg-[#1C1814] border-accent-teal ring-2 ring-accent-teal/40 shadow-md scale-[1.02]"
                       : "bg-white/80 dark:bg-[#1C1814]/80 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm opacity-90 hover:opacity-100"
                   }`}
                 >
@@ -824,23 +822,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CUSTOMER REVIEW SUBMISSION MODAL (FIXED MAX-HEIGHT & SCROLLABLE) */}
+      {/* CUSTOMER REVIEW SUBMISSION MODAL (CENTERED VIEWPORT CONTAINER) */}
       <AnimatePresence>
         {reviewModalOpen && (
-          <>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.6 }}
               exit={{ opacity: 0 }}
               onClick={() => setReviewModalOpen(false)}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 cursor-pointer"
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-pointer"
             />
 
+            {/* Modal Dialog Card */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-md max-h-[85vh] overflow-y-auto bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-2xl z-50 text-[#1F1B16] dark:text-[#F7F3EC] scrollbar-thin"
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="relative w-full max-w-md max-h-[85vh] overflow-y-auto bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-2xl z-10 text-[#1F1B16] dark:text-[#F7F3EC] scrollbar-thin"
             >
               <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 mb-4 sticky top-0 bg-white dark:bg-[#1C1814] z-10">
                 <div className="flex items-center gap-2.5">
@@ -967,7 +967,7 @@ export default function HomePage() {
                 </form>
               )}
             </motion.div>
-          </>
+          </div>
         )}
       </AnimatePresence>
 
