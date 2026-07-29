@@ -202,6 +202,17 @@ const INITIAL_PRODUCTS: Product[] = [
   }
 ];
 
+export interface CustomerTestimonial {
+  id: string;
+  name: string;
+  role: string;
+  quote: string;
+  rating: number;
+  avatar: string;
+  verified: boolean;
+  date: string;
+}
+
 export interface OrderRecord {
   id: string;
   date: string;
@@ -234,6 +245,39 @@ export interface CustomerRecord {
 const INITIAL_ORDERS_LIST: OrderRecord[] = [];
 const INITIAL_CUSTOMERS_LIST: CustomerRecord[] = [];
 
+const INITIAL_TESTIMONIALS: CustomerTestimonial[] = [
+  {
+    id: "t1",
+    name: "Aarav Mohapatra",
+    role: "Architect, Bhubaneswar",
+    quote: "Millennium's attention to teak joinery and finish is exceptional. Delivery inside Bhubaneswar was prompt and seamless.",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120",
+    verified: true,
+    date: "May 14, 2026",
+  },
+  {
+    id: "t2",
+    name: "Priyanka Patnaik",
+    role: "Homeowner, Cuttack",
+    quote: "Visiting their local studio in Bhubaneswar convinced me. The blush accent chair is now the highlight of our living room!",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120",
+    verified: true,
+    date: "Apr 28, 2026",
+  },
+  {
+    id: "t3",
+    name: "Ranjan Dash",
+    role: "Wholesale Partner, Rourkela",
+    quote: "Excellent commercial terms and reliable logistics. The build quality of solid wood frames is highly appreciated.",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120",
+    verified: true,
+    date: "Jun 02, 2026",
+  },
+];
+
 export interface AppNotification {
   id: string;
   orderId: string;
@@ -254,6 +298,7 @@ interface AppState {
   orders: OrderRecord[];
   customers: CustomerRecord[];
   notifications: AppNotification[];
+  customerTestimonials: CustomerTestimonial[];
   activePromoCode: string | null;
   cartDrawerOpen: boolean;
   leadModalOpen: boolean;
@@ -264,6 +309,9 @@ interface AppState {
   
   cmsSettings: CmsSettings;
   updateCmsSettings: (settings: Partial<CmsSettings>) => void;
+
+  // Testimonial Actions
+  addCustomerTestimonial: (testimonial: Omit<CustomerTestimonial, "id" | "date" | "verified">) => void;
 
   // Notification Actions
   markAllNotificationsRead: () => void;
@@ -316,6 +364,7 @@ export const useStore = create<AppState>()(
       orders: INITIAL_ORDERS_LIST,
       customers: INITIAL_CUSTOMERS_LIST,
       notifications: INITIAL_NOTIFICATIONS,
+      customerTestimonials: INITIAL_TESTIMONIALS,
       activePromoCode: null,
       cartDrawerOpen: false,
       leadModalOpen: false,
@@ -328,6 +377,18 @@ export const useStore = create<AppState>()(
         set((state) => ({
           cmsSettings: { ...state.cmsSettings, ...newSettings },
         })),
+
+      addCustomerTestimonial: (testimonial) => {
+        const newTestimonial: CustomerTestimonial = {
+          ...testimonial,
+          id: `t-${Date.now()}`,
+          verified: true,
+          date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        };
+        set((state) => ({
+          customerTestimonials: [newTestimonial, ...state.customerTestimonials],
+        }));
+      },
 
       markAllNotificationsRead: () =>
         set((state) => ({
@@ -566,6 +627,7 @@ export const useStore = create<AppState>()(
         orders: state.orders,
         customers: state.customers,
         notifications: state.notifications,
+        customerTestimonials: state.customerTestimonials,
         activePromoCode: state.activePromoCode,
         cmsSettings: state.cmsSettings,
         isAuthenticated: state.isAuthenticated,

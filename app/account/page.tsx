@@ -55,9 +55,27 @@ const MOCK_RETAIL_ORDERS = [
 ];
 
 export default function CustomerAccountPage() {
-  const { wishlist, toggleWishlist, addToCart, logout, user, isAuthenticated } = useStore();
+  const { wishlist, toggleWishlist, addToCart, logout, user, isAuthenticated, orders } = useStore();
   const [activeTab, setActiveTab] = useState<"overview" | "wishlist" | "orders" | "addresses" | "settings">("overview");
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+
+  // Combine Mock and Real Store Orders for customer profile history
+  const allUserOrders = React.useMemo(() => {
+    const formattedStoreOrders = orders.map((o) => ({
+      id: o.id,
+      date: o.date,
+      status: o.status || "Delivered",
+      total: o.total,
+      items: o.items.map((i) => ({
+        name: i.name,
+        color: i.color || "Natural Wood",
+        quantity: i.quantity,
+        price: i.price,
+        image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=300",
+      })),
+    }));
+    return [...formattedStoreOrders, ...MOCK_RETAIL_ORDERS];
+  }, [orders]);
 
   // Address State
   const [addresses, setAddresses] = useState([
@@ -167,7 +185,7 @@ export default function CustomerAccountPage() {
               <div className="flex items-center gap-6 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 px-5 py-2.5 rounded-2xl text-xs">
                 <div>
                   <span className="text-[9px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block">Orders</span>
-                  <span className="font-serif font-bold text-base text-[#1F1B16] dark:text-[#F7F3EC]">{MOCK_RETAIL_ORDERS.length} Delivered</span>
+                  <span className="font-serif font-bold text-base text-[#1F1B16] dark:text-[#F7F3EC]">{allUserOrders.length} Completed</span>
                 </div>
                 <div className="w-px h-7 bg-[#1F1B16]/10 dark:bg-[#F7F3EC]/10" />
                 <div>
@@ -389,16 +407,16 @@ export default function CustomerAccountPage() {
                 <div>
                   <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 mb-6">
                     <div>
-                      <h2 className="font-serif text-2xl font-bold">Order History</h2>
-                      <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">Track past orders and delivery invoices.</p>
+                      <h2 className="font-serif text-2xl font-bold">Order History & Purchased Details</h2>
+                      <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">Track your past purchases, furniture joinery specs, and delivery status.</p>
                     </div>
                     <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">
-                      {MOCK_RETAIL_ORDERS.length} Delivered Orders
+                      {allUserOrders.length} Orders Logged
                     </span>
                   </div>
 
                   <div className="space-y-4">
-                    {MOCK_RETAIL_ORDERS.map((ord) => {
+                    {allUserOrders.map((ord) => {
                       const isExpanded = expandedOrderId === ord.id;
                       return (
                         <div

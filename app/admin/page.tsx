@@ -14,7 +14,8 @@ import {
   Check,
   ArrowUpRight,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Trash2
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useStore } from "../../lib/store";
@@ -57,7 +58,7 @@ const ABANDONED_CARTS = [
 ];
 
 export default function AdminDashboardHome() {
-  const { offers, toggleOfferActive, cmsSettings, updateCmsSettings } = useStore();
+  const { offers, toggleOfferActive, deleteOffer, cmsSettings, updateCmsSettings } = useStore();
   const [lowStockList, setLowStockList] = useState(INITIAL_LOW_STOCK);
   const [abandonedCarts, setAbandonedCarts] = useState(ABANDONED_CARTS);
   const [restockInputs, setRestockInputs] = useState<Record<string, number>>({ p2: 10, p5: 15, p9: 5 });
@@ -236,19 +237,32 @@ export default function AdminDashboardHome() {
                 </span>
               </div>
 
-              <button
-                onClick={() => {
-                  toggleOfferActive(off.id);
-                  showToast(`Offer ${off.code} is now ${!off.active ? "ON" : "OFF"}.`);
-                }}
-                className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase shrink-0 transition-all ${
-                  off.active
-                    ? "bg-emerald-500 text-white hover:bg-emerald-600 shadow-sm"
-                    : "bg-red-500 text-white hover:bg-red-600"
-                }`}
-              >
-                {off.active ? "Turn OFF" : "Turn ON"}
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => {
+                    toggleOfferActive(off.id);
+                    showToast(`Offer ${off.code} is now ${!off.active ? "ON" : "OFF"}.`);
+                  }}
+                  className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase transition-all ${
+                    off.active
+                      ? "bg-emerald-500 text-white hover:bg-emerald-600 shadow-sm"
+                      : "bg-amber-500 text-white hover:bg-amber-600"
+                  }`}
+                >
+                  {off.active ? "Turn OFF" : "Turn ON"}
+                </button>
+
+                <button
+                  onClick={() => {
+                    deleteOffer(off.id);
+                    showToast(`Offer ${off.code} deleted permanently.`);
+                  }}
+                  className="p-1.5 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                  title="Delete Offer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

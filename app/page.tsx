@@ -232,10 +232,20 @@ const TESTIMONIALS = [
 ];
 
 export default function HomePage() {
-  const { wishlist, toggleWishlist, products: storeProducts } = useStore();
+  const { wishlist, toggleWishlist, products: storeProducts, customerTestimonials, addCustomerTestimonial, orders } = useStore();
   const [heroImageIdx, setHeroImageIdx] = useState(0);
   const [activeRoomTab, setActiveRoomTab] = useState<"Living Room" | "Study" | "Media Room" | "Dining Room">("Living Room");
-  const [activeTestimonial, setActiveTestimonial] = useState(1);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+
+  // Review Modal State
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [newReview, setNewReview] = useState({
+    name: "",
+    role: "Verified Customer",
+    quote: "",
+    rating: 5,
+  });
+  const [reviewSuccess, setReviewSuccess] = useState(false);
 
   const displayProducts = useMemo(() => {
     const activeStoreItems = storeProducts
@@ -359,58 +369,170 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FLOATING VERIFIED BRAND BADGES BAR (SLEEPWELL, CENTURYPLY, FEATHERLITE, GODREJ) */}
-      <section className="bg-white dark:bg-[#1C1814] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 py-4 shadow-sm relative z-20">
-        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 shrink-0">
+      {/* AUTO-MOVING BRAND PARTNERS & MATERIALS CAROUSEL WITH REAL LOGOS & BRAND NAMES */}
+      <section className="bg-white dark:bg-[#1C1814] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 py-4 shadow-sm relative z-20 overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#1F1B16]/80 dark:text-[#F7F3EC]/80">
               Verified Brand Partners & Materials
             </span>
           </div>
+          <span className="text-[10px] font-mono text-accent-teal font-semibold hidden sm:inline-block">
+            Authentic Sourcing Guarantee
+          </span>
+        </div>
 
-          <div className="flex items-center gap-4 sm:gap-8 overflow-x-auto w-full md:w-auto justify-between md:justify-end pb-1 md:pb-0 scrollbar-none" style={{ scrollbarWidth: "none" }}>
+        {/* Continuous Auto-Moving Marquee Track */}
+        <div className="relative w-full overflow-hidden flex py-1">
+          {/* Subtle gradient edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white dark:from-[#1C1814] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white dark:from-[#1C1814] to-transparent z-10 pointer-events-none" />
+
+          <motion.div
+            className="flex items-center gap-6 sm:gap-10 shrink-0 whitespace-nowrap"
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{
+              repeat: Infinity,
+              ease: "linear",
+              duration: 25,
+            }}
+          >
             {[
-              { name: "Sleepwell", tag: "Mattress Tech Partner" },
-              { name: "CenturyPly", tag: "Marine Teak Grade" },
-              { name: "Featherlite", tag: "Ergonomic Hardware" },
-              { name: "Godrej Interio", tag: "Steel Joinery" },
-              { name: "Pepperfry", tag: "Verified Merchant" },
-            ].map((brand) => (
-              <div
-                key={brand.name}
-                className="flex items-center gap-2 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full px-3.5 py-1.5 shrink-0 shadow-sm hover:border-accent-teal transition-all group"
-              >
-                <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[9px] font-black">
-                  ✓
-                </span>
-                <span className="font-serif text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors">
-                  {brand.name}
-                </span>
-                <span className="text-[9px] font-mono text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 hidden sm:inline">
-                  • {brand.tag}
-                </span>
-              </div>
-            ))}
-          </div>
+              {
+                name: "Sleepwell",
+                tag: "Mattress Tech Partner",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/ thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
+                fallbackLogo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=120",
+                color: "bg-blue-900/10 text-blue-800 dark:text-blue-300",
+                badge: "Official Mattress Partner",
+              },
+              {
+                name: "CenturyPly",
+                tag: "Marine Teak Grade",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CenturyPly_logo.svg/640px-CenturyPly_logo.svg.png",
+                fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
+                color: "bg-amber-900/10 text-amber-800 dark:text-amber-300",
+                badge: "700+ Teak Grade",
+              },
+              {
+                name: "Featherlite",
+                tag: "Ergonomic Hardware",
+                logo: "https://featherlitefurniture.com/wp-content/uploads/2021/04/Featherlite-Logo-1.png",
+                fallbackLogo: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=120",
+                color: "bg-emerald-900/10 text-emerald-800 dark:text-emerald-300",
+                badge: "Ergonomic Hardware",
+              },
+              {
+                name: "Godrej Interio",
+                tag: "Steel Joinery",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Godrej_Logo.svg/512px-Godrej_Logo.svg.png",
+                fallbackLogo: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=120",
+                color: "bg-rose-900/10 text-rose-800 dark:text-rose-300",
+                badge: "Precision Steel Joinery",
+              },
+              {
+                name: "Pepperfry",
+                tag: "Verified Merchant",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepperfry_Logo.png/640px-Pepperfry_Logo.png",
+                fallbackLogo: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=120",
+                color: "bg-orange-900/10 text-orange-800 dark:text-orange-300",
+                badge: "Verified Marketplace Partner",
+              },
+            ]
+              .concat([
+                {
+                  name: "Sleepwell",
+                  tag: "Mattress Tech Partner",
+                  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
+                  fallbackLogo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=120",
+                  color: "bg-blue-900/10 text-blue-800 dark:text-blue-300",
+                  badge: "Official Mattress Partner",
+                },
+                {
+                  name: "CenturyPly",
+                  tag: "Marine Teak Grade",
+                  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CenturyPly_logo.svg/640px-CenturyPly_logo.svg.png",
+                  fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
+                  color: "bg-amber-900/10 text-amber-800 dark:text-amber-300",
+                  badge: "700+ Teak Grade",
+                },
+                {
+                  name: "Featherlite",
+                  tag: "Ergonomic Hardware",
+                  logo: "https://featherlitefurniture.com/wp-content/uploads/2021/04/Featherlite-Logo-1.png",
+                  fallbackLogo: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=120",
+                  color: "bg-emerald-900/10 text-emerald-800 dark:text-emerald-300",
+                  badge: "Ergonomic Hardware",
+                },
+                {
+                  name: "Godrej Interio",
+                  tag: "Steel Joinery",
+                  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Godrej_Logo.svg/512px-Godrej_Logo.svg.png",
+                  fallbackLogo: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=120",
+                  color: "bg-rose-900/10 text-rose-800 dark:text-rose-300",
+                  badge: "Precision Steel Joinery",
+                },
+                {
+                  name: "Pepperfry",
+                  tag: "Verified Merchant",
+                  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepperfry_Logo.png/640px-Pepperfry_Logo.png",
+                  fallbackLogo: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=120",
+                  color: "bg-orange-900/10 text-orange-800 dark:text-orange-300",
+                  badge: "Verified Marketplace Partner",
+                },
+              ])
+              .map((brand, idx) => (
+                <div
+                  key={`${brand.name}-${idx}`}
+                  className="flex items-center gap-3 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl px-4 py-2 shrink-0 shadow-sm hover:border-accent-teal hover:shadow-md transition-all group cursor-pointer"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-inner group-hover:scale-105 transition-transform">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={brand.logo}
+                      alt={`${brand.name} logo`}
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        // Fallback image if remote SVG/PNG fails
+                        (e.target as HTMLImageElement).src = brand.fallbackLogo;
+                      }}
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[8px] font-black shrink-0">
+                        ✓
+                      </span>
+                      <span className="font-serif text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors">
+                        {brand.name}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-medium text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">
+                      • {brand.tag}
+                    </span>
+                  </div>
+                </div>
+              ))}
+          </motion.div>
         </div>
       </section>
 
       {/* POPULAR PRODUCTS CATALOG */}
       <section
         id="collections"
-        className="py-10 md:py-16 bg-[#FAF8F5] dark:bg-[#1A1612] border-y border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 transition-colors duration-300"
+        className="py-8 md:py-12 bg-[#FAF8F5] dark:bg-[#1A1612] border-y border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 transition-colors duration-300"
       >
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
             <div>
-              <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1.5 block">
+              <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1 block">
                 Handcrafted Catalog
               </span>
               <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl font-bold text-[#1F1B16] dark:text-[#F7F3EC] transition-colors">
                 Popular Collections
               </h2>
-              <p className="text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 text-xs sm:text-sm mt-1.5 transition-colors">
+              <p className="text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 text-xs sm:text-sm mt-1 transition-colors">
                 Discover sustainably harvested teak wood designs crafted in Bhubaneswar.
               </p>
             </div>
@@ -425,7 +547,7 @@ export default function HomePage() {
           {/* HORIZONTAL SCROLL CAROUSEL FOR BOTH MOBILE & DESKTOP (2 to 3 products visible per view) */}
           <div
             ref={productCarouselRef}
-            className="flex flex-row gap-3.5 sm:gap-6 overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory"
+            className="flex flex-row gap-3.5 sm:gap-6 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory"
             style={{ scrollbarWidth: "none" }}
           >
             {displayProducts.map((prod) => (
@@ -506,10 +628,10 @@ export default function HomePage() {
       </section>
 
       {/* ROOM INSPIRATION */}
-      <section id="lookbook" className="py-16 md:py-32">
+      <section id="lookbook" className="py-8 md:py-14">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
-          <div className="text-center max-w-2xl mx-auto mb-10 md:mb-16">
-            <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1.5 block">
+          <div className="text-center max-w-2xl mx-auto mb-6 md:mb-10">
+            <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1 block">
               Curated Spaces
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl font-bold text-[#1F1B16] dark:text-[#F7F3EC] leading-tight">
@@ -609,63 +731,74 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section id="about-us" className="py-10 md:py-16 bg-[#F7F3EC] dark:bg-[#12100e] transition-colors duration-300">
+      {/* TESTIMONIALS & CUSTOMER REVIEWS */}
+      <section id="about-us" className="py-10 md:py-16 bg-[#F7F3EC] dark:bg-[#12100e] transition-colors duration-300 relative">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
-          <div className="text-center max-w-xl mx-auto mb-6 md:mb-10">
-            <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1.5 block">
-              Testimonials
-            </span>
-            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
-              What Our Customers Say
-            </h2>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 md:mb-10">
+            <div>
+              <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1 block">
+                Customer Voices
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                What Our Buyers Say
+              </h2>
+            </div>
+            
+            <button
+              onClick={() => setReviewModalOpen(true)}
+              className="bg-accent-teal hover:bg-accent-teal/90 text-white rounded-full px-5 py-2.5 text-xs font-bold inline-flex items-center gap-2 shadow-md hover:shadow-lg transition-all self-start sm:self-auto"
+            >
+              <Star className="w-3.5 h-3.5 fill-white" /> + Write a Review
+            </button>
           </div>
 
-          {/* Horizontal Auto-Sliding Carousel Track on Mobile & Grid on Desktop */}
+          {/* Compact Attractive Testimonials Track */}
           <div
             ref={testimonialCarouselRef}
-            className="flex flex-row overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-4 sm:gap-8 pb-4 md:pb-0 scrollbar-none scroll-smooth"
-            style={{ scrollbarWidth: "none" }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"
           >
-            {TESTIMONIALS.map((test, index) => {
+            {(customerTestimonials || TESTIMONIALS).map((test, index) => {
               const isActive = index === activeTestimonial;
               return (
                 <div
                   key={test.id}
                   onClick={() => setActiveTestimonial(index)}
-                  className={`min-w-[280px] max-w-[300px] sm:min-w-[340px] md:min-w-0 md:max-w-none snap-center rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 min-h-[220px] md:min-h-[280px] ${
+                  className={`rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between cursor-pointer border shadow-sm hover:shadow-md ${
                     isActive
-                      ? "bg-accent-teal text-white border-accent-teal shadow-xl md:scale-[1.03]"
-                      : "bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm opacity-90 hover:opacity-100 hover:border-accent-teal"
+                      ? "bg-white dark:bg-[#1C1814] border-accent-teal ring-2 ring-accent-teal/30 scale-[1.01]"
+                      : "bg-white/80 dark:bg-[#1C1814]/80 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 opacity-90 hover:opacity-100"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center gap-1.5 mb-3.5">
-                      {[...Array(test.rating)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-3.5 h-3.5 md:w-4 md:h-4 fill-current ${
-                            isActive ? "text-[#FDF3D8]" : "text-amber-500"
-                          }`}
-                        />
-                      ))}
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                      <div className="flex items-center gap-1">
+                        {[...Array(test.rating)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[9px] font-mono font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        ✓ Verified Buyer
+                      </span>
                     </div>
 
-                    <p className={`font-serif italic text-xs sm:text-sm md:text-base leading-relaxed mb-6 ${isActive ? "text-white" : "text-[#1F1B16]/85 dark:text-[#F7F3EC]/85"}`}>
+                    <p className="font-serif italic text-xs leading-relaxed text-[#1F1B16]/85 dark:text-[#F7F3EC]/85 mb-4 line-clamp-3">
                       &ldquo;{test.quote}&rdquo;
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-3 border-t border-white/20 dark:border-[#F7F3EC]/10">
+                  <div className="flex items-center gap-3 pt-3 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={test.avatar}
+                      src={test.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120"}
                       alt={test.name}
-                      className="w-9 h-9 md:w-11 md:h-11 rounded-full object-cover border-2 border-white/60 shrink-0"
+                      className="w-8 h-8 rounded-full object-cover border border-accent-teal/40 shrink-0"
                     />
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-xs md:text-sm leading-tight truncate">{test.name}</h4>
-                      <p className={`text-[10px] md:text-xs mt-0.5 truncate ${isActive ? "text-white/80" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60"}`}>
+                      <h4 className="font-bold text-xs leading-tight truncate text-[#1F1B16] dark:text-[#F7F3EC]">{test.name}</h4>
+                      <p className="text-[10px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 truncate mt-0.5">
                         {test.role}
                       </p>
                     </div>
@@ -674,22 +807,155 @@ export default function HomePage() {
               );
             })}
           </div>
-
-          {/* Testimonial Indicator Dots for Mobile */}
-          <div className="flex md:hidden justify-center items-center gap-2 mt-4">
-            {TESTIMONIALS.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveTestimonial(idx)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  activeTestimonial === idx ? "w-6 bg-accent-teal" : "w-1.5 bg-[#1F1B16]/20 dark:bg-[#F7F3EC]/20"
-                }`}
-                aria-label={`Go to testimonial ${idx + 1}`}
-              />
-            ))}
-          </div>
         </div>
       </section>
+
+      {/* CUSTOMER REVIEW SUBMISSION MODAL */}
+      <AnimatePresence>
+        {reviewModalOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setReviewModalOpen(false)}
+              className="fixed inset-0 bg-black z-50 cursor-pointer"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-2xl z-50 text-[#1F1B16] dark:text-[#F7F3EC]"
+            >
+              <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-accent-teal/10 text-accent-teal flex items-center justify-center">
+                    <Star className="w-4 h-4 fill-accent-teal text-accent-teal" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold">Write a Review</h3>
+                    <p className="text-[10px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">Share your experience with Millennium</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setReviewModalOpen(false)}
+                  className="w-7 h-7 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 hover:bg-accent-teal hover:text-white flex items-center justify-center transition-all text-xs font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {reviewSuccess ? (
+                <div className="py-8 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto text-xl font-black">
+                    ✓
+                  </div>
+                  <h4 className="font-serif font-bold text-base">Thank You for Your Feedback!</h4>
+                  <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">Your review has been verified and published.</p>
+                  <button
+                    onClick={() => {
+                      setReviewSuccess(false);
+                      setReviewModalOpen(false);
+                    }}
+                    className="bg-accent-teal text-white rounded-full px-6 py-2 text-xs font-bold"
+                  >
+                    Done
+                  </button>
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!newReview.name || !newReview.quote) return;
+                    addCustomerTestimonial({
+                      name: newReview.name,
+                      role: newReview.role || "Verified Buyer, Odisha",
+                      quote: newReview.quote,
+                      rating: newReview.rating,
+                      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120",
+                    });
+                    setReviewSuccess(true);
+                  }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                      Your Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newReview.name}
+                      onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                      placeholder="e.g. Sweta Mishra"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                      City & Occupation (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={newReview.role}
+                      onChange={(e) => setNewReview({ ...newReview, role: e.target.value })}
+                      placeholder="e.g. Homeowner, Bhubaneswar"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                      Rating *
+                    </label>
+                    <div className="flex gap-2 items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setNewReview({ ...newReview, rating: star })}
+                          className="p-1"
+                        >
+                          <Star
+                            className={`w-6 h-6 transition-all ${
+                              star <= newReview.rating
+                                ? "fill-amber-400 text-amber-400 scale-110"
+                                : "text-gray-300 dark:text-gray-600"
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                      Your Review *
+                    </label>
+                    <textarea
+                      required
+                      rows={3}
+                      value={newReview.quote}
+                      onChange={(e) => setNewReview({ ...newReview, quote: e.target.value })}
+                      placeholder="Tell us about the quality, delivery, or custom joinery..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC] resize-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-accent-teal text-white font-bold py-3 rounded-full text-xs uppercase tracking-wider hover:bg-accent-teal/90 transition-all shadow-md"
+                  >
+                    Submit Review
+                  </button>
+                </form>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* SPECIAL OFFERS */}
       <section id="offer" className="py-10 md:py-16">
