@@ -14,6 +14,14 @@ import {
   Phone,
   ArrowRight,
   Package,
+  Home,
+  Briefcase,
+  Building,
+  TreeSun,
+  Sparkles,
+  Tag,
+  Boxes,
+  Compass,
 } from "lucide-react";
 import { useStore } from "../lib/store";
 
@@ -29,7 +37,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   
-  const { cart, toggleCartDrawer, products, openLeadModal } = useStore();
+  const { cart, toggleCartDrawer, products } = useStore();
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
@@ -280,7 +288,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all ${iconThemeClass}`}
             >
-              {mobileMenuOpen ? <X className="w-4.5 h-4.5" /> : <Menu className="w-4.5 h-4.5" />}
+              {mobileMenuOpen ? <X className="w-4.5 h-4.5 text-accent-teal" /> : <Menu className="w-4.5 h-4.5" />}
             </button>
           </div>
         </nav>
@@ -385,36 +393,121 @@ export default function Navbar({ transparent = false }: NavbarProps) {
         </AnimatePresence>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* ULTRA LUXURY MOBILE MENU SIDEBAR DRAWER */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="pointer-events-auto lg:hidden absolute top-full left-4 right-4 mt-2 bg-cream/98 dark:bg-charcoal/98 border border-charcoal/10 dark:border-cream/15 backdrop-blur-xl rounded-3xl shadow-2xl py-6 px-6 flex flex-col gap-4 text-charcoal dark:text-cream"
-          >
-            {[
-              { name: "Home", href: "/" },
-              { name: "Home Spaces", href: "/spaces/home" },
-              { name: "Office & Work", href: "/spaces/office" },
-              { name: "Commercial & Hospitality", href: "/spaces/commercial" },
-              { name: "Outdoor & Patio", href: "/spaces/outdoor" },
-              { name: "Lookbook / Curated Spaces", href: "/#lookbook" },
-              { name: "Special Offers", href: "/#offer" },
-              { name: "Wholesale Supplies", href: "/wholesale" },
-              { name: "Contact & Studio", href: "/#contact" },
-            ].map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="font-serif text-base font-semibold hover:text-accent-teal transition-colors py-1 border-b border-charcoal/5 dark:border-cream/5 last:border-0"
-              >
-                {link.name}
-              </a>
-            ))}
-          </motion.div>
+          <>
+            {/* Backdrop Blur Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="pointer-events-auto fixed inset-0 z-50 bg-black/60 backdrop-blur-md lg:hidden"
+            />
+
+            {/* Premium Slide-Over Drawer */}
+            <motion.aside
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 280 }}
+              className="pointer-events-auto fixed top-0 right-0 bottom-0 z-50 w-[85%] max-w-sm bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] shadow-2xl flex flex-col justify-between overflow-y-auto border-l border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 lg:hidden"
+            >
+              {/* Drawer Header with Logo & Close button */}
+              <div className="p-6 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex items-center justify-between">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logo.png"
+                  alt="Millennium Furniture"
+                  className="h-12 w-auto object-contain dark:brightness-0 dark:invert"
+                />
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-10 h-10 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 flex items-center justify-center text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Navigation Links List */}
+              <div className="p-6 space-y-6 flex-1">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal block mb-3">
+                    Navigation Menu
+                  </span>
+                  <div className="space-y-1">
+                    {[
+                      { name: "Home", href: "/", icon: Home },
+                      { name: "Lookbook Showcase", href: "/#lookbook", icon: Compass },
+                      { name: "Special Offers", href: "/#offer", icon: Tag },
+                      { name: "B2B Wholesale Tier", href: "/wholesale", icon: Boxes },
+                      { name: "Contact & Studio", href: "/#contact", icon: Phone },
+                    ].map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-accent-teal/10 hover:text-accent-teal font-serif text-base font-bold transition-all group"
+                        >
+                          <span className="flex items-center gap-3">
+                            <Icon className="w-4 h-4 text-accent-teal" />
+                            {item.name}
+                          </span>
+                          <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Spaces Categories Subsection */}
+                <div className="pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal block mb-3">
+                    Curated Spaces
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { name: "Home Spaces", href: "/spaces/home", icon: Home },
+                      { name: "Office & Work", href: "/spaces/office", icon: Briefcase },
+                      { name: "Commercial", href: "/spaces/commercial", icon: Building },
+                      { name: "Outdoor Patio", href: "/spaces/outdoor", icon: Sparkles },
+                    ].map((space) => {
+                      const Icon = space.icon;
+                      return (
+                        <a
+                          key={space.name}
+                          href={space.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="p-3 rounded-2xl bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex flex-col gap-1.5 hover:border-accent-teal transition-all group shadow-sm"
+                        >
+                          <Icon className="w-4 h-4 text-accent-teal" />
+                          <span className="text-xs font-bold leading-tight group-hover:text-accent-teal transition-colors">
+                            {space.name}
+                          </span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Drawer Footer with Quick Call Button */}
+              <div className="p-6 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 bg-white/50 dark:bg-black/20 space-y-3">
+                <a
+                  href="tel:+919337721647"
+                  className="w-full py-3 bg-accent-teal hover:bg-accent-teal/90 text-white rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
+                >
+                  <Phone className="w-4 h-4" /> Call Studio (+91 93377 21647)
+                </a>
+                <p className="text-[10px] text-center text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 font-medium">
+                  Handcrafting Teak Furniture in Bhubaneswar
+                </p>
+              </div>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
     </header>
