@@ -130,25 +130,6 @@ export default function CheckoutPage() {
             email: shippingForm.email || "",
             contact: shippingForm.phone || "",
           },
-          config: {
-            display: {
-              blocks: {
-                banks: {
-                  name: "UPI (Google Pay / PhonePe / Paytm / QR)",
-                  instruments: [
-                    {
-                      method: "upi",
-                      flows: ["qr", "intent", "collect"],
-                    },
-                  ],
-                },
-              },
-              sequence: ["block.banks"],
-              preferences: {
-                show_default_blocks: true,
-              },
-            },
-          },
           theme: {
             color: "#0D5C53",
           },
