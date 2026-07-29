@@ -76,6 +76,8 @@ export const metadata: Metadata = {
   },
 };
 
+import FloatingContactWidget from "../components/FloatingContactWidget";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -88,6 +90,7 @@ export default function RootLayout({
         <CartDrawer />
         <AddedToCartToast />
         <LeadCaptureModal />
+        <FloatingContactWidget />
       </body>
     </html>
   );
