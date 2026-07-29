@@ -25,34 +25,51 @@ export async function POST(request: Request) {
       );
     }
 
-    const instance = new Razorpay({
-      key_id,
-      key_secret,
+    // Direct HTTP call to Razorpay Order API using Basic Auth
+    const authHeader = `Basic ${Buffer.from(`${key_id.trim()}:${key_secret.trim()}`).toString("base64")}`;
+
+    const rzpResponse = await fetch("https://api.razorpay.com/v1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authHeader,
+      },
+      body: JSON.stringify({
+        amount: amountInPaise,
+        currency: currency || "INR",
+        receipt: receipt || `rec_${Date.now()}`,
+        notes: notes || {
+          store: "Millennium Furniture Bhubaneswar",
+        },
+      }),
     });
 
-    const orderOptions = {
-      amount: amountInPaise,
-      currency: currency || "INR",
-      receipt: receipt || `rec_${Date.now()}`,
-      notes: notes || {
-        store: "Millennium Furniture Bhubaneswar",
-      },
-    };
+    const rzpData = await rzpResponse.json();
 
-    const razorpayOrder = await instance.orders.create(orderOptions);
+    if (!rzpResponse.ok) {
+      console.error("Razorpay API Error Response:", rzpData);
+      return NextResponse.json(
+        {
+          success: false,
+          error: rzpData.error?.description || rzpData.error?.reason || "Razorpay API error while creating order",
+          details: rzpData,
+        },
+        { status: rzpResponse.status }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      order_id: razorpayOrder.id,
-      orderId: razorpayOrder.id,
-      amount: razorpayOrder.amount,
-      currency: razorpayOrder.currency,
+      order_id: rzpData.id,
+      orderId: rzpData.id,
+      amount: rzpData.amount,
+      currency: rzpData.currency,
       keyId: key_id,
     });
   } catch (error: any) {
-    console.error("Razorpay Order Creation Error:", error);
+    console.error("Razorpay Order Creation Exception:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Razorpay API error while creating order" },
+      { success: false, error: error.message || "Server exception while creating Razorpay order" },
       { status: 500 }
     );
   }
