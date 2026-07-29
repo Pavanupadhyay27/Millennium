@@ -75,7 +75,11 @@ export default function CheckoutPage() {
 
   const handlePaymentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStep("review");
+    if (paymentMethod === "upi" || paymentMethod === "card") {
+      handlePlaceOrder();
+    } else {
+      setStep("review");
+    }
   };
 
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
@@ -560,9 +564,16 @@ export default function CheckoutPage() {
                             </button>
                             <button
                               type="submit"
-                              className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2"
+                              disabled={isProcessingPayment}
+                              className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 disabled:opacity-50"
                             >
-                              Proceed to Review <ArrowRight className="w-4 h-4" />
+                              {isProcessingPayment ? (
+                                "Opening Razorpay..."
+                              ) : paymentMethod === "cod" ? (
+                                <>Proceed to Review <ArrowRight className="w-4 h-4" /></>
+                              ) : (
+                                <>Pay ₹{total.toLocaleString("en-IN")} via Razorpay <CheckCircle className="w-4 h-4" /></>
+                              )}
                             </button>
                           </div>
                         </form>
