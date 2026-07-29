@@ -417,13 +417,49 @@ export default function OrderProcessorPage() {
                 </span>
               </div>
 
-              {/* Print Packing Slips Actions */}
-              <button
-                onClick={() => window.print()}
-                className="w-full bg-[#1F1B16] hover:bg-[#1F1B16]/90 text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:shadow-warm-md transition-all duration-300"
-              >
-                <Printer className="w-4 h-4" /> Print Packing Slip & Invoice
-              </button>
+              {/* Action Buttons: Print Slip & Send PDF Invoice Email */}
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("/api/orders/invoice", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          orderId: selectedOrder.id,
+                          customerName: selectedOrder.customerName,
+                          customerEmail: selectedOrder.email,
+                          customerPhone: selectedOrder.phone,
+                          address: selectedOrder.address,
+                          gstin: selectedOrder.gstin,
+                          items: selectedOrder.items,
+                          totalAmount: selectedOrder.total,
+                          date: selectedOrder.date,
+                        }),
+                      });
+                      const data = await res.json();
+                      if (data.success) {
+                        setToastMsg(`PDF Invoice generated & dispatched to ${selectedOrder.email}!`);
+                        setTimeout(() => setToastMsg(null), 4000);
+                      } else {
+                        alert(data.error || "Could not send email");
+                      }
+                    } catch (err) {
+                      console.error("PDF Invoice dispatch error:", err);
+                    }
+                  }}
+                  className="w-full bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3 rounded-full text-xs flex items-center justify-center gap-2 transition-all shadow-md"
+                >
+                  <Mail className="w-4 h-4" /> Send PDF Invoice to {selectedOrder.email}
+                </button>
+
+                <button
+                  onClick={() => window.print()}
+                  className="w-full bg-[#1F1B16] dark:bg-[#FAF7F2] dark:text-[#1F1B16] hover:opacity-90 text-white font-bold py-3 rounded-full text-xs flex items-center justify-center gap-2 transition-all"
+                >
+                  <Printer className="w-4 h-4" /> Print Packing Slip & Invoice
+                </button>
+              </div>
 
             </motion.div>
           )}
