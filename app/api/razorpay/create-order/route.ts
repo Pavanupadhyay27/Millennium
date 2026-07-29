@@ -15,8 +15,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const key_id = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TJRLmrLh2IFoPD";
-    const key_secret = process.env.RAZORPAY_KEY_SECRET || "CE3e1InOR0tJJPkzo0JbVq7R";
+    const rawKeyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TJRLmrLh2IFoPD";
+    const rawKeySecret = process.env.RAZORPAY_KEY_SECRET || "CE3e1InOR0tJJPkzo0JbVq7R";
+
+    const key_id = rawKeyId.replace(/^["']|["']$/g, "").trim();
+    const key_secret = rawKeySecret.replace(/^["']|["']$/g, "").trim();
 
     if (!key_id || !key_secret) {
       return NextResponse.json(
@@ -26,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     // Direct HTTP call to Razorpay Order API using Basic Auth
-    const authHeader = `Basic ${Buffer.from(`${key_id.trim()}:${key_secret.trim()}`).toString("base64")}`;
+    const authHeader = `Basic ${Buffer.from(`${key_id}:${key_secret}`).toString("base64")}`;
 
     const rzpResponse = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
