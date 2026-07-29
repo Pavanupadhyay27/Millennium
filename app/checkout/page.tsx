@@ -19,7 +19,6 @@ import {
   Minus,
   Trash2,
   Banknote,
-  Smartphone,
   Check,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -35,7 +34,7 @@ const formatPrice = (price: number) => {
 export default function CheckoutPage() {
   const { cart, clearCart, updateCartQuantity, removeFromCart, addNotification, addOrder } = useStore();
   const [step, setStep] = useState<"shipping" | "payment" | "review">("shipping");
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "upi" | "card">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
   const [isCompleted, setIsCompleted] = useState(false);
 
   // Form Fields
@@ -47,13 +46,6 @@ export default function CheckoutPage() {
     city: "",
     state: "",
     postalCode: "",
-  });
-
-  const [paymentForm, setPaymentForm] = useState({
-    cardName: "",
-    cardNumber: "",
-    cardExpiry: "",
-    cardCvc: "",
   });
 
   // Calculate prices
@@ -75,7 +67,7 @@ export default function CheckoutPage() {
 
   const handlePaymentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (paymentMethod === "upi" || paymentMethod === "card") {
+    if (paymentMethod === "online") {
       handlePlaceOrder();
     } else {
       setStep("review");
@@ -87,7 +79,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async () => {
     const orderId = `RET-2026-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    if (paymentMethod === "upi" || paymentMethod === "card") {
+    if (paymentMethod === "online") {
       setIsProcessingPayment(true);
       try {
         // 1. Create Razorpay Order via backend API
@@ -129,9 +121,9 @@ export default function CheckoutPage() {
           image: "/logo.png",
           order_id: razorpayData.orderId,
           prefill: {
-            name: shippingForm.fullName || "Test Customer",
-            email: shippingForm.email || "test@domain.com",
-            contact: shippingForm.phone || "9437000000",
+            name: shippingForm.fullName || "",
+            email: shippingForm.email || "",
+            contact: shippingForm.phone || "",
           },
           theme: {
             color: "#0D5C53",
@@ -146,10 +138,10 @@ export default function CheckoutPage() {
               });
 
               // Finalize Order Creation after successful payment
-              await finalizeOrderPlacement(orderId, paymentMethod === "upi" ? "UPI Instant (Razorpay)" : "Credit/Debit Card (Razorpay)");
+              await finalizeOrderPlacement(orderId, "Online Payment (Razorpay)");
             } catch (vErr) {
               console.error("Payment verification error:", vErr);
-              await finalizeOrderPlacement(orderId, "Razorpay (Online Payment)");
+              await finalizeOrderPlacement(orderId, "Online Payment (Razorpay)");
             }
           },
           modal: {
@@ -447,127 +439,38 @@ export default function CheckoutPage() {
                               </div>
                             </div>
 
-                            {/* Option 2: UPI Instant Transfer */}
+                            {/* Option 2: Online Payment via Razorpay (UPI / Cards / Netbanking) */}
                             <div
-                              onClick={() => setPaymentMethod("upi")}
+                              onClick={() => setPaymentMethod("online")}
                               className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
-                                paymentMethod === "upi"
+                                paymentMethod === "online"
                                   ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
                                   : "bg-[#FAF7F2] dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
                               }`}
                             >
                               <div className="flex items-center gap-3.5">
                                 <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold shrink-0 transition-colors ${
-                                  paymentMethod === "upi" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
+                                  paymentMethod === "online" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
                                 }`}>
-                                  <Smartphone className="w-5 h-5" />
+                                  <CreditCard className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">UPI Instant (GPay / PhonePe / Paytm / Razorpay)</h4>
+                                  <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Online Payment (UPI / Cards / Netbanking)</h4>
                                   <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
-                                    Fast 1-click checkout via any UPI App or QR code scan.
+                                    GPay, PhonePe, Paytm, UPI QR, Visa, Mastercard, RuPay & more via Razorpay.
                                   </p>
-                                </div>
-                              </div>
-                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                paymentMethod === "upi" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
-                              }`}>
-                                {paymentMethod === "upi" && <Check className="w-3 h-3 stroke-[3]" />}
-                              </div>
-                            </div>
-
-                            {/* Option 3: Credit / Debit Card (WITH EXPANDABLE FORM FIELDS) */}
-                            <div
-                              onClick={() => setPaymentMethod("card")}
-                              className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-                                paymentMethod === "card"
-                                  ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
-                                  : "bg-[#FAF7F2] dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3.5">
-                                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold shrink-0 transition-colors ${
-                                    paymentMethod === "card" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
-                                  }`}>
-                                    <CreditCard className="w-5 h-5" />
-                                  </div>
-                                  <div>
-                                    <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Credit / Debit Card</h4>
-                                    <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
-                                      Visa, Mastercard, RuPay, and American Express.
+                                  {paymentMethod === "online" && (
+                                    <p className="text-[10px] font-bold text-accent-teal mt-1.5 flex items-center gap-1">
+                                      <Lock className="w-3 h-3" /> Secure payment gateway — you will choose your method in the next step
                                     </p>
-                                  </div>
-                                </div>
-                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                  paymentMethod === "card" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
-                                }`}>
-                                  {paymentMethod === "card" && <Check className="w-3 h-3 stroke-[3]" />}
+                                  )}
                                 </div>
                               </div>
-
-                              {/* EXPANDABLE CARD INPUT FIELDS */}
-                              {paymentMethod === "card" && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: "auto" }}
-                                  className="mt-4 pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 space-y-3"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <div>
-                                    <label className="block text-[9px] font-extrabold uppercase tracking-widest mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                                      Cardholder Name *
-                                    </label>
-                                    <input
-                                      type="text"
-                                      value={paymentForm.cardName}
-                                      onChange={(e) => setPaymentForm({ ...paymentForm, cardName: e.target.value })}
-                                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
-                                    />
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-[9px] font-extrabold uppercase tracking-widest mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                                      Card Number *
-                                    </label>
-                                    <div className="relative">
-                                      <input
-                                        type="text"
-                                        value={paymentForm.cardNumber}
-                                        onChange={(e) => setPaymentForm({ ...paymentForm, cardNumber: e.target.value })}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
-                                      />
-                                      <Lock className="w-3.5 h-3.5 text-accent-teal absolute right-3.5 top-1/2 -translate-y-1/2" />
-                                    </div>
-                                  </div>
-
-                                  <div className="grid grid-cols-2 gap-3">
-                                    <div>
-                                      <label className="block text-[9px] font-extrabold uppercase tracking-widest mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                                        Expiry Date (MM/YY) *
-                                      </label>
-                                      <input
-                                        type="text"
-                                        value={paymentForm.cardExpiry}
-                                        onChange={(e) => setPaymentForm({ ...paymentForm, cardExpiry: e.target.value })}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
-                                      />
-                                    </div>
-                                    <div>
-                                      <label className="block text-[9px] font-extrabold uppercase tracking-widest mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                                        CVV Security Code *
-                                      </label>
-                                      <input
-                                        type="password"
-                                        maxLength={4}
-                                        value={paymentForm.cardCvc}
-                                        onChange={(e) => setPaymentForm({ ...paymentForm, cardCvc: e.target.value })}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
-                                      />
-                                    </div>
-                                  </div>
-                                </motion.div>
-                              )}
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                paymentMethod === "online" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
+                              }`}>
+                                {paymentMethod === "online" && <Check className="w-3 h-3 stroke-[3]" />}
+                              </div>
                             </div>
                           </div>
 
@@ -589,7 +492,7 @@ export default function CheckoutPage() {
                               ) : paymentMethod === "cod" ? (
                                 <>Proceed to Review <ArrowRight className="w-4 h-4" /></>
                               ) : (
-                                <>Pay ₹{total.toLocaleString("en-IN")} via Razorpay <CheckCircle className="w-4 h-4" /></>
+                                <>Pay ₹{total.toLocaleString("en-IN")} Securely <CheckCircle className="w-4 h-4" /></>
                               )}
                             </button>
                           </div>
@@ -621,9 +524,7 @@ export default function CheckoutPage() {
                                 <ShieldCheck className="w-4 h-4" />
                                 {paymentMethod === "cod"
                                   ? "Cash on Delivery (Pay upon arrival)"
-                                  : paymentMethod === "upi"
-                                  ? "UPI Instant Transfer (GPay / PhonePe / Razorpay)"
-                                  : `Credit / Debit Card (${paymentForm.cardNumber ? `**** ${paymentForm.cardNumber.slice(-4)}` : "Online Card"})`}
+                                  : "Online Payment via Razorpay (UPI / Cards / Netbanking)"}
                               </p>
                             </div>
                           </div>
@@ -814,9 +715,7 @@ export default function CheckoutPage() {
                     <ShieldCheck className="w-3.5 h-3.5" />
                     {paymentMethod === "cod"
                       ? "Cash on Delivery (COD)"
-                      : paymentMethod === "upi"
-                      ? "UPI Instant (Paid via Razorpay)"
-                      : "Credit / Debit Card (Paid via Razorpay)"}
+                      : "Online Payment (Paid via Razorpay)"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pb-2.5 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
