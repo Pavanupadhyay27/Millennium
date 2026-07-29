@@ -254,10 +254,18 @@ export default function HomePage() {
   const productCarouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const heroInterval = setInterval(() => {
       setHeroImageIdx((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 4500);
-    return () => clearInterval(interval);
+
+    const testimonialInterval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+    }, 4000);
+
+    return () => {
+      clearInterval(heroInterval);
+      clearInterval(testimonialInterval);
+    };
   }, []);
 
   const currentSlide = HERO_SLIDES[heroImageIdx];
@@ -564,46 +572,47 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
+          {/* Horizontal Auto-Sliding Carousel Track on Mobile & Grid on Desktop */}
+          <div className="flex flex-row overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-3.5 sm:gap-6 pb-4 md:pb-0 scrollbar-none" style={{ scrollbarWidth: "none" }}>
             {TESTIMONIALS.map((test, index) => {
-              const isMiddle = index === 1;
+              const isActive = index === activeTestimonial;
               return (
                 <div
                   key={test.id}
                   onClick={() => setActiveTestimonial(index)}
-                  className={`rounded-3xl p-6 sm:p-8 transition-all duration-300 flex flex-col justify-between cursor-pointer border ${
-                    isMiddle
-                      ? "bg-accent-teal text-cream border-accent-teal shadow-xl"
-                      : "bg-[#FAF8F5] dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm"
+                  className={`min-w-[270px] max-w-[290px] sm:min-w-[320px] md:min-w-0 md:max-w-none snap-center rounded-2xl sm:rounded-3xl p-4 sm:p-6 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 ${
+                    isActive
+                      ? "bg-accent-teal text-white border-accent-teal shadow-lg scale-[1.01]"
+                      : "bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm opacity-90 hover:opacity-100"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center gap-1 mb-4">
+                    <div className="flex items-center gap-1 mb-2.5">
                       {[...Array(test.rating)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-3.5 h-3.5 fill-current ${
-                            isMiddle ? "text-[#FDF3D8]" : "text-accent-terracotta"
+                          className={`w-3 h-3 fill-current ${
+                            isActive ? "text-[#FDF3D8]" : "text-amber-500"
                           }`}
                         />
                       ))}
                     </div>
 
-                    <p className={`font-serif italic text-sm sm:text-base leading-relaxed mb-6 ${isMiddle ? "text-cream" : "text-charcoal dark:text-cream"}`}>
+                    <p className={`font-serif italic text-xs sm:text-sm leading-relaxed mb-4 ${isActive ? "text-white" : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80"}`}>
                       &ldquo;{test.quote}&rdquo;
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5 pt-2 border-t border-white/20 dark:border-[#F7F3EC]/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={test.avatar}
                       alt={test.name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white/50"
+                      className="w-8 h-8 rounded-full object-cover border-2 border-white/50 shrink-0"
                     />
-                    <div>
-                      <h4 className="font-bold text-xs sm:text-sm leading-tight">{test.name}</h4>
-                      <p className={`text-[11px] mt-0.5 ${isMiddle ? "text-cream/80" : "text-charcoal/60 dark:text-cream/60"}`}>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-bold text-xs leading-tight truncate">{test.name}</h4>
+                      <p className={`text-[10px] mt-0.5 truncate ${isActive ? "text-white/80" : "text-[#1F1B16]/60 dark:text-[#F7F3EC]/60"}`}>
                         {test.role}
                       </p>
                     </div>
@@ -611,6 +620,20 @@ export default function HomePage() {
                 </div>
               );
             })}
+          </div>
+
+          {/* Testimonial Indicator Dots for Mobile */}
+          <div className="flex md:hidden justify-center items-center gap-2 mt-4">
+            {TESTIMONIALS.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveTestimonial(idx)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeTestimonial === idx ? "w-6 bg-accent-teal" : "w-1.5 bg-[#1F1B16]/20 dark:bg-[#F7F3EC]/20"
+                }`}
+                aria-label={`Go to testimonial ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
       </section>
