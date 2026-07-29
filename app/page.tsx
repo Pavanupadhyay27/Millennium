@@ -771,7 +771,8 @@ export default function HomePage() {
                         {[...Array(test.rating || 5)].map((_, i) => (
                           <Star
                             key={i}
-                            className="w-4 h-4 fill-amber-400 text-amber-400"
+                            className="w-4 h-4"
+                            style={{ fill: "#F59E0B", color: "#F59E0B" }}
                           />
                         ))}
                       </div>
@@ -924,23 +925,26 @@ export default function HomePage() {
                       Rating *
                     </label>
                     <div className="flex gap-3 items-center bg-[#FAF7F2] dark:bg-[#12100E] p-3 rounded-2xl border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setNewReview({ ...newReview, rating: star })}
-                          className="p-1 hover:scale-125 transition-transform"
-                        >
-                          <Star
-                            className={`w-7 h-7 transition-all ${
-                              star <= newReview.rating
-                                ? "fill-amber-400 text-amber-400 drop-shadow-sm scale-110"
-                                : "fill-transparent text-gray-400 dark:text-gray-600"
-                            }`}
-                          />
-                        </button>
-                      ))}
-                      <span className="text-xs font-bold font-mono text-amber-600 dark:text-amber-400 ml-auto">
+                      {[1, 2, 3, 4, 5].map((star) => {
+                        const isFilled = star <= newReview.rating;
+                        return (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setNewReview({ ...newReview, rating: star })}
+                            className="p-1 hover:scale-125 transition-transform"
+                          >
+                            <Star
+                              className="w-7 h-7 transition-all scale-110"
+                              style={{
+                                fill: isFilled ? "#F59E0B" : "transparent",
+                                color: isFilled ? "#F59E0B" : "#6B7280",
+                              }}
+                            />
+                          </button>
+                        );
+                      })}
+                      <span className="text-xs font-bold font-mono text-amber-500 ml-auto">
                         {newReview.rating} / 5 Stars
                       </span>
                     </div>
