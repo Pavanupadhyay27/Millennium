@@ -365,18 +365,19 @@ export default function HomePage() {
             </a>
           </div>
 
+          {/* HORIZONTAL SCROLL CAROUSEL FOR BOTH MOBILE & DESKTOP (2 to 3 products visible per view) */}
           <div
             ref={productCarouselRef}
-            className="flex sm:flex-row flex-col gap-3 sm:gap-6 overflow-x-auto pb-4 sm:pb-6 scrollbar-none snap-x snap-mandatory"
+            className="flex flex-row gap-3.5 sm:gap-6 overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory"
             style={{ scrollbarWidth: "none" }}
           >
             {displayProducts.map((prod) => (
               <div
                 key={prod.id}
-                className="w-full sm:min-w-[320px] sm:max-w-[320px] snap-start flex flex-row sm:flex-col bg-white dark:bg-[#1C1814] rounded-2xl p-2.5 sm:p-0 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 group cursor-pointer shadow-sm hover:shadow-md transition-all gap-3.5 sm:gap-0"
+                className="min-w-[260px] max-w-[280px] sm:min-w-[340px] sm:max-w-[340px] snap-start flex flex-col bg-white dark:bg-[#1C1814] rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 group cursor-pointer shadow-sm hover:shadow-lg transition-all shrink-0"
               >
-                {/* Image Frame - Small horizontal square thumbnail on mobile */}
-                <div className="w-28 h-28 shrink-0 sm:w-full sm:h-auto sm:aspect-[4/5] bg-[#FAF8F5] dark:bg-[#1C1814] rounded-xl sm:rounded-2xl relative overflow-hidden flex items-center justify-center border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
+                {/* Image Frame */}
+                <div className="w-full aspect-[4/3] sm:aspect-[4/3] bg-[#FAF8F5] dark:bg-[#1C1814] rounded-xl sm:rounded-2xl relative overflow-hidden flex items-center justify-center border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={prod.image}
@@ -396,10 +397,10 @@ export default function HomePage() {
                         bg: "bg-[#FAF8F5]",
                       });
                     }}
-                    className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 dark:bg-black/80 backdrop-blur-md transition-all text-[#1F1B16] dark:text-[#F7F3EC] shadow-md"
+                    className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 p-2 rounded-full bg-white/80 dark:bg-black/80 backdrop-blur-md transition-all text-[#1F1B16] dark:text-[#F7F3EC] shadow-md"
                   >
                     <Heart
-                      className={`w-3 h-3 ${
+                      className={`w-3.5 h-3.5 ${
                         wishlist.some((w) => w.slug === prod.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"))
                           ? "fill-accent-terracotta text-accent-terracotta"
                           : "opacity-60"
@@ -408,13 +409,13 @@ export default function HomePage() {
                   </button>
                 </div>
 
-                {/* Info block - Right side on mobile, bottom on desktop */}
-                <div className="flex-1 min-w-0 sm:mt-3 flex flex-col sm:flex-row justify-between sm:items-end p-1 sm:p-0">
-                  <div className="flex-1 min-w-0 sm:pr-3">
+                {/* Info block */}
+                <div className="mt-3 flex justify-between items-end flex-1">
+                  <div className="flex-1 min-w-0 pr-2">
                     <span className="text-[9px] font-bold text-accent-teal uppercase tracking-widest block mb-0.5">
                       {prod.category}
                     </span>
-                    <h3 className="font-serif font-bold text-sm sm:text-base text-[#1F1B16] dark:text-[#F7F3EC] leading-snug group-hover:text-accent-teal transition-colors line-clamp-2 sm:truncate">
+                    <h3 className="font-serif font-bold text-sm sm:text-base text-[#1F1B16] dark:text-[#F7F3EC] leading-snug group-hover:text-accent-teal transition-colors truncate">
                       {prod.name}
                     </h3>
                     <span className="font-mono text-xs sm:text-sm font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] block mt-1">
@@ -436,7 +437,7 @@ export default function HomePage() {
                         bg: "bg-[#FAF8F5]",
                       });
                     }}
-                    className="mt-2 sm:mt-0 flex-shrink-0 px-3 py-1.5 sm:px-3.5 border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal dark:hover:text-white rounded-full text-[10px] font-bold tracking-wider uppercase transition-colors self-start sm:self-auto"
+                    className="flex-shrink-0 px-3.5 py-1.5 border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal dark:hover:text-white rounded-full text-[10px] font-bold tracking-wider uppercase transition-colors"
                   >
                     + Add
                   </button>
