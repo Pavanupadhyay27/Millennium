@@ -17,7 +17,6 @@ import {
   Home,
   Briefcase,
   Building,
-  TreeSun,
   Sparkles,
   Tag,
   Boxes,
@@ -108,11 +107,11 @@ export default function Navbar({ transparent = false }: NavbarProps) {
 
   const textThemeClass = shouldBeTransparent
     ? "text-white/90 hover:text-white"
-    : "text-charcoal/85 hover:text-accent-teal dark:text-cream/85 dark:hover:text-accent-teal";
+    : "text-[#1F1B16]/85 hover:text-accent-teal dark:text-[#F7F3EC]/85 dark:hover:text-accent-teal";
 
   const iconThemeClass = shouldBeTransparent
     ? "text-white/90 hover:bg-white/10 hover:text-white"
-    : "text-charcoal/80 hover:bg-charcoal/5 hover:text-charcoal dark:text-cream/80 dark:hover:bg-cream/5 dark:hover:text-cream";
+    : "text-[#1F1B16]/80 hover:bg-[#1F1B16]/5 hover:text-[#1F1B16] dark:text-[#F7F3EC]/80 dark:hover:bg-[#F7F3EC]/5 dark:hover:text-[#F7F3EC]";
 
   return (
     <header className="fixed top-3 left-0 w-full z-50 px-4 sm:px-8 md:px-12 flex items-center justify-between pointer-events-none">
@@ -136,7 +135,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
           className={`transition-all duration-300 rounded-full border px-4 sm:px-8 py-2 flex items-center gap-3 sm:gap-6 ${
             shouldBeTransparent
               ? "bg-black/40 dark:bg-black/60 backdrop-blur-md border-white/20 shadow-xl"
-              : "bg-cream/95 dark:bg-charcoal/95 backdrop-blur-md border-charcoal/10 dark:border-cream/10 shadow-xl"
+              : "bg-[#FAF7F2]/95 dark:bg-[#12100E]/95 backdrop-blur-md border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-xl"
           }`}
         >
           {/* Search Input field */}
@@ -146,7 +145,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
               animate={{ width: "260px", opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
               onSubmit={handleSearchSubmit}
-              className="flex items-center gap-2 px-3 py-1 bg-white/90 dark:bg-charcoal/90 border border-charcoal/15 dark:border-cream/20 rounded-full shadow-inner relative"
+              className="flex items-center gap-2 px-3 py-1 bg-white/90 dark:bg-[#1C1814]/90 border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 rounded-full shadow-inner relative"
             >
               <Search className="w-3.5 h-3.5 shrink-0 text-accent-teal" />
               <input
@@ -154,7 +153,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                 placeholder="Search products or categories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent text-xs font-semibold focus:outline-none text-charcoal dark:text-cream placeholder:text-charcoal/60 dark:placeholder:text-cream/60"
+                className="w-full bg-transparent text-xs font-semibold focus:outline-none text-[#1F1B16] dark:text-[#F7F3EC] placeholder:text-[#1F1B16]/60 dark:placeholder:text-[#F7F3EC]/60"
                 autoFocus
               />
               <button
@@ -163,7 +162,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                   setSearchActive(false);
                   setSearchQuery("");
                 }}
-                className="p-0.5 rounded-full hover:bg-charcoal/10 dark:hover:bg-cream/10 text-charcoal dark:text-cream"
+                className="p-0.5 rounded-full hover:bg-[#1F1B16]/10 dark:hover:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -193,7 +192,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-cream dark:bg-charcoal border border-charcoal/10 dark:border-cream/20 rounded-2xl shadow-2xl p-3 flex flex-col gap-1 backdrop-blur-lg z-50 text-charcoal dark:text-cream"
+                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/20 rounded-2xl shadow-2xl p-3 flex flex-col gap-1 backdrop-blur-lg z-50 text-[#1F1B16] dark:text-[#F7F3EC]"
                     >
                       <a
                         href="/spaces/home"
@@ -300,7 +299,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
-              className="absolute top-full left-0 right-0 mt-3 w-full min-w-[300px] sm:min-w-[380px] bg-white dark:bg-[#1C1814] border border-charcoal/15 dark:border-cream/20 rounded-3xl shadow-2xl p-4 z-50 text-charcoal dark:text-cream overflow-hidden"
+              className="absolute top-full left-0 right-0 mt-3 w-full min-w-[300px] sm:min-w-[380px] bg-white dark:bg-[#1C1814] border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 rounded-3xl shadow-2xl p-4 z-50 text-[#1F1B16] dark:text-[#F7F3EC] overflow-hidden"
             >
               {searchResults.products.length > 0 || searchResults.categories.length > 0 ? (
                 <div className="space-y-4 max-h-[360px] overflow-y-auto pr-1">
@@ -335,19 +334,19 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                           <a
                             key={prod.id}
                             href={`/product/${prod.slug}`}
-                            className="flex items-center gap-3 p-2 rounded-2xl hover:bg-charcoal/5 dark:hover:bg-cream/5 transition-all group"
+                            className="flex items-center gap-3 p-2 rounded-2xl hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/5 transition-all group"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={prod.image}
                               alt={prod.name}
-                              className="w-10 h-10 rounded-xl object-cover border border-charcoal/10 dark:border-cream/10 shrink-0"
+                              className="w-10 h-10 rounded-xl object-cover border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shrink-0"
                             />
                             <div className="flex-1 min-w-0">
                               <h5 className="font-serif font-bold text-xs group-hover:text-accent-teal transition-colors truncate">
                                 {prod.name}
                               </h5>
-                              <span className="text-[10px] text-charcoal/60 dark:text-cream/60 block font-mono">
+                              <span className="text-[10px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 block font-mono">
                                 ₹{prod.price.toLocaleString("en-IN")} • {prod.category}
                               </span>
                             </div>
@@ -366,7 +365,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                   </div>
                   <div>
                     <h5 className="font-serif font-bold text-sm">Product Not Listed Yet</h5>
-                    <p className="text-xs text-charcoal/70 dark:text-cream/70 mt-1 leading-relaxed">
+                    <p className="text-xs text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-1 leading-relaxed">
                       We craft bespoke solid teak furniture to order. Speak to our studio advisor directly!
                     </p>
                   </div>
@@ -381,7 +380,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                     </a>
                     <a
                       href="tel:+919337721647"
-                      className="w-full py-2 bg-charcoal/5 dark:bg-cream/5 hover:bg-charcoal/10 dark:hover:bg-cream/10 border border-charcoal/10 dark:border-cream/10 rounded-2xl text-xs font-bold text-charcoal dark:text-cream flex items-center justify-center gap-1.5 transition-all"
+                      className="w-full py-2 bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/5 hover:bg-[#1F1B16]/10 dark:hover:bg-[#F7F3EC]/10 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] flex items-center justify-center gap-1.5 transition-all"
                     >
                       <Phone className="w-3.5 h-3.5 text-accent-teal" /> Call Studio Directly
                     </a>
@@ -393,45 +392,48 @@ export default function Navbar({ transparent = false }: NavbarProps) {
         </AnimatePresence>
       </div>
 
-      {/* ULTRA LUXURY MOBILE MENU SIDEBAR DRAWER */}
+      {/* LUXURY FULL-WIDTH WARM CREAM MOBILE SIDEBAR MENU */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
-            {/* Backdrop Blur Overlay */}
+            {/* Soft Backdrop Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="pointer-events-auto fixed inset-0 z-50 bg-black/60 backdrop-blur-md lg:hidden"
+              className="pointer-events-auto fixed inset-0 z-50 bg-black/50 backdrop-blur-sm lg:hidden"
             />
 
-            {/* Compact Premium Slide-Over Drawer */}
+            {/* Full-Height Warm Cream Slide-In Drawer */}
             <motion.aside
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 320 }}
-              className="pointer-events-auto fixed top-0 right-0 bottom-0 z-50 w-[75%] max-w-[280px] bg-cream/98 dark:bg-charcoal/98 backdrop-blur-2xl text-charcoal dark:text-cream shadow-2xl flex flex-col justify-between overflow-y-auto border-l border-charcoal/10 dark:border-cream/15 lg:hidden"
+              className="pointer-events-auto fixed top-0 right-0 bottom-0 z-50 w-[88%] max-w-sm bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] shadow-2xl flex flex-col justify-between overflow-y-auto border-l border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 lg:hidden"
             >
-              {/* Drawer Header with Compact Logo & Close button */}
-              <div className="p-5 border-b border-charcoal/10 dark:border-cream/10 flex items-center justify-between">
+              {/* Header */}
+              <div className="p-6 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex items-center justify-between">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/logo.png"
                   alt="Millennium Furniture"
-                  className="h-10 w-auto object-contain dark:brightness-0 dark:invert"
+                  className="h-12 w-auto object-contain dark:brightness-0 dark:invert"
                 />
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-8 h-8 rounded-full bg-charcoal/5 dark:bg-cream/10 flex items-center justify-center text-charcoal dark:text-cream hover:bg-accent-teal hover:text-white transition-all"
+                  className="w-10 h-10 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 flex items-center justify-center text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white transition-all"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5 text-accent-teal" />
                 </button>
               </div>
 
-              {/* Compact Navigation Links List */}
-              <div className="p-5 space-y-5 flex-1">
+              {/* Navigation Links */}
+              <div className="p-6 space-y-4 flex-1">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal block mb-2">
+                  Navigation & Catalog
+                </span>
                 <div className="space-y-1">
                   {[
                     { name: "Home", href: "/", icon: Home },
@@ -441,8 +443,8 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                     { name: "Outdoor & Patio", href: "/spaces/outdoor", icon: Sparkles },
                     { name: "Lookbook Showcase", href: "/#lookbook", icon: Compass },
                     { name: "Special Offers", href: "/#offer", icon: Tag },
-                    { name: "Wholesale Tier", href: "/wholesale", icon: Boxes },
-                    { name: "Contact & Studio", href: "/#contact", icon: Phone },
+                    { name: "Wholesale B2B Tier", href: "/wholesale", icon: Boxes },
+                    { name: "Contact Studio", href: "/#contact", icon: Phone },
                   ].map((item) => {
                     const Icon = item.icon;
                     return (
@@ -450,23 +452,23 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                         key={item.name}
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-accent-teal/10 hover:text-accent-teal font-serif text-sm font-semibold transition-all group"
+                        className="flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-accent-teal/10 hover:text-accent-teal font-serif text-base font-bold text-[#1F1B16] dark:text-[#F7F3EC] transition-all group border border-transparent hover:border-accent-teal/20"
                       >
-                        <span className="flex items-center gap-2.5">
-                          <Icon className="w-3.5 h-3.5 text-accent-teal" />
+                        <span className="flex items-center gap-3">
+                          <Icon className="w-4 h-4 text-accent-teal" />
                           {item.name}
                         </span>
-                        <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-accent-teal" />
+                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-accent-teal" />
                       </a>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Minimal Brand Footer */}
-              <div className="p-5 border-t border-charcoal/10 dark:border-cream/10 text-center">
-                <p className="text-[10px] text-charcoal/50 dark:text-cream/50 font-medium">
-                  &copy; Millennium Furniture • Odisha
+              {/* Footer */}
+              <div className="p-6 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-center bg-[#FAF7F2] dark:bg-[#12100E]">
+                <p className="text-xs text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 font-semibold">
+                  Millennium Furniture • Bhubaneswar, Odisha
                 </p>
               </div>
             </motion.aside>
