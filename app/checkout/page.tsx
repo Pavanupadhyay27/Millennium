@@ -129,12 +129,30 @@ export default function CheckoutPage() {
           image: "/logo.png",
           order_id: razorpayData.orderId,
           prefill: {
-            name: shippingForm.fullName,
-            email: shippingForm.email,
-            contact: shippingForm.phone,
+            name: shippingForm.fullName || "Test Customer",
+            email: shippingForm.email || "test@domain.com",
+            contact: shippingForm.phone || "9437000000",
           },
           theme: {
             color: "#0D5C53",
+          },
+          config: {
+            display: {
+              blocks: {
+                banks: {
+                  name: "Pay via Indian Domestic Methods",
+                  instruments: [
+                    { method: "upi" },
+                    { method: "card" },
+                    { method: "netbanking" },
+                  ],
+                },
+              },
+              sequence: ["block.banks"],
+              preferences: {
+                show_default_blocks: true,
+              },
+            },
           },
           handler: async function (response: any) {
             try {
