@@ -76,7 +76,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
       wholesalePrice: 18500,
       category: "Seating",
       description: "Indulge in mid-century elegance with our signature piece. Handcrafted by local artisans in Bhubaneswar using premium, sustainably harvested solid teak timber.",
-      images: storeProduct?.image ? [storeProduct.image] : [
+      images: [
         "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
       ],
       colors: [

@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
     const isValid = generatedSignature === razorpay_signature;
 
-    if (isValid || secret === "dummy_secret_for_demo") {
+    if (isValid) {
       return NextResponse.json({
         success: true,
         message: "Razorpay payment signature verified successfully",
