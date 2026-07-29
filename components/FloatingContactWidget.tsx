@@ -3,14 +3,18 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useStore } from "../lib/store";
 
 export default function FloatingContactWidget() {
+  const pathname = usePathname();
   const { cartDrawerOpen } = useStore();
+
+  const isAdminPage = pathname?.startsWith("/admin");
 
   return (
     <AnimatePresence>
-      {!cartDrawerOpen && (
+      {!cartDrawerOpen && !isAdminPage && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
