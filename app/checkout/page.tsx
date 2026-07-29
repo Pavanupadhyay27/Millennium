@@ -21,6 +21,8 @@ import {
   Banknote,
   Check,
   FileDown,
+  Smartphone,
+  QrCode,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -35,7 +37,8 @@ const formatPrice = (price: number) => {
 export default function CheckoutPage() {
   const { cart, clearCart, updateCartQuantity, removeFromCart, addNotification, addOrder } = useStore();
   const [step, setStep] = useState<"shipping" | "payment" | "review">("shipping");
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "upi" | "online">("cod");
+  const [upiId, setUpiId] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
   const [completedOrderId, setCompletedOrderId] = useState<string>("");
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
@@ -72,7 +75,7 @@ export default function CheckoutPage() {
 
   const handlePaymentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (paymentMethod === "online") {
+    if (paymentMethod === "online" || paymentMethod === "upi") {
       handlePlaceOrder();
     } else {
       setStep("review");
@@ -83,6 +86,14 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     const orderId = `RET-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    if (paymentMethod === "upi") {
+      setIsProcessingPayment(true);
+      setTimeout(async () => {
+        await finalizeOrderPlacement(orderId, `UPI Instant (${upiId || "test@razorpay"})`);
+      }, 1000);
+      return;
+    }
 
     if (paymentMethod === "online") {
       setIsProcessingPayment(true);
@@ -487,7 +498,82 @@ export default function CheckoutPage() {
                               </div>
                             </div>
 
-                            {/* Option 2: Online Payment via Razorpay (UPI / Cards / Netbanking) */}
+                            {/* Option 2: UPI Instant Transfer (QR Code / GPay / PhonePe / Paytm) */}
+                            <div
+                              onClick={() => setPaymentMethod("upi")}
+                              className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                                paymentMethod === "upi"
+                                  ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
+                                  : "bg-[#FAF7F2] dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3.5">
+                                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold shrink-0 transition-colors ${
+                                    paymentMethod === "upi" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
+                                  }`}>
+                                    <Smartphone className="w-5 h-5" />
+                                  </div>
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">UPI Instant (GPay / PhonePe / Paytm / QR)</h4>
+                                      <span className="text-[9px] font-extrabold uppercase tracking-wider bg-accent-teal text-white px-2.5 py-0.5 rounded-full">Instant</span>
+                                    </div>
+                                    <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
+                                      Scan QR Code or enter UPI ID (e.g. test@razorpay) for 1-click payment.
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                  paymentMethod === "upi" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
+                                }`}>
+                                  {paymentMethod === "upi" && <Check className="w-3 h-3 stroke-[3]" />}
+                                </div>
+                              </div>
+
+                              {/* EXPANDABLE UPI INPUT & QR CODE */}
+                              {paymentMethod === "upi" && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  className="mt-4 pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 space-y-4"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <div className="bg-white dark:bg-[#1C1814] p-4 rounded-2xl border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex flex-col sm:flex-row items-center gap-4">
+                                    <div className="bg-white p-2.5 rounded-xl border border-[#1F1B16]/15 shrink-0 text-center">
+                                      {/* Dynamic QR Code */}
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi://pay?pa=9334309230@ybl%26pn=Millennium%20Furniture%26am=${total}%26cu=INR`}
+                                        alt="UPI QR Code"
+                                        className="w-28 h-28 mx-auto rounded-lg"
+                                      />
+                                      <span className="text-[9px] font-bold text-[#1F1B16]/60 mt-1 block">Scan with any UPI App</span>
+                                    </div>
+                                    <div className="flex-1 space-y-2 text-left w-full">
+                                      <label className="block text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                                        Or Enter UPI ID / VPA *
+                                      </label>
+                                      <div className="relative">
+                                        <input
+                                          type="text"
+                                          value={upiId}
+                                          onChange={(e) => setUpiId(e.target.value)}
+                                          placeholder="e.g. test@razorpay or 9876543210@paytm"
+                                          className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                        />
+                                        <Smartphone className="w-3.5 h-3.5 text-accent-teal absolute right-3.5 top-1/2 -translate-y-1/2" />
+                                      </div>
+                                      <p className="text-[10px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">
+                                        Supports GPay, PhonePe, Paytm, BHIM, and Razorpay test VPA (<code className="font-bold text-accent-teal">test@razorpay</code>).
+                                      </p>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </div>
+
+                            {/* Option 3: Credit / Debit Card & Netbanking via Razorpay */}
                             <div
                               onClick={() => setPaymentMethod("online")}
                               className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
@@ -503,15 +589,10 @@ export default function CheckoutPage() {
                                   <CreditCard className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Online Payment (UPI / Cards / Netbanking)</h4>
+                                  <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Credit / Debit Card & Netbanking (Razorpay)</h4>
                                   <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
-                                    GPay, PhonePe, Paytm, UPI QR, Visa, Mastercard, RuPay & more via Razorpay.
+                                    Visa, Mastercard, RuPay, Netbanking & PayLater.
                                   </p>
-                                  {paymentMethod === "online" && (
-                                    <p className="text-[10px] font-bold text-accent-teal mt-1.5 flex items-center gap-1">
-                                      <Lock className="w-3 h-3" /> Secure payment gateway — you will choose your method in the next step
-                                    </p>
-                                  )}
                                 </div>
                               </div>
                               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
@@ -536,11 +617,13 @@ export default function CheckoutPage() {
                               className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 disabled:opacity-50"
                             >
                               {isProcessingPayment ? (
-                                "Opening Razorpay..."
+                                "Processing Payment..."
                               ) : paymentMethod === "cod" ? (
                                 <>Proceed to Review <ArrowRight className="w-4 h-4" /></>
+                              ) : paymentMethod === "upi" ? (
+                                <>Pay ₹{total.toLocaleString("en-IN")} via UPI Instant <CheckCircle className="w-4 h-4" /></>
                               ) : (
-                                <>Pay ₹{total.toLocaleString("en-IN")} Securely <CheckCircle className="w-4 h-4" /></>
+                                <>Pay ₹{total.toLocaleString("en-IN")} via Razorpay <CheckCircle className="w-4 h-4" /></>
                               )}
                             </button>
                           </div>
@@ -572,7 +655,9 @@ export default function CheckoutPage() {
                                 <ShieldCheck className="w-4 h-4" />
                                 {paymentMethod === "cod"
                                   ? "Cash on Delivery (Pay upon arrival)"
-                                  : "Online Payment via Razorpay (UPI / Cards / Netbanking)"}
+                                  : paymentMethod === "upi"
+                                  ? `UPI Instant (${upiId || "test@razorpay"})`
+                                  : "Online Payment via Razorpay (Cards / Netbanking)"}
                               </p>
                             </div>
                           </div>
@@ -763,6 +848,8 @@ export default function CheckoutPage() {
                     <ShieldCheck className="w-3.5 h-3.5" />
                     {paymentMethod === "cod"
                       ? "Cash on Delivery (COD)"
+                      : paymentMethod === "upi"
+                      ? "UPI Instant (Verified)"
                       : "Online Payment (Paid via Razorpay)"}
                   </span>
                 </div>
