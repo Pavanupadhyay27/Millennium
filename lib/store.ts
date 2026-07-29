@@ -297,36 +297,72 @@ export interface CustomerRecord {
 const INITIAL_ORDERS_LIST: OrderRecord[] = [];
 const INITIAL_CUSTOMERS_LIST: CustomerRecord[] = [];
 
-const INITIAL_TESTIMONIALS: CustomerTestimonial[] = [
+export interface WholesaleApplication {
+  id: string;
+  businessName: string;
+  gstin: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  expectedVolume: number;
+  notes: string;
+  status: "Pending" | "Approved" | "Rejected";
+  history?: { id: string; date: string; value: number; status: string }[];
+}
+
+const INITIAL_WHOLESALE_APPLICATIONS: WholesaleApplication[] = [
   {
-    id: "t1",
-    name: "Aarav Mohapatra",
-    role: "Architect, Bhubaneswar",
-    quote: "Millennium's attention to teak joinery and finish is exceptional. Delivery inside Bhubaneswar was prompt and seamless.",
-    rating: 5,
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120",
-    verified: true,
-    date: "May 14, 2026",
+    id: "app-1",
+    businessName: "Mayfair Hotels & Resorts",
+    gstin: "21AAAHM98171Z9",
+    contactPerson: "Subhakanta Jena",
+    email: "purchase@mayfairhotels.com",
+    phone: "+91 94370 12345",
+    expectedVolume: 675000,
+    notes: "Requires 45 units with custom walnut stain for luxury resort patio.",
+    status: "Pending",
+    history: [
+      { id: "ORD-9821", date: "Jul 12, 2026", value: 450000, status: "Delivered" },
+      { id: "ORD-9102", date: "May 04, 2026", value: 225000, status: "Delivered" },
+    ],
   },
   {
-    id: "t2",
-    name: "Priyanka Patnaik",
-    role: "Homeowner, Cuttack",
-    quote: "Visiting their local studio in Bhubaneswar convinced me. The blush accent chair is now the highlight of our living room!",
-    rating: 5,
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120",
-    verified: true,
-    date: "Apr 28, 2026",
+    id: "app-2",
+    businessName: "Mohapatra Interiors Ltd",
+    gstin: "21AAAFM9283K1Z9",
+    contactPerson: "Rajesh Mohapatra",
+    email: "rajesh@mohapatrainteriors.com",
+    phone: "+91 94370 19283",
+    expectedVolume: 150000,
+    notes: "Requires solid teak dining chairs for a restaurant project in Cuttack.",
+    status: "Pending",
+    history: [
+      { id: "ORD-8821", date: "Jun 18, 2026", value: 150000, status: "Delivered" }
+    ],
   },
   {
-    id: "t3",
-    name: "Ranjan Dash",
-    role: "Wholesale Partner, Rourkela",
-    quote: "Excellent commercial terms and reliable logistics. The build quality of solid wood frames is highly appreciated.",
-    rating: 5,
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120",
-    verified: true,
-    date: "Jun 02, 2026",
+    id: "app-3",
+    businessName: "Odisha Housing Corp",
+    gstin: "21AABCO1928K2Z5",
+    contactPerson: "Siddharth Patnaik",
+    email: "spatnaik@odishahousing.gov.in",
+    phone: "+91 674 2530182",
+    expectedVolume: 400000,
+    notes: "Government housing contracts. Seeking bulk workstations and bookshelves.",
+    status: "Pending",
+    history: [],
+  },
+  {
+    id: "app-4",
+    businessName: "Kalinga Co-working Spaces",
+    gstin: "21AAACK1982A1ZA",
+    contactPerson: "Ananya Mishra",
+    email: "spaces@kalingahub.co.in",
+    phone: "+91 99371 82931",
+    expectedVolume: 100000,
+    notes: "Opening a new hub in Rourkela. Need desks and custom stools.",
+    status: "Pending",
+    history: [],
   },
 ];
 
@@ -350,6 +386,7 @@ interface AppState {
   orders: OrderRecord[];
   customers: CustomerRecord[];
   notifications: AppNotification[];
+  wholesaleApplications: WholesaleApplication[];
   customerTestimonials: CustomerTestimonial[];
   brandPartners: BrandPartner[];
   activePromoCode: string | null;
@@ -362,6 +399,11 @@ interface AppState {
   
   cmsSettings: CmsSettings;
   updateCmsSettings: (settings: Partial<CmsSettings>) => void;
+
+  // Wholesale Applications Actions
+  addWholesaleApplication: (app: Omit<WholesaleApplication, "id" | "status"> & { status?: "Pending" | "Approved" | "Rejected" }) => void;
+  updateWholesaleApplication: (id: string, app: Partial<WholesaleApplication>) => void;
+  deleteWholesaleApplication: (id: string) => void;
 
   // Brand Partners Actions
   addBrandPartner: (partner: Omit<BrandPartner, "id">) => void;
@@ -424,6 +466,7 @@ export const useStore = create<AppState>()(
       orders: INITIAL_ORDERS_LIST,
       customers: INITIAL_CUSTOMERS_LIST,
       notifications: INITIAL_NOTIFICATIONS,
+      wholesaleApplications: INITIAL_WHOLESALE_APPLICATIONS,
       customerTestimonials: INITIAL_TESTIMONIALS,
       brandPartners: INITIAL_BRAND_PARTNERS,
       activePromoCode: null,
@@ -438,6 +481,32 @@ export const useStore = create<AppState>()(
         set((state) => ({
           cmsSettings: { ...state.cmsSettings, ...newSettings },
         })),
+
+      addWholesaleApplication: (appData) => {
+        const newApp: WholesaleApplication = {
+          ...appData,
+          id: `app-${Date.now()}`,
+          status: appData.status || "Pending",
+          history: appData.history || [],
+        };
+        set((state) => ({
+          wholesaleApplications: [newApp, ...(state.wholesaleApplications || [])],
+        }));
+      },
+
+      updateWholesaleApplication: (id, fields) => {
+        set((state) => ({
+          wholesaleApplications: (state.wholesaleApplications || []).map((a) =>
+            a.id === id ? { ...a, ...fields } : a
+          ),
+        }));
+      },
+
+      deleteWholesaleApplication: (id) => {
+        set((state) => ({
+          wholesaleApplications: (state.wholesaleApplications || []).filter((a) => a.id !== id),
+        }));
+      },
 
       addBrandPartner: (partner) => {
         const newBp: BrandPartner = {
@@ -722,6 +791,7 @@ export const useStore = create<AppState>()(
         orders: state.orders,
         customers: state.customers,
         notifications: state.notifications,
+        wholesaleApplications: state.wholesaleApplications,
         customerTestimonials: state.customerTestimonials,
         brandPartners: state.brandPartners,
         activePromoCode: state.activePromoCode,
