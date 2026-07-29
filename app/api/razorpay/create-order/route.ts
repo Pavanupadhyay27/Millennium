@@ -6,25 +6,32 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { amount, currency = "INR", receipt, notes } = body;
 
-    if (!amount || amount <= 0) {
+    // Minimum amount validation: 100 paise (Rs. 1)
+    const amountInPaise = Math.round(Number(amount) * 100);
+    if (!amountInPaise || amountInPaise < 100) {
       return NextResponse.json(
-        { success: false, error: "Valid amount is required" },
+        { success: false, error: "Minimum order amount must be at least 100 paise (Rs. 1)" },
         { status: 400 }
       );
     }
 
-    // Initialize Razorpay SDK using keys from environment variables
-    const key_id = process.env.RAZORPAY_KEY_ID || "rzp_test_millennium_demo";
-    const key_secret = process.env.RAZORPAY_KEY_SECRET || "dummy_secret_for_demo";
+    const key_id = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TJQxxOQXnCKeTx";
+    const key_secret = process.env.RAZORPAY_KEY_SECRET || "XpHQVNa35xkQ620Out9A402t";
+
+    if (!key_id || !key_secret) {
+      return NextResponse.json(
+        { success: false, error: "Razorpay credentials not configured in server environment" },
+        { status: 401 }
+      );
+    }
 
     const instance = new Razorpay({
       key_id,
       key_secret,
     });
 
-    // Create Razorpay Order (amount in paise, e.g. Rs. 24500 => 2450000 paise)
     const orderOptions = {
-      amount: Math.round(Number(amount) * 100),
+      amount: amountInPaise,
       currency: currency || "INR",
       receipt: receipt || `rec_${Date.now()}`,
       notes: notes || {
@@ -36,15 +43,16 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
+      order_id: razorpayOrder.id,
       orderId: razorpayOrder.id,
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
       keyId: key_id,
     });
   } catch (error: any) {
-    console.error("Razorpay order creation error:", error);
+    console.error("Razorpay Order Creation Error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to create Razorpay order" },
+      { success: false, error: error.message || "Razorpay API error while creating order" },
       { status: 500 }
     );
   }
