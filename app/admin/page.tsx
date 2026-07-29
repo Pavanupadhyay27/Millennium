@@ -17,6 +17,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useStore } from "../../lib/store";
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("en-IN", {
