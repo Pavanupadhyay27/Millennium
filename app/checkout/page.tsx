@@ -288,7 +288,6 @@ export default function CheckoutPage() {
                               required
                               value={shippingForm.fullName}
                               onChange={(e) => setShippingForm({ ...shippingForm, fullName: e.target.value })}
-                              placeholder="e.g. Rajesh Mohapatra"
                               className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                             />
                           </div>
@@ -303,7 +302,6 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.email}
                                 onChange={(e) => setShippingForm({ ...shippingForm, email: e.target.value })}
-                                placeholder="name@domain.com"
                                 className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                               />
                             </div>
@@ -316,7 +314,6 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.phone}
                                 onChange={(e) => setShippingForm({ ...shippingForm, phone: e.target.value })}
-                                placeholder="+91 94370 00000"
                                 className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                               />
                             </div>
@@ -331,7 +328,6 @@ export default function CheckoutPage() {
                               required
                               value={shippingForm.address}
                               onChange={(e) => setShippingForm({ ...shippingForm, address: e.target.value })}
-                              placeholder="Flat / House No., Street, Landmark"
                               className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                             />
                           </div>
@@ -346,7 +342,6 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.city}
                                 onChange={(e) => setShippingForm({ ...shippingForm, city: e.target.value })}
-                                placeholder="Bhubaneswar"
                                 className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
@@ -359,7 +354,6 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.state}
                                 onChange={(e) => setShippingForm({ ...shippingForm, state: e.target.value })}
-                                placeholder="Odisha"
                                 className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
@@ -372,7 +366,6 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.postalCode}
                                 onChange={(e) => setShippingForm({ ...shippingForm, postalCode: e.target.value })}
-                                placeholder="751015"
                                 className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
@@ -508,7 +501,6 @@ export default function CheckoutPage() {
                                       type="text"
                                       value={paymentForm.cardName}
                                       onChange={(e) => setPaymentForm({ ...paymentForm, cardName: e.target.value })}
-                                      placeholder="Name on card"
                                       className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                                     />
                                   </div>
@@ -522,7 +514,6 @@ export default function CheckoutPage() {
                                         type="text"
                                         value={paymentForm.cardNumber}
                                         onChange={(e) => setPaymentForm({ ...paymentForm, cardNumber: e.target.value })}
-                                        placeholder="4111 1111 1111 1111"
                                         className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                                       />
                                       <Lock className="w-3.5 h-3.5 text-accent-teal absolute right-3.5 top-1/2 -translate-y-1/2" />
@@ -538,7 +529,6 @@ export default function CheckoutPage() {
                                         type="text"
                                         value={paymentForm.cardExpiry}
                                         onChange={(e) => setPaymentForm({ ...paymentForm, cardExpiry: e.target.value })}
-                                        placeholder="12/26"
                                         className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                                       />
                                     </div>
@@ -551,7 +541,6 @@ export default function CheckoutPage() {
                                         maxLength={4}
                                         value={paymentForm.cardCvc}
                                         onChange={(e) => setPaymentForm({ ...paymentForm, cardCvc: e.target.value })}
-                                        placeholder="123"
                                         className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                                       />
                                     </div>
