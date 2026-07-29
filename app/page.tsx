@@ -756,21 +756,21 @@ export default function HomePage() {
                   onClick={() => setActiveTestimonial(index)}
                   className={`min-w-[280px] sm:min-w-[340px] md:min-w-[380px] max-w-[400px] snap-start rounded-3xl p-6 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 ${
                     isActive
-                      ? "bg-white dark:bg-[#1C1814] border-accent-teal ring-2 ring-accent-teal/40 shadow-md scale-[1.02]"
-                      : "bg-white/80 dark:bg-[#1C1814]/80 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm opacity-90 hover:opacity-100"
+                      ? "bg-white dark:bg-[#1C1814] border-amber-600/60 dark:border-amber-500/60 shadow-lg scale-[1.02]"
+                      : "bg-white/90 dark:bg-[#1C1814]/90 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm hover:border-amber-600/30"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="flex items-center justify-between gap-2 mb-4">
                       <div className="flex items-center gap-1">
                         {[...Array(test.rating)].map((_, i) => (
                           <Star
                             key={i}
-                            className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
+                            className="w-4 h-4 fill-amber-400 text-amber-400"
                           />
                         ))}
                       </div>
-                      <span className="text-[9px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-500/30 px-3 py-0.5 rounded-full flex items-center gap-1">
                         ✓ Verified Buyer
                       </span>
                     </div>
@@ -780,12 +780,12 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-3.5 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                  <div className="flex items-center gap-3.5 pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={test.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120"}
                       alt={test.name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-accent-teal/40 shrink-0 shadow-sm"
+                      className="w-11 h-11 rounded-full object-cover border-2 border-amber-500/30 shrink-0 shadow-sm"
                     />
                     <div className="min-w-0 flex-1">
                       <h4 className="font-bold text-xs sm:text-sm leading-tight truncate text-[#1F1B16] dark:text-[#F7F3EC]">{test.name}</h4>
