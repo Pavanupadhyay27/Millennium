@@ -268,16 +268,19 @@ export default function CheckoutPage() {
                       
                       {/* STEP 1: SHIPPING FORM */}
                       {step === "shipping" && (
-                        <form onSubmit={handleShippingSubmit} className="space-y-4">
-                          <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                            <h2 className="font-serif text-xl font-bold">1. Delivery Address</h2>
-                            <span className="text-[10px] font-bold text-accent-teal uppercase tracking-wider bg-accent-teal/10 px-2.5 py-0.5 rounded-full">
+                        <form onSubmit={handleShippingSubmit} className="space-y-5">
+                          <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                            <div>
+                              <h2 className="font-serif text-2xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">Delivery Address</h2>
+                              <p className="text-[11px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mt-0.5">Enter your shipping details for insured doorstep transit.</p>
+                            </div>
+                            <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-widest bg-accent-teal/10 border border-accent-teal/20 px-3 py-1 rounded-full">
                               Step 1 of 3
                             </span>
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                            <label className="block text-[10px] font-extrabold uppercase tracking-widest mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                               Full Name *
                             </label>
                             <input
@@ -285,14 +288,14 @@ export default function CheckoutPage() {
                               required
                               value={shippingForm.fullName}
                               onChange={(e) => setShippingForm({ ...shippingForm, fullName: e.target.value })}
-                              placeholder="First and last name"
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                              placeholder="e.g. Rajesh Mohapatra"
+                              className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                             />
                           </div>
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                              <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                              <label className="block text-[10px] font-extrabold uppercase tracking-widest mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                                 Email Address *
                               </label>
                               <input
@@ -301,11 +304,11 @@ export default function CheckoutPage() {
                                 value={shippingForm.email}
                                 onChange={(e) => setShippingForm({ ...shippingForm, email: e.target.value })}
                                 placeholder="name@domain.com"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                               />
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                              <label className="block text-[10px] font-extrabold uppercase tracking-widest mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                                 Phone Number *
                               </label>
                               <input
@@ -313,14 +316,14 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.phone}
                                 onChange={(e) => setShippingForm({ ...shippingForm, phone: e.target.value })}
-                                placeholder="+91 XXXXX XXXXX"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                placeholder="+91 94370 00000"
+                                className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                               />
                             </div>
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                            <label className="block text-[10px] font-extrabold uppercase tracking-widest mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                               Street Address *
                             </label>
                             <input
@@ -328,14 +331,14 @@ export default function CheckoutPage() {
                               required
                               value={shippingForm.address}
                               onChange={(e) => setShippingForm({ ...shippingForm, address: e.target.value })}
-                              placeholder="Flat/House number, street, area"
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                              placeholder="Flat / House No., Street, Landmark"
+                              className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal focus:ring-2 focus:ring-accent-teal/20 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                             />
                           </div>
 
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
-                              <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                              <label className="block text-[10px] font-extrabold uppercase tracking-widest mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                                 City *
                               </label>
                               <input
@@ -343,11 +346,11 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.city}
                                 onChange={(e) => setShippingForm({ ...shippingForm, city: e.target.value })}
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                              <label className="block text-[10px] font-extrabold uppercase tracking-widest mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                                 State *
                               </label>
                               <input
@@ -355,11 +358,11 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.state}
                                 onChange={(e) => setShippingForm({ ...shippingForm, state: e.target.value })}
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                              <label className="block text-[10px] font-extrabold uppercase tracking-widest mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                                 PIN Code *
                               </label>
                               <input
@@ -367,14 +370,14 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.postalCode}
                                 onChange={(e) => setShippingForm({ ...shippingForm, postalCode: e.target.value })}
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC] font-mono"
+                                className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
                           </div>
 
                           <button
                             type="submit"
-                            className="w-full bg-[#1F1B16] text-[#F7F3EC] dark:bg-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal dark:hover:bg-accent-teal hover:text-white dark:hover:text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-4"
+                            className="w-full bg-accent-teal hover:bg-accent-teal/90 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 mt-4"
                           >
                             Continue to Payment <ArrowRight className="w-4 h-4" />
                           </button>
@@ -383,26 +386,29 @@ export default function CheckoutPage() {
 
                       {/* STEP 2: PAYMENT METHOD SELECTION */}
                       {step === "payment" && (
-                        <form onSubmit={handlePaymentSubmit} className="space-y-4">
-                          <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                            <h2 className="font-serif text-xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">2. Select Payment Method</h2>
-                            <span className="text-[10px] font-extrabold text-accent-teal uppercase tracking-wider bg-accent-teal/10 px-3 py-1 rounded-full flex items-center gap-1">
-                              <ShieldCheck className="w-3.5 h-3.5" /> 100% Encrypted & Safe
+                        <form onSubmit={handlePaymentSubmit} className="space-y-5">
+                          <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                            <div>
+                              <h2 className="font-serif text-2xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">Payment Method</h2>
+                              <p className="text-[11px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mt-0.5">Select how you would like to complete your order.</p>
+                            </div>
+                            <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full flex items-center gap-1">
+                              <ShieldCheck className="w-3.5 h-3.5" /> Encrypted & Verified
                             </span>
                           </div>
 
-                          <div className="space-y-3">
+                          <div className="space-y-3.5">
                             {/* Option 1: Cash on Delivery (COD) */}
                             <div
                               onClick={() => setPaymentMethod("cod")}
                               className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
                                 paymentMethod === "cod"
                                   ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
-                                  : "bg-[#F7F3EC]/30 dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
+                                  : "bg-[#FAF7F2] dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
                               }`}
                             >
                               <div className="flex items-center gap-3.5">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 transition-colors ${
+                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold shrink-0 transition-colors ${
                                   paymentMethod === "cod" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
                                 }`}>
                                   <Banknote className="w-5 h-5" />
@@ -410,10 +416,10 @@ export default function CheckoutPage() {
                                 <div>
                                   <div className="flex items-center gap-2">
                                     <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Cash on Delivery (COD)</h4>
-                                    <span className="text-[9px] font-extrabold uppercase tracking-wider bg-emerald-500 text-white px-2 py-0.5 rounded-full">Recommended</span>
+                                    <span className="text-[9px] font-extrabold uppercase tracking-wider bg-emerald-500 text-white px-2.5 py-0.5 rounded-full">Recommended</span>
                                   </div>
                                   <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
-                                    Pay cash at doorstep after inspecting your handcrafted furniture delivery.
+                                    Pay cash at doorstep after inspecting your handcrafted furniture.
                                   </p>
                                 </div>
                               </div>
@@ -424,27 +430,25 @@ export default function CheckoutPage() {
                               </div>
                             </div>
 
-                            {/* Option 2: UPI / QR Code Direct */}
+                            {/* Option 2: UPI Instant Transfer */}
                             <div
                               onClick={() => setPaymentMethod("upi")}
                               className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
                                 paymentMethod === "upi"
                                   ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
-                                  : "bg-[#F7F3EC]/30 dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
+                                  : "bg-[#FAF7F2] dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
                               }`}
                             >
                               <div className="flex items-center gap-3.5">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 transition-colors ${
+                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold shrink-0 transition-colors ${
                                   paymentMethod === "upi" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
                                 }`}>
                                   <Smartphone className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <div className="flex items-center gap-2">
-                                    <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">UPI Instant (GPay / PhonePe / Paytm)</h4>
-                                  </div>
+                                  <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">UPI Instant (GPay / PhonePe / Paytm / Razorpay)</h4>
                                   <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
-                                    Zero transaction fee via any Indian UPI app.
+                                    Fast 1-click checkout via any UPI App or QR code scan.
                                   </p>
                                 </div>
                               </div>
@@ -455,33 +459,102 @@ export default function CheckoutPage() {
                               </div>
                             </div>
 
-                            {/* Option 3: Credit / Debit Card */}
+                            {/* Option 3: Credit / Debit Card (WITH EXPANDABLE FORM FIELDS) */}
                             <div
                               onClick={() => setPaymentMethod("card")}
-                              className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                              className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
                                 paymentMethod === "card"
                                   ? "bg-accent-teal/10 dark:bg-accent-teal/20 border-accent-teal shadow-md"
-                                  : "bg-[#F7F3EC]/30 dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
+                                  : "bg-[#FAF7F2] dark:bg-[#12100E]/40 border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal/50"
                               }`}
                             >
-                              <div className="flex items-center gap-3.5">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 transition-colors ${
-                                  paymentMethod === "card" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3.5">
+                                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold shrink-0 transition-colors ${
+                                    paymentMethod === "card" ? "bg-accent-teal text-white" : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 text-[#1F1B16] dark:text-[#F7F3EC]"
+                                  }`}>
+                                    <CreditCard className="w-5 h-5" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Credit / Debit Card</h4>
+                                    <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
+                                      Visa, Mastercard, RuPay, and American Express.
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                  paymentMethod === "card" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
                                 }`}>
-                                  <CreditCard className="w-5 h-5" />
-                                </div>
-                                <div>
-                                  <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">Credit / Debit Card</h4>
-                                  <p className="text-[11px] text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">
-                                    Visa, Mastercard, RuPay, and American Express accepted.
-                                  </p>
+                                  {paymentMethod === "card" && <Check className="w-3 h-3 stroke-[3]" />}
                                 </div>
                               </div>
-                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                paymentMethod === "card" ? "border-accent-teal bg-accent-teal text-white" : "border-[#1F1B16]/30 dark:border-[#F7F3EC]/30"
-                              }`}>
-                                {paymentMethod === "card" && <Check className="w-3 h-3 stroke-[3]" />}
-                              </div>
+
+                              {/* EXPANDABLE CARD INPUT FIELDS */}
+                              {paymentMethod === "card" && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  className="mt-4 pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 space-y-3"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <div>
+                                    <label className="block text-[9px] font-extrabold uppercase tracking-widest mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                                      Cardholder Name *
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={paymentForm.cardName}
+                                      onChange={(e) => setPaymentForm({ ...paymentForm, cardName: e.target.value })}
+                                      placeholder="Name on card"
+                                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-[9px] font-extrabold uppercase tracking-widest mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                                      Card Number *
+                                    </label>
+                                    <div className="relative">
+                                      <input
+                                        type="text"
+                                        value={paymentForm.cardNumber}
+                                        onChange={(e) => setPaymentForm({ ...paymentForm, cardNumber: e.target.value })}
+                                        placeholder="4111 1111 1111 1111"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                      />
+                                      <Lock className="w-3.5 h-3.5 text-accent-teal absolute right-3.5 top-1/2 -translate-y-1/2" />
+                                    </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                      <label className="block text-[9px] font-extrabold uppercase tracking-widest mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                                        Expiry Date (MM/YY) *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={paymentForm.cardExpiry}
+                                        onChange={(e) => setPaymentForm({ ...paymentForm, cardExpiry: e.target.value })}
+                                        placeholder="12/26"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-[9px] font-extrabold uppercase tracking-widest mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                                        CVV Security Code *
+                                      </label>
+                                      <input
+                                        type="password"
+                                        maxLength={4}
+                                        value={paymentForm.cardCvc}
+                                        onChange={(e) => setPaymentForm({ ...paymentForm, cardCvc: e.target.value })}
+                                        placeholder="123"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-white dark:bg-[#1C1814] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                                      />
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
                             </div>
                           </div>
 
@@ -489,13 +562,13 @@ export default function CheckoutPage() {
                             <button
                               type="button"
                               onClick={() => setStep("shipping")}
-                              className="border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-xs font-bold px-5 py-3 rounded-xl flex items-center justify-center gap-1 text-[#1F1B16] dark:text-[#F7F3EC]"
+                              className="border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10 text-xs font-bold px-6 py-3.5 rounded-2xl flex items-center justify-center gap-1 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                             >
                               <ArrowLeft className="w-4 h-4" /> Back
                             </button>
                             <button
                               type="submit"
-                              className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+                              className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2"
                             >
                               Proceed to Review <ArrowRight className="w-4 h-4" />
                             </button>
@@ -505,30 +578,32 @@ export default function CheckoutPage() {
 
                       {/* STEP 3: REVIEW AND PLACE ORDER */}
                       {step === "review" && (
-                        <div className="space-y-4">
-                          <div className="pb-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                            <h2 className="font-serif text-xl font-bold">3. Confirm Order Details</h2>
+                        <div className="space-y-5">
+                          <div className="pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                            <h2 className="font-serif text-2xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">Confirm Order Details</h2>
+                            <p className="text-[11px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mt-0.5">Review your shipping address and payment summary before placing order.</p>
                           </div>
 
-                          <div className="bg-[#F7F3EC]/50 dark:bg-[#12100E]/50 rounded-2xl p-4 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-xs space-y-3">
+                          <div className="bg-[#FAF7F2] dark:bg-[#12100E] rounded-2xl p-5 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-xs space-y-4 shadow-inner">
                             <div>
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-accent-teal block mb-1">
+                              <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal block mb-1">
                                 Delivery Address
                               </span>
-                              <p className="font-bold">{shippingForm.fullName}</p>
-                              <p className="text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">{shippingForm.address}, {shippingForm.city}, {shippingForm.state} - {shippingForm.postalCode}</p>
-                              <p className="text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">Phone: {shippingForm.phone}</p>
+                              <p className="font-bold text-sm text-[#1F1B16] dark:text-[#F7F3EC]">{shippingForm.fullName}</p>
+                              <p className="text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 mt-0.5">{shippingForm.address}, {shippingForm.city}, {shippingForm.state} - {shippingForm.postalCode}</p>
+                              <p className="text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 font-mono mt-0.5">Phone: {shippingForm.phone} | Email: {shippingForm.email}</p>
                             </div>
-                            <div className="border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pt-2">
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-accent-teal block mb-1">
-                                Payment Method
+                            <div className="border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pt-3">
+                              <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal block mb-1">
+                                Selected Payment Method
                               </span>
-                              <p className="font-bold text-emerald-600 dark:text-emerald-400">
+                              <p className="font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                                <ShieldCheck className="w-4 h-4" />
                                 {paymentMethod === "cod"
                                   ? "Cash on Delivery (Pay upon arrival)"
                                   : paymentMethod === "upi"
-                                  ? "UPI Instant Transfer (GPay / PhonePe / Paytm)"
-                                  : "Credit / Debit Card Payment"}
+                                  ? "UPI Instant Transfer (GPay / PhonePe / Razorpay)"
+                                  : `Credit / Debit Card (${paymentForm.cardNumber ? `**** ${paymentForm.cardNumber.slice(-4)}` : "Online Card"})`}
                               </p>
                             </div>
                           </div>
@@ -536,15 +611,16 @@ export default function CheckoutPage() {
                           <div className="flex gap-3 pt-2">
                             <button
                               onClick={() => setStep("payment")}
-                              className="border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-xs font-bold px-5 py-3 rounded-xl flex items-center justify-center gap-1"
+                              className="border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10 text-xs font-bold px-6 py-3.5 rounded-2xl flex items-center justify-center gap-1 text-[#1F1B16] dark:text-[#F7F3EC] transition-all"
                             >
                               <ArrowLeft className="w-4 h-4" /> Back
                             </button>
                             <button
+                              disabled={isProcessingPayment}
                               onClick={handlePlaceOrder}
-                              className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2"
+                              className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-extrabold text-xs uppercase tracking-widest py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 disabled:opacity-50"
                             >
-                              Place Order ({formatPrice(total)}) <CheckCircle className="w-4 h-4" />
+                              {isProcessingPayment ? "Launching Secure Gateway..." : `Place Order (${formatPrice(total)})`} <CheckCircle className="w-4 h-4" />
                             </button>
                           </div>
                         </div>
@@ -715,7 +791,12 @@ export default function CheckoutPage() {
                 <div className="flex justify-between items-center pb-2.5 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                   <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono font-bold uppercase tracking-wider text-[10px]">Payment Method</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" /> Cash on Delivery (COD)
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    {paymentMethod === "cod"
+                      ? "Cash on Delivery (COD)"
+                      : paymentMethod === "upi"
+                      ? "UPI Instant (Paid via Razorpay)"
+                      : "Credit / Debit Card (Paid via Razorpay)"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pb-2.5 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
@@ -725,8 +806,8 @@ export default function CheckoutPage() {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono font-bold uppercase tracking-wider text-[10px]">Logistics Alert</span>
-                  <span className="font-bold text-accent-teal">Automated Notification Sent</span>
+                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono font-bold uppercase tracking-wider text-[10px]">Logistics & Tax Invoice</span>
+                  <span className="font-bold text-accent-teal">PDF Tax Invoice Emailed</span>
                 </div>
               </div>
 
