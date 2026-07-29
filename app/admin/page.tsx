@@ -56,6 +56,7 @@ const ABANDONED_CARTS = [
 ];
 
 export default function AdminDashboardHome() {
+  const { offers, toggleOfferActive, cmsSettings, updateCmsSettings } = useStore();
   const [lowStockList, setLowStockList] = useState(INITIAL_LOW_STOCK);
   const [abandonedCarts, setAbandonedCarts] = useState(ABANDONED_CARTS);
   const [restockInputs, setRestockInputs] = useState<Record<string, number>>({ p2: 10, p5: 15, p9: 5 });
@@ -102,7 +103,7 @@ export default function AdminDashboardHome() {
   const greeting = getGreeting();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Toast Alert */}
       {toastMessage && (
         <motion.div
@@ -125,8 +126,8 @@ export default function AdminDashboardHome() {
       </div>
 
       {/* Executive KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
           <div>
             <span className="text-[10px] font-bold text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 uppercase tracking-wider block mb-1">
               Active Orders
@@ -141,7 +142,7 @@ export default function AdminDashboardHome() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
           <div>
             <span className="text-[10px] font-bold text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 uppercase tracking-wider block mb-1">
               B2B Trade Leads
@@ -156,7 +157,7 @@ export default function AdminDashboardHome() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
           <div>
             <span className="text-[10px] font-bold text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 uppercase tracking-wider block mb-1">
               Cart Recovery
@@ -171,7 +172,7 @@ export default function AdminDashboardHome() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+        <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
           <div>
             <span className="text-[10px] font-bold text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 uppercase tracking-wider block mb-1">
               Low Stock Warnings
@@ -184,6 +185,71 @@ export default function AdminDashboardHome() {
           <div className="w-12 h-12 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
             <AlertCircle className="w-6 h-6" />
           </div>
+        </div>
+      </div>
+
+      {/* LIVE PROMOTIONS & ANNOUNCEMENT CONTROL MASTER */}
+      <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-5 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+          <div>
+            <h3 className="font-serif text-lg font-bold text-[#1F1B16] dark:text-[#F7F3EC] flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-accent-teal" /> Public Site Promotions & Master Switches
+            </h3>
+            <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 font-medium">
+              Turn public offers, announcement bars, or discount codes ON/OFF instantly.
+            </p>
+          </div>
+
+          <button
+            onClick={() => {
+              const nextState = !cmsSettings.showAnnouncementBar;
+              updateCmsSettings({ showAnnouncementBar: nextState });
+              showToast(`Header Announcement Bar is now ${nextState ? "VISIBLE" : "HIDDEN"}.`);
+            }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-sm ${
+              cmsSettings?.showAnnouncementBar
+                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                : "bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
+            }`}
+          >
+            {cmsSettings?.showAnnouncementBar ? "Header Announcement: ON" : "Header Announcement: OFF"}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {offers.map((off) => (
+            <div
+              key={off.id}
+              className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                off.active
+                  ? "bg-[#FAF7F2] dark:bg-[#12100E] border-accent-teal/30"
+                  : "bg-red-500/5 border-red-500/20 opacity-70"
+              }`}
+            >
+              <div className="min-w-0">
+                <span className="font-mono text-xs font-bold text-accent-teal block truncate">
+                  {off.code}
+                </span>
+                <span className="text-[11px] font-bold text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 truncate block">
+                  {off.title}
+                </span>
+              </div>
+
+              <button
+                onClick={() => {
+                  toggleOfferActive(off.id);
+                  showToast(`Offer ${off.code} is now ${!off.active ? "ON" : "OFF"}.`);
+                }}
+                className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase shrink-0 transition-all ${
+                  off.active
+                    ? "bg-emerald-500 text-white hover:bg-emerald-600 shadow-sm"
+                    : "bg-red-500 text-white hover:bg-red-600"
+                }`}
+              >
+                {off.active ? "Turn OFF" : "Turn ON"}
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 
