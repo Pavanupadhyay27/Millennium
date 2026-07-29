@@ -307,16 +307,16 @@ export default function HomePage() {
               </motion.div>
             </AnimatePresence>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="flex flex-row gap-2.5 w-full sm:w-auto justify-start">
               <a
                 href="#collections"
-                className="bg-accent-teal hover:bg-accent-teal/90 text-white rounded-full px-7 py-3.5 sm:px-8 sm:py-4 text-xs sm:text-sm font-semibold text-center hover:scale-[1.02] shadow-lg transition-all duration-300 active:scale-95"
+                className="bg-accent-teal hover:bg-accent-teal/90 text-white rounded-full px-5 py-2.5 sm:px-8 sm:py-4 text-[11px] sm:text-sm font-semibold text-center hover:scale-[1.02] shadow-md transition-all duration-300 active:scale-95"
               >
                 Shop Now
               </a>
               <a
                 href="#lookbook"
-                className="border border-white/40 text-white backdrop-blur-sm rounded-full px-7 py-3.5 sm:px-8 sm:py-4 text-xs sm:text-sm font-semibold text-center hover:bg-white hover:text-charcoal transition-all duration-300 active:scale-95"
+                className="border border-white/40 text-white backdrop-blur-sm rounded-full px-5 py-2.5 sm:px-8 sm:py-4 text-[11px] sm:text-sm font-semibold text-center hover:bg-white hover:text-charcoal transition-all duration-300 active:scale-95"
               >
                 Explore Collection
               </a>
