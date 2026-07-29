@@ -30,7 +30,9 @@ export async function POST(request: Request) {
       date: date || new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }),
     });
 
-    // 2. Dispatch Email via Resend if API key is provided
+    // 2. Dispatch Email via Resend (sends from onboarding@resend.dev by default)
+    // NOTE: To use a custom sender like orders@millenniumfurniture.in,
+    // verify your domain at resend.com/domains first.
     const resendApiKey = process.env.RESEND_API_KEY;
     let emailDispatched = false;
 
@@ -40,7 +42,7 @@ export async function POST(request: Request) {
       await resend.emails.send({
         from: "Millennium Furniture <onboarding@resend.dev>",
         to: [customerEmail],
-        subject: `Tax Invoice PDF - Order ${orderId || 'Confirmation'} | Millennium Furniture`,
+        subject: `Tax Invoice PDF - Order ${orderId || "Confirmation"} | Millennium Furniture`,
         html: `
           <div style="font-family: Arial, sans-serif; color: #1F1B16; max-width: 600px; margin: 0 auto; border: 1px solid #0D5C53; border-radius: 10px; overflow: hidden;">
             <div style="background: #0D5C53; color: white; padding: 20px; text-align: center;">
@@ -57,7 +59,7 @@ export async function POST(request: Request) {
         `,
         attachments: [
           {
-            filename: `Tax-Invoice-${orderId || 'Millennium'}.pdf`,
+            filename: `Tax-Invoice-${orderId || "Millennium"}.pdf`,
             content: pdfBuffer,
           },
         ],

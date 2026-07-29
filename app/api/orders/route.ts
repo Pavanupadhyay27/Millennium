@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       console.error("PDF Generation error:", pdfErr);
     }
 
-    // Dispatch Email with attached PDF invoice
+    // Dispatch Email with attached PDF invoice via Resend
     const resendApiKey = process.env.RESEND_API_KEY;
     if (resendApiKey && newOrder.customerEmail && pdfBuffer) {
       try {
@@ -113,7 +113,7 @@ export async function POST(request: Request) {
 
               <div style="padding: 24px; background-color: #FAF7F2;">
                 <h2 style="font-size: 18px; color: #0D5C53; margin-top: 0;">Thank You for Your Order, ${customerName}!</h2>
-                <p style="font-size: 14px; line-height: 1.5;">We are pleased to confirm your order <strong>${orderNumber}</strong>. Attached to this email is your official, authentic tax invoice PDF with verified 10-Year Teak Timber Warranty details.</p>
+                <p style="font-size: 14px; line-height: 1.5;">We are pleased to confirm your order <strong>${orderNumber}</strong>. Attached is your official tax invoice PDF with verified 10-Year Teak Timber Warranty details.</p>
 
                 <div style="background: white; border: 1px solid #E5DEC9; border-radius: 8px; padding: 16px; margin: 20px 0;">
                   <h3 style="margin-top: 0; font-size: 14px; text-transform: uppercase; color: #0D5C53;">Order Summary</h3>
@@ -137,7 +137,7 @@ export async function POST(request: Request) {
 
                 <p style="font-size: 12px; color: #666; margin-bottom: 0;">
                   Dispatched from Studio: F, 2G/49, 15, Indradhanu Market, IRC Village, Complex, Bhubaneswar, Odisha 751015.<br/>
-                  If you have any custom joinery or delivery questions, reach our desk at <strong>+91 93343 09230</strong>.
+                  Questions? Call us at <strong>+91 93343 09230</strong>.
                 </p>
               </div>
 
@@ -153,7 +153,7 @@ export async function POST(request: Request) {
             },
           ],
         });
-        console.log(`Successfully dispatched automated PDF tax invoice email to ${newOrder.customerEmail}`);
+        console.log(`Successfully dispatched PDF invoice email to ${newOrder.customerEmail}`);
       } catch (emailErr) {
         console.error("Resend Email dispatch error:", emailErr);
       }
