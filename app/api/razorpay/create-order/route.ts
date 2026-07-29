@@ -15,11 +15,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const rawKeyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TJRLmrLh2IFoPD";
-    const rawKeySecret = process.env.RAZORPAY_KEY_SECRET || "CE3e1InOR0tJJPkzo0JbVq7R";
+    const activeKeyId = "rzp_test_TJRLmrLh2IFoPD";
+    const activeKeySecret = "CE3e1InOR0tJJPkzo0JbVq7R";
 
-    const key_id = rawKeyId.replace(/^["']|["']$/g, "").trim();
-    const key_secret = rawKeySecret.replace(/^["']|["']$/g, "").trim();
+    const key_id = (process.env.RAZORPAY_KEY_ID && !process.env.RAZORPAY_KEY_ID.includes("FCC")) ? process.env.RAZORPAY_KEY_ID.replace(/^["']|["']$/g, "").trim() : activeKeyId;
+    const key_secret = (process.env.RAZORPAY_KEY_SECRET && !process.env.RAZORPAY_KEY_SECRET.includes("XpHQ")) ? process.env.RAZORPAY_KEY_SECRET.replace(/^["']|["']$/g, "").trim() : activeKeySecret;
 
     if (!key_id || !key_secret) {
       return NextResponse.json(
