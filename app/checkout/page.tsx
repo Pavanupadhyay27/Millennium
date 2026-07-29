@@ -136,24 +136,6 @@ export default function CheckoutPage() {
           theme: {
             color: "#0D5C53",
           },
-          config: {
-            display: {
-              blocks: {
-                banks: {
-                  name: "Pay via Indian Domestic Methods",
-                  instruments: [
-                    { method: "upi" },
-                    { method: "card" },
-                    { method: "netbanking" },
-                  ],
-                },
-              },
-              sequence: ["block.banks"],
-              preferences: {
-                show_default_blocks: true,
-              },
-            },
-          },
           handler: async function (response: any) {
             try {
               // Verify Payment Signature
