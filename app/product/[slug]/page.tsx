@@ -648,9 +648,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               >
                 Browse Full Catalog <ArrowRight className="w-3.5 h-3.5" />
               </a>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6">
               {storeProducts
                 .filter((p) => p.id !== product.id && p.status === "active")
                 .slice(0, 4)
@@ -658,36 +656,38 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   <a
                     key={item.id}
                     href={`/product/${item.id}`}
-                    className="group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                    className="group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-2.5 sm:p-0 flex flex-row sm:flex-col gap-3.5 sm:gap-0 shadow-sm hover:shadow-md transition-all"
                   >
-                    <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF7F2] dark:bg-[#12100E] flex items-center justify-center p-3">
+                    <div className="w-24 h-24 shrink-0 sm:w-full sm:h-auto sm:aspect-[4/3] bg-[#FAF7F2] dark:bg-[#12100E] rounded-xl sm:rounded-2xl relative overflow-hidden flex items-center justify-center border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={item.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400"}
                         alt={item.name}
-                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <span className="absolute top-3 left-3 text-[9px] font-extrabold uppercase tracking-wider bg-white/90 dark:bg-[#1C1814]/90 backdrop-blur-md text-accent-teal px-2.5 py-0.5 rounded-full border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                        {item.category}
-                      </span>
                     </div>
 
-                    <div className="p-4 flex flex-col gap-1.5 border-t border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
-                      <h4 className="font-serif font-bold text-sm text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors line-clamp-1">
-                        {item.name}
-                      </h4>
-                      <div className="flex items-center justify-between mt-1">
-                        <span className="font-mono font-extrabold text-sm text-[#1F1B16] dark:text-[#F7F3EC]">
+                    <div className="flex-1 min-w-0 sm:p-4 flex flex-col justify-between">
+                      <div>
+                        <span className="text-[9px] font-bold text-accent-teal uppercase tracking-widest block mb-0.5">
+                          {item.category}
+                        </span>
+                        <h4 className="font-serif font-bold text-sm text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors line-clamp-1">
+                          {item.name}
+                        </h4>
+                      </div>
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
+                        <span className="font-mono font-extrabold text-xs sm:text-sm text-[#1F1B16] dark:text-[#F7F3EC]">
                           {formatPrice(item.price)}
                         </span>
-                        <span className="text-[10px] font-bold text-accent-teal group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
-                          View <ArrowRight className="w-3 h-3" />
+                        <span className="text-[10px] font-bold text-accent-teal flex items-center gap-0.5">
+                          View &rarr;
                         </span>
                       </div>
                     </div>
                   </a>
                 ))}
-            </div>
+            </div>         </div>
           </div>
 
         </main>

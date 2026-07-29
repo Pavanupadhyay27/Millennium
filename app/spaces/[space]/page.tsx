@@ -7,13 +7,9 @@ import {
   SlidersHorizontal,
   RotateCcw,
   ShoppingBag,
-  Eye,
   ChevronDown,
-  X,
-  Search,
-  Sparkles,
   Heart,
-  RotateCw
+  ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "../../../lib/store";
@@ -62,7 +58,6 @@ const COLOR_PALETTES = [
 ];
 
 const SPACE_PRODUCTS = [
-  // Home
   {
     id: "sp1",
     name: "Aura Curved Velvet Sofa",
@@ -127,7 +122,6 @@ const SPACE_PRODUCTS = [
     image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=800",
     isNew: true,
   },
-  // Office
   {
     id: "sp4",
     name: "Kalinga Teak Executive Desk",
@@ -176,7 +170,6 @@ const SPACE_PRODUCTS = [
     image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=800",
     isNew: true,
   },
-  // Commercial
   {
     id: "sp7",
     name: "Zenith Boardroom Conference Table",
@@ -209,7 +202,6 @@ const SPACE_PRODUCTS = [
     image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800",
     isNew: false,
   },
-  // Outdoor
   {
     id: "sp9",
     name: "Solstice Outdoor Teak Dining Set",
@@ -249,20 +241,15 @@ export default function SpacePage({ params }: { params: { space: string } }) {
   const currentSpaceKey = SPACE_DETAILS[rawSpace] ? rawSpace : "home";
   const spaceInfo = SPACE_DETAILS[currentSpaceKey];
 
-  const { addToCart, toggleCartDrawer, toggleWishlist, wishlist, products: storeProducts } = useStore();
+  const { addToCart, toggleWishlist, wishlist, products: storeProducts } = useStore();
 
-  // Filters Criteria State
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedColor, setSelectedColor] = useState<string>("all");
   const [selectedMaterial, setSelectedMaterial] = useState<string>("all");
   const [maxPrice, setMaxPrice] = useState<number>(200000);
   const [sortBy, setSortBy] = useState<"featured" | "price-low" | "price-high" | "rating">("featured");
-
-  const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
-  const [rotationAngle, setRotationAngle] = useState<number>(0);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // Combine static catalog items with live admin products
   const allCatalogProducts = useMemo(() => {
     const liveItems = storeProducts
       .filter((p) => p.status === "active")
@@ -285,19 +272,16 @@ export default function SpacePage({ params }: { params: { space: string } }) {
     return [...liveItems, ...SPACE_PRODUCTS];
   }, [storeProducts]);
 
-  // Categories for current space
   const categories = useMemo(() => {
     const spaceProds = allCatalogProducts.filter((p) => p.space === currentSpaceKey);
     return Array.from(new Set(spaceProds.map((p) => p.category)));
   }, [allCatalogProducts, currentSpaceKey]);
 
-  // Materials for current space
   const materials = useMemo(() => {
     const spaceProds = allCatalogProducts.filter((p) => p.space === currentSpaceKey);
     return Array.from(new Set(spaceProds.map((p) => p.material)));
   }, [allCatalogProducts, currentSpaceKey]);
 
-  // Filtered & Sorted Products
   const filteredProducts = useMemo(() => {
     return allCatalogProducts.filter((p) => {
       if (p.space !== currentSpaceKey && currentSpaceKey !== "home") return false;
@@ -340,17 +324,17 @@ export default function SpacePage({ params }: { params: { space: string } }) {
       <div>
         <Navbar />
 
-        {/* Full-bleed Crisp Hero Image */}
-        <section className="relative h-[380px] md:h-[450px] flex items-end justify-start overflow-hidden pt-16">
+        {/* Hero Banner */}
+        <section className="relative h-[320px] md:h-[420px] flex items-end justify-start overflow-hidden pt-16">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={spaceInfo.banner}
             alt={spaceInfo.title}
             className="absolute inset-0 w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-black/35" />
           
-          <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-12 pb-10 w-full text-white">
+          <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 pb-8 w-full text-white">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -359,56 +343,56 @@ export default function SpacePage({ params }: { params: { space: string } }) {
               <span className="bg-accent-teal text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full inline-block mb-2 shadow-md">
                 {spaceInfo.tag}
               </span>
-              <h1 className="font-serif text-3xl md:text-5xl font-bold tracking-tight text-white mb-1 drop-shadow-md">
+              <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-1 drop-shadow-md">
                 {spaceInfo.title}
               </h1>
-              <p className="text-white/90 text-xs md:text-sm max-w-xl font-medium drop-shadow-sm">
+              <p className="text-white/90 text-xs sm:text-sm max-w-xl font-medium drop-shadow-sm">
                 {spaceInfo.subtitle}
               </p>
             </motion.div>
           </div>
         </section>
 
-        {/* Clean Layout with Left Filter Sidebar & Grid */}
-        <section className="max-w-[1400px] mx-auto px-6 md:px-12 py-8">
+        {/* Main Content Area */}
+        <section className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 py-6 sm:py-8">
           
-          {/* Top Header Bar */}
-          <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-charcoal/10 dark:border-cream/10">
+          {/* Header Bar */}
+          <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
             <button
               onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-              className="lg:hidden flex items-center gap-2 bg-charcoal text-cream dark:bg-cream dark:text-charcoal px-4 py-2 rounded-full text-xs font-bold shadow-md"
+              className="lg:hidden flex items-center gap-2 bg-[#1F1B16] text-white dark:bg-[#F7F3EC] dark:text-[#1F1B16] px-4 py-2 rounded-full text-xs font-bold shadow-md"
             >
               <SlidersHorizontal className="w-4 h-4" /> Filters ({filteredProducts.length})
             </button>
             
-            <span className="text-xs text-charcoal/60 dark:text-cream/60 font-semibold hidden lg:inline">
-              {filteredProducts.length} Premium Pieces Available
+            <span className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 font-semibold hidden lg:inline">
+              {filteredProducts.length} Handcrafted Pieces Available
             </span>
 
-            {/* Custom Styled Sort Control */}
+            {/* Sort Control */}
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-charcoal/50 dark:text-cream/50 hidden sm:inline">Sort:</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 hidden sm:inline">Sort:</span>
               <div className="relative">
                 <select
                   value={sortBy}
                   onChange={(e: any) => setSortBy(e.target.value)}
-                  className="bg-white dark:bg-charcoal border border-charcoal/15 dark:border-cream/20 text-charcoal dark:text-cream rounded-full px-4 py-2 text-xs font-bold focus:outline-none appearance-none pr-9 cursor-pointer shadow-sm hover:border-accent-teal transition-all"
+                  className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 text-[#1F1B16] dark:text-[#F7F3EC] rounded-full px-4 py-2 text-xs font-bold focus:outline-none appearance-none pr-9 cursor-pointer shadow-sm hover:border-accent-teal transition-all"
                 >
-                  <option value="featured" className="bg-white dark:bg-charcoal text-charcoal dark:text-cream py-1">Featured</option>
-                  <option value="price-low" className="bg-white dark:bg-charcoal text-charcoal dark:text-cream py-1">Price: Low to High</option>
-                  <option value="price-high" className="bg-white dark:bg-charcoal text-charcoal dark:text-cream py-1">Price: High to Low</option>
-                  <option value="rating" className="bg-white dark:bg-charcoal text-charcoal dark:text-cream py-1">Top Rated ★</option>
+                  <option value="featured">Featured</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Top Rated ★</option>
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-charcoal/60 dark:text-cream/60" />
+                <ChevronDown className="w-3.5 h-3.5 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#1F1B16]/60 dark:text-[#F7F3EC]/60" />
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            {/* LEFT SIDEBAR FILTERS WITH COLOR SWATCHES */}
-            <aside className={`lg:col-span-3 bg-white dark:bg-[#1A1612] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-warm-sm sticky top-20 ${
-              mobileFilterOpen ? "block" : "hidden lg:block"
+            {/* Sidebar Filters */}
+            <aside className={`lg:col-span-3 bg-white dark:bg-[#1A1612] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-5 sm:p-6 shadow-sm sticky top-20 ${
+              mobileFilterOpen ? "block mb-6 lg:mb-0" : "hidden lg:block"
             }`}>
               <div className="flex items-center justify-between pb-3 mb-5 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                 <h3 className="font-serif font-bold text-base flex items-center gap-2 text-[#1F1B16] dark:text-[#F7F3EC]">
@@ -424,7 +408,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
 
               <div className="space-y-6">
 
-                {/* 1. COLOR PALETTE FILTER */}
+                {/* Color Swatches */}
                 <div>
                   <label className="block text-[11px] font-extrabold uppercase tracking-wider text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-3">
                     Color Swatches
@@ -440,7 +424,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                             className={`px-3 py-1.5 rounded-full text-[11px] font-bold transition-all border ${
                               isSelected
                                 ? "bg-accent-teal text-white border-accent-teal shadow-sm"
-                                : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 border-[#1F1B16]/10 dark:border-[#F7F3EC]/20 text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-[#1F1B16]/10"
+                                : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 border-[#1F1B16]/10 dark:border-[#F7F3EC]/20 text-[#1F1B16] dark:text-[#F7F3EC]"
                             }`}
                           >
                             All
@@ -451,7 +435,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                         <button
                           key={color.id}
                           onClick={() => setSelectedColor(isSelected ? "all" : color.id)}
-                          className={`group relative w-7 h-7 rounded-full transition-transform hover:scale-110 flex items-center justify-center border-2 ${
+                          className={`w-7 h-7 rounded-full transition-transform flex items-center justify-center border-2 ${
                             isSelected ? "border-accent-teal ring-2 ring-accent-teal/30 scale-110" : "border-white/50 shadow-sm"
                           }`}
                           style={{ backgroundColor: color.hex }}
@@ -464,7 +448,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                   </div>
                 </div>
 
-                {/* 2. CATEGORIES */}
+                {/* Category Filter */}
                 <div>
                   <label className="block text-[11px] font-extrabold uppercase tracking-wider text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-2">
                     Category
@@ -478,7 +462,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                           : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10"
                       }`}
                     >
-                      All Categories ({allCatalogProducts.filter(p => p.space === currentSpaceKey || currentSpaceKey === "home").length})
+                      All Categories
                     </button>
                     {categories.map((cat) => (
                       <button
@@ -496,35 +480,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                   </div>
                 </div>
 
-                {/* 3. MATERIAL FILTER */}
-                <div>
-                  <label className="block text-[11px] font-extrabold uppercase tracking-wider text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-2">
-                    Material
-                  </label>
-                  <div className="space-y-1">
-                    <button
-                      onClick={() => setSelectedMaterial("all")}
-                      className={`w-full text-left px-3 py-1 rounded-xl text-xs font-medium ${
-                        selectedMaterial === "all" ? "font-bold text-accent-teal" : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10"
-                      }`}
-                    >
-                      Any Material
-                    </button>
-                    {materials.map((mat) => (
-                      <button
-                        key={mat}
-                        onClick={() => setSelectedMaterial(mat)}
-                        className={`w-full text-left px-3 py-1 rounded-xl text-xs font-medium ${
-                          selectedMaterial === mat ? "font-bold text-accent-teal" : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10"
-                        }`}
-                      >
-                        {mat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 4. MAX PRICE SLIDER */}
+                {/* Price limit slider */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="text-[11px] font-extrabold uppercase tracking-wider text-[#1F1B16]/80 dark:text-[#F7F3EC]/80">
@@ -546,12 +502,12 @@ export default function SpacePage({ params }: { params: { space: string } }) {
               </div>
             </aside>
 
-            {/* PRODUCT CARDS GRID */}
+            {/* PRODUCT CARDS LIST - Horizontal E-commerce row on Mobile, Grid on Desktop */}
             <main className="lg:col-span-9">
               {filteredProducts.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-[#1A1612] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-8">
                   <h3 className="font-serif text-xl font-bold mb-2 text-[#1F1B16] dark:text-[#F7F3EC]">No matching pieces</h3>
-                  <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mb-4">Try clearing your color swatch or price filter.</p>
+                  <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mb-4">Try resetting your filters.</p>
                   <button
                     onClick={resetFilters}
                     className="inline-flex items-center gap-2 bg-accent-teal text-white px-5 py-2 rounded-full text-xs font-bold shadow-md hover:bg-accent-teal/90 transition-all"
@@ -560,94 +516,68 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                <div className="flex flex-col sm:grid sm:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-6">
                   {filteredProducts.map((product) => (
-                    <motion.div
+                    <div
                       key={product.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3 }}
-                      className="group relative bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[24px] overflow-hidden shadow-warm-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between"
+                      className="group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl sm:rounded-3xl p-2.5 sm:p-0 flex flex-row sm:flex-col gap-3.5 sm:gap-0 shadow-sm hover:shadow-lg transition-all"
                     >
-                      <a href={`/product/${product.id}`} className="cursor-pointer block">
-                        {/* Image Frame with Aspect Ratio & Badges */}
-                        <div className="relative aspect-[4/3] overflow-hidden bg-[#1F1B16]/5">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          
-                          {/* Customization Granted Badge on Photo if set by Admin */}
-                          {product.customizable !== false && (
-                            <span className="absolute top-4 left-4 z-20 bg-[#1F1B16]/90 text-white backdrop-blur-md text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1 border border-white/20">
-                              Customisable
-                            </span>
-                          )}
-
-                          {/* Top Right Badges: Rating & Wishlist */}
-                          <div className="absolute top-4 right-4 flex items-center gap-2">
-                            <span className="bg-white/90 dark:bg-[#1C1814]/90 backdrop-blur-md text-[#1F1B16] dark:text-[#F7F3EC] text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                              <span className="text-amber-500">★</span> {product.rating}
-                            </span>
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleWishlist({
-                                  id: product.id,
-                                  slug: product.id,
-                                  name: product.name,
-                                  price: product.price,
-                                  image: product.image,
-                                  bg: "bg-cream"
-                                });
-                              }}
-                              className="p-2 rounded-full bg-white/90 dark:bg-[#1C1814]/90 backdrop-blur-md shadow-sm hover:bg-white text-[#1F1B16] dark:text-[#F7F3EC] transition-all hover:scale-110 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10"
-                            >
-                              <Heart className={`w-3.5 h-3.5 ${wishlist.some(w => w.id === product.id) ? "fill-accent-terracotta text-accent-terracotta" : "opacity-60"}`} />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Card Info Content */}
-                        <div className="p-5">
-                          <div className="flex items-center justify-between gap-2 mb-1.5">
-                            <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal">
-                              {product.category}
-                            </span>
-                            <span className="text-[10px] font-bold text-[#1F1B16]/70 dark:text-[#F7F3EC]/80 bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 px-2 py-0.5 rounded-md">
-                              {product.material}
-                            </span>
-                          </div>
-                          <h3 className="font-serif font-bold text-lg text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors leading-snug line-clamp-1">
-                            {product.name}
-                          </h3>
-                        </div>
-                      </a>
-
-                      {/* Premium Card Footer with Restored Add to Cart + */}
-                      <div className="px-5 pb-5 pt-2 flex items-center justify-between border-t border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
-                        <div>
-                          <span className="text-[9px] uppercase tracking-wider text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 block font-bold">Crafted Price</span>
-                          <span className="font-serif text-lg font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
-                            ₹{product.price.toLocaleString("en-IN")}
-                          </span>
-                        </div>
+                      {/* Image Frame - Small horizontal square thumbnail on mobile (< sm), full aspect ratio on desktop */}
+                      <a
+                        href={`/product/${product.id}`}
+                        className="w-28 h-28 shrink-0 sm:w-full sm:h-auto sm:aspect-[4/3] bg-[#FAF8F5] dark:bg-[#12100E] rounded-xl sm:rounded-2xl relative overflow-hidden flex items-center justify-center border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
                         <button
                           onClick={(e) => {
+                            e.preventDefault();
                             e.stopPropagation();
-                            handleAddToCart(product);
+                            toggleWishlist({
+                              id: product.id,
+                              slug: product.id,
+                              name: product.name,
+                              price: product.price,
+                              image: product.image,
+                              bg: "bg-cream"
+                            });
                           }}
-                          className="bg-[#1F1B16] text-[#F7F3EC] dark:bg-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal dark:hover:bg-accent-teal hover:text-white dark:hover:text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-lg active:scale-95"
+                          className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 dark:bg-black/80 backdrop-blur-md transition-all text-[#1F1B16] dark:text-[#F7F3EC] shadow-md"
                         >
-                          Add To Cart +
+                          <Heart className={`w-3.5 h-3.5 ${wishlist.some(w => w.id === product.id) ? "fill-accent-terracotta text-accent-terracotta" : "opacity-60"}`} />
                         </button>
+                      </a>
+
+                      {/* Card Info Content */}
+                      <div className="flex-1 min-w-0 sm:p-5 flex flex-col justify-between">
+                        <a href={`/product/${product.id}`} className="block">
+                          <span className="text-[9px] font-bold text-accent-teal uppercase tracking-widest block mb-0.5">
+                            {product.category}
+                          </span>
+                          <h3 className="font-serif font-bold text-sm sm:text-base text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors leading-snug line-clamp-2 sm:truncate">
+                            {product.name}
+                          </h3>
+                        </a>
+
+                        <div className="mt-2 sm:mt-4 flex items-end justify-between gap-2 border-t sm:pt-3 border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
+                          <div>
+                            <span className="font-mono text-xs sm:text-base font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] block">
+                              ₹{product.price.toLocaleString("en-IN")}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => handleAddToCart(product)}
+                            className="bg-accent-teal hover:bg-accent-teal/90 text-white text-[10px] sm:text-xs font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all shadow-sm active:scale-95"
+                          >
+                            + Add
+                          </button>
+                        </div>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               )}
@@ -656,104 +586,6 @@ export default function SpacePage({ params }: { params: { space: string } }) {
           </div>
         </section>
       </div>
-
-      {/* INTERACTIVE ANIMATED PRODUCT POPUP MODAL */}
-      <AnimatePresence>
-        {quickViewProduct && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 md:p-8 max-w-4xl w-full shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col"
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => setQuickViewProduct(null)}
-                className="absolute top-6 right-6 z-10 w-9 h-9 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 flex items-center justify-center hover:bg-[#1F1B16]/15 transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 overflow-y-auto pr-1">
-                {/* Left: Product Image */}
-                <div className="space-y-4">
-                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#1F1B16]/5 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={quickViewProduct.image}
-                      alt={quickViewProduct.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <span className="absolute top-4 left-4 text-[10px] font-extrabold uppercase tracking-widest bg-accent-teal text-white px-3 py-1 rounded-full shadow-sm">
-                      {quickViewProduct.category}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right: Product Details & Conditional Customizer */}
-                <div className="space-y-5 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-bold text-accent-teal uppercase tracking-widest bg-accent-teal/10 px-2.5 py-0.5 rounded-full">
-                        ★ {quickViewProduct.rating} Rating
-                      </span>
-                      <span className={`text-[10px] font-bold ${quickViewProduct.customizable !== false ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600"}`}>
-                        {quickViewProduct.customizable !== false ? "✓ Admin Customization Granted" : "Standard Model Only"}
-                      </span>
-                    </div>
-
-                    <h2 className="font-serif text-2xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
-                      {quickViewProduct.name}
-                    </h2>
-                    <span className="font-serif text-xl font-bold text-accent-teal block mt-1">
-                      ₹{quickViewProduct.price.toLocaleString("en-IN")}
-                    </span>
-
-                    {/* Conditional Customizer Panel (Admin Granted) */}
-                    {quickViewProduct.customizable !== false ? (
-                      <div className="mt-4 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 space-y-3">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-accent-teal block">
-                          Select Custom Timber Finish
-                        </span>
-                        <div className="grid grid-cols-2 gap-2">
-                          {["Natural Teak", "Charcoal Ebonized", "Warm Honey Polish", "Rosewood Finish"].map((f) => (
-                            <button
-                              key={f}
-                              className="px-3 py-2 rounded-xl text-[10px] font-bold text-left bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:border-accent-teal transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
-                            >
-                              {f}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="mt-4 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4">
-                        <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 font-medium">
-                          This product is supplied with standard factory timber specifications. Customization is disabled by store administration.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="pt-4 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex items-center gap-3">
-                    <button
-                      onClick={() => {
-                        handleAddToCart(quickViewProduct);
-                        setQuickViewProduct(null);
-                      }}
-                      className="flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3.5 rounded-2xl text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2"
-                    >
-                      <ShoppingBag className="w-4 h-4" /> Add Item To Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       <Footer />
     </div>
