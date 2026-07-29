@@ -76,9 +76,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
       wholesalePrice: 18500,
       category: "Seating",
       description: "Indulge in mid-century elegance with our signature piece. Handcrafted by local artisans in Bhubaneswar using premium, sustainably harvested solid teak timber.",
-      images: [
+      images: storeProduct?.image ? [storeProduct.image] : [
         "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800",
-        "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=800",
       ],
       colors: [
         { name: "Natural Wood", value: "#D97B3F", priceDelta: 0, imgIdx: 0 },
@@ -256,8 +255,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                 </button>
               </div>
 
-              {/* Thumbnails Strip (Rendered only if multiple images exist) */}
-              {product.images && product.images.length > 1 && (
+              {/* Thumbnails Strip (Rendered strictly when multiple images > 1 exist for this product) */}
+              {Array.isArray(product.images) && product.images.length > 1 && (
                 <div className="flex gap-3">
                   {product.images.map((img: string, idx: number) => {
                     const isActive = idx === activeImgIdx;
