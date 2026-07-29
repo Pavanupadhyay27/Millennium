@@ -237,7 +237,6 @@ export default function WholesaleLandingPage() {
                       required
                       value={formData.businessName}
                       onChange={handleInputChange}
-                      placeholder="e.g. Sharma Interior Projects"
                       className="w-full px-3 py-2 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                     />
                   </div>
@@ -252,7 +251,6 @@ export default function WholesaleLandingPage() {
                       required
                       value={formData.contactPerson}
                       onChange={handleInputChange}
-                      placeholder="Full Name"
                       className="w-full px-3 py-2 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                     />
                   </div>
@@ -267,7 +265,6 @@ export default function WholesaleLandingPage() {
                       required
                       value={formData.email}
                       onChange={handleInputChange}
-                      placeholder="name@company.com"
                       className="w-full px-3 py-2 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#F7F3EC]/30 dark:bg-[#12100E]/50 text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                     />
                   </div>

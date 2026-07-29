@@ -304,7 +304,6 @@ export default function WholesalePartnerProfilePage() {
                 rows={4}
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="Details regarding project scope, teak wood grade preferences, or delivery terms..."
                 className="w-full border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-3.5 py-2.5 text-xs bg-[#FAF7F2] dark:bg-[#12100E] font-medium focus:outline-none focus:border-accent-teal resize-none text-[#1F1B16] dark:text-[#F7F3EC]"
               />
             </div>

@@ -362,7 +362,6 @@ export default function WholesaleRequestQueuePage() {
                     required
                     value={newAppData.businessName}
                     onChange={(e) => setNewAppData({ ...newAppData, businessName: e.target.value })}
-                    placeholder="e.g. Trident Luxury Resorts"
                     className="w-full px-4 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal"
                   />
                 </div>
@@ -377,7 +376,6 @@ export default function WholesaleRequestQueuePage() {
                       required
                       value={newAppData.contactPerson}
                       onChange={(e) => setNewAppData({ ...newAppData, contactPerson: e.target.value })}
-                      placeholder="e.g. Ramesh Chandra"
                       className="w-full px-4 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal"
                     />
                   </div>
@@ -390,7 +388,6 @@ export default function WholesaleRequestQueuePage() {
                       type="text"
                       value={newAppData.gstin}
                       onChange={(e) => setNewAppData({ ...newAppData, gstin: e.target.value })}
-                      placeholder="21AAAFM9283K1Z9"
                       className="w-full px-4 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono uppercase focus:outline-none focus:border-accent-teal"
                     />
                   </div>
@@ -406,7 +403,6 @@ export default function WholesaleRequestQueuePage() {
                       required
                       value={newAppData.email}
                       onChange={(e) => setNewAppData({ ...newAppData, email: e.target.value })}
-                      placeholder="purchase@domain.com"
                       className="w-full px-4 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono focus:outline-none focus:border-accent-teal"
                     />
                   </div>
@@ -419,7 +415,6 @@ export default function WholesaleRequestQueuePage() {
                       type="text"
                       value={newAppData.phone}
                       onChange={(e) => setNewAppData({ ...newAppData, phone: e.target.value })}
-                      placeholder="+91 94370 00000"
                       className="w-full px-4 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono focus:outline-none focus:border-accent-teal"
                     />
                   </div>
@@ -433,7 +428,6 @@ export default function WholesaleRequestQueuePage() {
                     type="number"
                     value={newAppData.expectedVolume}
                     onChange={(e) => setNewAppData({ ...newAppData, expectedVolume: Number(e.target.value) })}
-                    placeholder="150000"
                     className="w-full px-4 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal"
                   />
                 </div>
@@ -446,7 +440,6 @@ export default function WholesaleRequestQueuePage() {
                     rows={3}
                     value={newAppData.notes}
                     onChange={(e) => setNewAppData({ ...newAppData, notes: e.target.value })}
-                    placeholder="Specify project scope, teak wood specs, or custom stain requirements..."
                     className="w-full px-4 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal resize-none"
                   />
                 </div>
