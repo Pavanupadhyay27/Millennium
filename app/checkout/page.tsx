@@ -129,30 +129,23 @@ export default function CheckoutPage() {
             name: shippingForm.fullName || "",
             email: shippingForm.email || "",
             contact: shippingForm.phone || "",
-            method: "upi",
           },
           config: {
             display: {
               blocks: {
-                utib: {
-                  name: "UPI",
+                banks: {
+                  name: "UPI (Google Pay / PhonePe / Paytm / QR)",
                   instruments: [
-                    { method: "upi" },
-                  ],
-                },
-                other: {
-                  name: "Other Payment Methods",
-                  instruments: [
-                    { method: "card" },
-                    { method: "netbanking" },
-                    { method: "wallet" },
-                    { method: "paylater" },
+                    {
+                      method: "upi",
+                      flows: ["qr", "intent", "collect"],
+                    },
                   ],
                 },
               },
-              sequence: ["block.utib", "block.other"],
+              sequence: ["block.banks"],
               preferences: {
-                show_default_blocks: false,
+                show_default_blocks: true,
               },
             },
           },
