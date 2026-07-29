@@ -232,7 +232,7 @@ const TESTIMONIALS = [
 ];
 
 export default function HomePage() {
-  const { wishlist, toggleWishlist, products: storeProducts, customerTestimonials, addCustomerTestimonial, orders } = useStore();
+  const { wishlist, toggleWishlist, products: storeProducts, customerTestimonials, addCustomerTestimonial, orders, brandPartners } = useStore();
   const [heroImageIdx, setHeroImageIdx] = useState(0);
   const [activeRoomTab, setActiveRoomTab] = useState<"Living Room" | "Study" | "Media Room" | "Dining Room">("Living Room");
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -370,24 +370,24 @@ export default function HomePage() {
       </section>
 
       {/* AUTO-MOVING BRAND PARTNERS & MATERIALS CAROUSEL WITH REAL LOGOS & BRAND NAMES */}
-      <section className="bg-white dark:bg-[#1C1814] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 py-4 shadow-sm relative z-20 overflow-hidden">
-        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 mb-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      <section className="bg-[#FAF7F2] dark:bg-[#16120E] border-y border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 py-5 shadow-sm relative z-20 overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12 mb-3 text-center flex flex-col items-center justify-center">
+          <div className="flex items-center justify-center gap-2 mb-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#1F1B16]/80 dark:text-[#F7F3EC]/80">
               Verified Brand Partners & Materials
             </span>
           </div>
-          <span className="text-[10px] font-mono text-accent-teal font-semibold hidden sm:inline-block">
-            Authentic Sourcing Guarantee
+          <span className="text-[10px] font-mono text-accent-teal font-semibold">
+            Authentic Factory Sourcing Guarantee
           </span>
         </div>
 
         {/* Continuous Auto-Moving Marquee Track */}
         <div className="relative w-full overflow-hidden flex py-1">
-          {/* Subtle gradient edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white dark:from-[#1C1814] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white dark:from-[#1C1814] to-transparent z-10 pointer-events-none" />
+          {/* Soft ambient gradient blur on left & right edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#FAF7F2] dark:from-[#16120E] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#FAF7F2] dark:from-[#16120E] to-transparent z-10 pointer-events-none" />
 
           <motion.div
             className="flex items-center gap-6 sm:gap-10 shrink-0 whitespace-nowrap"
@@ -398,104 +398,97 @@ export default function HomePage() {
               duration: 25,
             }}
           >
-            {[
+            {(brandPartners && brandPartners.length > 0 ? brandPartners : [
               {
+                id: "1",
                 name: "Sleepwell",
                 tag: "Mattress Tech Partner",
-                logo: "https://upload.wikimedia.org/wikipedia/commons/ thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
                 fallbackLogo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=120",
-                color: "bg-blue-900/10 text-blue-800 dark:text-blue-300",
-                badge: "Official Mattress Partner",
               },
               {
+                id: "2",
                 name: "CenturyPly",
                 tag: "Marine Teak Grade",
                 logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CenturyPly_logo.svg/640px-CenturyPly_logo.svg.png",
                 fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
-                color: "bg-amber-900/10 text-amber-800 dark:text-amber-300",
-                badge: "700+ Teak Grade",
               },
               {
+                id: "3",
                 name: "Featherlite",
                 tag: "Ergonomic Hardware",
                 logo: "https://featherlitefurniture.com/wp-content/uploads/2021/04/Featherlite-Logo-1.png",
                 fallbackLogo: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=120",
-                color: "bg-emerald-900/10 text-emerald-800 dark:text-emerald-300",
-                badge: "Ergonomic Hardware",
               },
               {
+                id: "4",
                 name: "Godrej Interio",
                 tag: "Steel Joinery",
                 logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Godrej_Logo.svg/512px-Godrej_Logo.svg.png",
                 fallbackLogo: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=120",
-                color: "bg-rose-900/10 text-rose-800 dark:text-rose-300",
-                badge: "Precision Steel Joinery",
               },
               {
+                id: "5",
                 name: "Pepperfry",
                 tag: "Verified Merchant",
                 logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepperfry_Logo.png/640px-Pepperfry_Logo.png",
                 fallbackLogo: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=120",
-                color: "bg-orange-900/10 text-orange-800 dark:text-orange-300",
-                badge: "Verified Marketplace Partner",
               },
-            ]
-              .concat([
-                {
-                  name: "Sleepwell",
-                  tag: "Mattress Tech Partner",
-                  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
-                  fallbackLogo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=120",
-                  color: "bg-blue-900/10 text-blue-800 dark:text-blue-300",
-                  badge: "Official Mattress Partner",
-                },
-                {
-                  name: "CenturyPly",
-                  tag: "Marine Teak Grade",
-                  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CenturyPly_logo.svg/640px-CenturyPly_logo.svg.png",
-                  fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
-                  color: "bg-amber-900/10 text-amber-800 dark:text-amber-300",
-                  badge: "700+ Teak Grade",
-                },
-                {
-                  name: "Featherlite",
-                  tag: "Ergonomic Hardware",
-                  logo: "https://featherlitefurniture.com/wp-content/uploads/2021/04/Featherlite-Logo-1.png",
-                  fallbackLogo: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=120",
-                  color: "bg-emerald-900/10 text-emerald-800 dark:text-emerald-300",
-                  badge: "Ergonomic Hardware",
-                },
-                {
-                  name: "Godrej Interio",
-                  tag: "Steel Joinery",
-                  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Godrej_Logo.svg/512px-Godrej_Logo.svg.png",
-                  fallbackLogo: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=120",
-                  color: "bg-rose-900/10 text-rose-800 dark:text-rose-300",
-                  badge: "Precision Steel Joinery",
-                },
-                {
-                  name: "Pepperfry",
-                  tag: "Verified Merchant",
-                  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepperfry_Logo.png/640px-Pepperfry_Logo.png",
-                  fallbackLogo: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=120",
-                  color: "bg-orange-900/10 text-orange-800 dark:text-orange-300",
-                  badge: "Verified Marketplace Partner",
-                },
-              ])
+            ])
+              .concat(
+                brandPartners && brandPartners.length > 0 ? brandPartners : [
+                  {
+                    id: "1b",
+                    name: "Sleepwell",
+                    tag: "Mattress Tech Partner",
+                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
+                    fallbackLogo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=120",
+                  },
+                  {
+                    id: "2b",
+                    name: "CenturyPly",
+                    tag: "Marine Teak Grade",
+                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CenturyPly_logo.svg/640px-CenturyPly_logo.svg.png",
+                    fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
+                  },
+                  {
+                    id: "3b",
+                    name: "Featherlite",
+                    tag: "Ergonomic Hardware",
+                    logo: "https://featherlitefurniture.com/wp-content/uploads/2021/04/Featherlite-Logo-1.png",
+                    fallbackLogo: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=120",
+                  },
+                  {
+                    id: "4b",
+                    name: "Godrej Interio",
+                    tag: "Steel Joinery",
+                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Godrej_Logo.svg/512px-Godrej_Logo.svg.png",
+                    fallbackLogo: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=120",
+                  },
+                  {
+                    id: "5b",
+                    name: "Pepperfry",
+                    tag: "Verified Merchant",
+                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepperfry_Logo.png/640px-Pepperfry_Logo.png",
+                    fallbackLogo: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=120",
+                  },
+                ]
+              )
               .map((brand, idx) => (
                 <div
-                  key={`${brand.name}-${idx}`}
-                  className="flex items-center gap-3 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl px-4 py-2 shrink-0 shadow-sm hover:border-accent-teal hover:shadow-md transition-all group cursor-pointer"
+                  key={`${brand.id}-${idx}`}
+                  className="flex items-center gap-3 bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl px-4 py-2 shrink-0 shadow-sm hover:border-accent-teal hover:shadow-md transition-all group cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-inner group-hover:scale-105 transition-transform">
+                  <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-inner group-hover:scale-105 transition-transform">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={brand.logo}
                       alt={`${brand.name} logo`}
                       className="w-full h-full object-contain"
                       onError={(e) => {
-                        // Fallback image if remote SVG/PNG fails
-                        (e.target as HTMLImageElement).src = brand.fallbackLogo;
+                        if (brand.fallbackLogo) {
+                          (e.target as HTMLImageElement).src = brand.fallbackLogo;
+                        }
                       }}
                     />
                   </div>

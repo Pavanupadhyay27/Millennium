@@ -52,7 +52,7 @@ const INITIAL_CMS_SETTINGS = {
 };
 
 export default function HomepageCmsPage() {
-  const { products: storeProducts, cmsSettings, updateCmsSettings } = useStore();
+  const { products: storeProducts, cmsSettings, updateCmsSettings, brandPartners, addBrandPartner, updateBrandPartner, deleteBrandPartner } = useStore();
   const [cmsData, setCmsData] = useState({
     ...INITIAL_CMS_SETTINGS,
     announcementBarText: cmsSettings?.announcementBarText || INITIAL_CMS_SETTINGS.announcementBarText,
@@ -63,7 +63,14 @@ export default function HomepageCmsPage() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   // Active tab inside CMS editor
-  const [activeTab, setActiveTab] = useState<"hero" | "banners" | "branding" | "carousel" | "testimonials">("hero");
+  const [activeTab, setActiveTab] = useState<"hero" | "partners" | "banners" | "branding" | "carousel" | "testimonials">("hero");
+
+  // New partner state
+  const [newPartner, setNewPartner] = useState({
+    name: "",
+    tag: "",
+    logo: "",
+  });
 
   const handleHeroSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,6 +155,7 @@ export default function HomepageCmsPage() {
       <div className="flex border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pb-4 gap-8 overflow-x-auto">
         {([
           { id: "hero", name: "Hero Block & Banners", icon: FileEdit },
+          { id: "partners", name: "Brand Partners", icon: Globe },
           { id: "banners", name: "Promo Banners CMS", icon: Layout },
           { id: "branding", name: "Branding & Theme", icon: Palette },
           { id: "carousel", name: "Featured Showcase", icon: ShoppingBag },
@@ -232,6 +240,132 @@ export default function HomepageCmsPage() {
               <Sparkles className="w-4 h-4" /> Publish Hero & Announcement
             </button>
           </form>
+        )}
+
+        {/* Tab: Brand Partners CRUD Editor */}
+        {activeTab === "partners" && (
+          <div className="flex flex-col gap-6">
+            <div className="pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                  Manage Brand Partners & Material Certifications
+                </h3>
+                <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mt-1">
+                  Add, edit, or delete verified brand partners (Sleepwell, CenturyPly, Featherlite, Godrej Interio, etc.) featured on the homepage.
+                </p>
+              </div>
+            </div>
+
+            {/* Add New Partner Form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!newPartner.name || !newPartner.logo) return;
+                addBrandPartner({
+                  name: newPartner.name,
+                  tag: newPartner.tag || "Verified Partner",
+                  logo: newPartner.logo,
+                  fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
+                });
+                setNewPartner({ name: "", tag: "", logo: "" });
+                showToast("New Brand Partner added to storefront ticker!");
+              }}
+              className="bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 space-y-4"
+            >
+              <h4 className="font-serif text-sm font-bold text-accent-teal uppercase tracking-wider">
+                + Add New Brand Partner
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Company Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Sleepwell"
+                    value={newPartner.name}
+                    onChange={(e) => setNewPartner({ ...newPartner, name: e.target.value })}
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Material / Tech Tag *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Mattress Tech Partner"
+                    value={newPartner.tag}
+                    onChange={(e) => setNewPartner({ ...newPartner, tag: e.target.value })}
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs font-medium text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Logo Image URL *
+                  </label>
+                  <input
+                    type="url"
+                    required
+                    placeholder="https://domain.com/logo.png"
+                    value={newPartner.logo}
+                    onChange={(e) => setNewPartner({ ...newPartner, logo: e.target.value })}
+                    className="w-full bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-4 py-2 text-xs font-medium text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-sm transition-all"
+              >
+                + Add Partner
+              </button>
+            </form>
+
+            {/* List of Current Partners */}
+            <div className="space-y-3">
+              <h4 className="font-serif text-sm font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                Active Brand Partners ({brandPartners?.length || 0})
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {brandPartners?.map((bp) => (
+                  <div
+                    key={bp.id}
+                    className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 p-1 flex items-center justify-center shrink-0 overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={bp.logo} alt={bp.name} className="w-full h-full object-contain" />
+                      </div>
+                      <div className="min-w-0">
+                        <h5 className="font-serif font-bold text-xs truncate text-[#1F1B16] dark:text-[#F7F3EC]">{bp.name}</h5>
+                        <p className="text-[10px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 truncate">• {bp.tag}</p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        deleteBrandPartner(bp.id);
+                        showToast(`Brand partner "${bp.name}" removed.`);
+                      }}
+                      className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-colors shrink-0 text-xs font-bold"
+                      title="Delete Partner"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Tab: Promo Banners Editor */}

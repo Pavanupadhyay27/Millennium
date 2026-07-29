@@ -73,6 +73,15 @@ export interface Product {
   seoDescription?: string;
 }
 
+export interface BrandPartner {
+  id: string;
+  name: string;
+  tag: string;
+  logo: string;
+  fallbackLogo?: string;
+  badge?: string;
+}
+
 export interface CmsSettings {
   announcementBarText: string;
   showAnnouncementBar: boolean;
@@ -88,6 +97,49 @@ export interface WishlistItem {
   slug: string;
   bg: string;
 }
+
+const INITIAL_BRAND_PARTNERS: BrandPartner[] = [
+  {
+    id: "bp-1",
+    name: "Sleepwell",
+    tag: "Mattress Tech Partner",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
+    fallbackLogo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=120",
+    badge: "Official Mattress Partner",
+  },
+  {
+    id: "bp-2",
+    name: "CenturyPly",
+    tag: "Marine Teak Grade",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CenturyPly_logo.svg/640px-CenturyPly_logo.svg.png",
+    fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
+    badge: "700+ Teak Grade",
+  },
+  {
+    id: "bp-3",
+    name: "Featherlite",
+    tag: "Ergonomic Hardware",
+    logo: "https://featherlitefurniture.com/wp-content/uploads/2021/04/Featherlite-Logo-1.png",
+    fallbackLogo: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=120",
+    badge: "Ergonomic Hardware",
+  },
+  {
+    id: "bp-4",
+    name: "Godrej Interio",
+    tag: "Steel Joinery",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Godrej_Logo.svg/512px-Godrej_Logo.svg.png",
+    fallbackLogo: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=120",
+    badge: "Precision Steel Joinery",
+  },
+  {
+    id: "bp-5",
+    name: "Pepperfry",
+    tag: "Verified Merchant",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepperfry_Logo.png/640px-Pepperfry_Logo.png",
+    fallbackLogo: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=120",
+    badge: "Verified Marketplace Partner",
+  },
+];
 
 const INITIAL_CMS_SETTINGS: CmsSettings = {
   announcementBarText: "⚡ Monsoon Special: Up to 20% OFF on Teak Seating & Free Delivery Across Odisha!",
@@ -299,6 +351,7 @@ interface AppState {
   customers: CustomerRecord[];
   notifications: AppNotification[];
   customerTestimonials: CustomerTestimonial[];
+  brandPartners: BrandPartner[];
   activePromoCode: string | null;
   cartDrawerOpen: boolean;
   leadModalOpen: boolean;
@@ -309,6 +362,11 @@ interface AppState {
   
   cmsSettings: CmsSettings;
   updateCmsSettings: (settings: Partial<CmsSettings>) => void;
+
+  // Brand Partners Actions
+  addBrandPartner: (partner: Omit<BrandPartner, "id">) => void;
+  updateBrandPartner: (id: string, partner: Partial<BrandPartner>) => void;
+  deleteBrandPartner: (id: string) => void;
 
   // Testimonial Actions
   addCustomerTestimonial: (testimonial: Omit<CustomerTestimonial, "id" | "date" | "verified">) => void;
@@ -365,6 +423,7 @@ export const useStore = create<AppState>()(
       customers: INITIAL_CUSTOMERS_LIST,
       notifications: INITIAL_NOTIFICATIONS,
       customerTestimonials: INITIAL_TESTIMONIALS,
+      brandPartners: INITIAL_BRAND_PARTNERS,
       activePromoCode: null,
       cartDrawerOpen: false,
       leadModalOpen: false,
@@ -377,6 +436,28 @@ export const useStore = create<AppState>()(
         set((state) => ({
           cmsSettings: { ...state.cmsSettings, ...newSettings },
         })),
+
+      addBrandPartner: (partner) => {
+        const newBp: BrandPartner = {
+          ...partner,
+          id: `bp-${Date.now()}`,
+        };
+        set((state) => ({
+          brandPartners: [...state.brandPartners, newBp],
+        }));
+      },
+
+      updateBrandPartner: (id, fields) => {
+        set((state) => ({
+          brandPartners: state.brandPartners.map((bp) => (bp.id === id ? { ...bp, ...fields } : bp)),
+        }));
+      },
+
+      deleteBrandPartner: (id) => {
+        set((state) => ({
+          brandPartners: state.brandPartners.filter((bp) => bp.id !== id),
+        }));
+      },
 
       addCustomerTestimonial: (testimonial) => {
         const newTestimonial: CustomerTestimonial = {
@@ -628,6 +709,7 @@ export const useStore = create<AppState>()(
         customers: state.customers,
         notifications: state.notifications,
         customerTestimonials: state.customerTestimonials,
+        brandPartners: state.brandPartners,
         activePromoCode: state.activePromoCode,
         cmsSettings: state.cmsSettings,
         isAuthenticated: state.isAuthenticated,
