@@ -86,9 +86,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   useEffect(() => {
-    // Admin panel is permanently locked to Luxury Dark Mode
-    document.documentElement.classList.add("dark");
+    const savedTheme = localStorage.getItem("millennium_admin_theme") as "light" | "dark" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      if (savedTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    localStorage.setItem("millennium_admin_theme", nextTheme);
+    if (nextTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
   useEffect(() => {
     // Check local admin authentication state
@@ -246,6 +266,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-3">
             {/* Live Clock Component on Right Side */}
             <AdminLiveClock />
+
+            {/* Light / Dark Mode Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="w-9 h-9 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 flex items-center justify-center hover:bg-accent-teal hover:text-white transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
+              title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </button>
 
             {/* Notifications Bell Dropdown */}
             <div className="relative">

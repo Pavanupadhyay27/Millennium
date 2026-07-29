@@ -194,17 +194,16 @@ export default function WholesaleRequestQueuePage() {
       </div>
 
       {/* Applications Table list */}
-      <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-[28px] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl overflow-hidden shadow-sm">
+        <div className="w-full">
+          <table className="w-full text-left border-collapse table-auto">
             <thead>
-              <tr className="bg-[#FAF7F2] dark:bg-[#12100E] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">
-                <th className="py-4 px-6">Company / GSTIN</th>
-                <th className="py-4 px-4">Representative & Contact</th>
-                <th className="py-4 px-4">Expected Monthly Volume</th>
-                <th className="py-4 px-4">Status & Notes</th>
-                <th className="py-4 px-4">Verification Audit Remarks</th>
-                <th className="py-4 px-6 text-center">Decision & Actions</th>
+              <tr className="bg-[#FAF7F2] dark:bg-[#12100E] border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 text-[10px] font-extrabold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">
+                <th className="py-3.5 px-4">Company & GSTIN</th>
+                <th className="py-3.5 px-4">Contact</th>
+                <th className="py-3.5 px-4">Monthly Spend</th>
+                <th className="py-3.5 px-4">Status & Notes</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1F1B16]/5 dark:divide-[#F7F3EC]/10 text-xs font-medium">
@@ -212,22 +211,22 @@ export default function WholesaleRequestQueuePage() {
                 wholesaleApplications.map((app) => (
                   <tr
                     key={app.id}
-                    className="hover:bg-[#FAF7F2]/50 dark:hover:bg-[#12100E]/50 transition-colors group cursor-pointer"
+                    className="hover:bg-[#FAF7F2]/50 dark:hover:bg-[#12100E]/50 transition-colors group"
                   >
-                    {/* Business Name and GSTIN - CLICKABLE TO OPEN DETAIL MODAL */}
-                    <td
-                      onClick={() => setSelectedApp(app)}
-                      className="py-5 px-6"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-accent-teal/10 text-accent-teal flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    {/* Business Name and GSTIN */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-accent-teal/10 text-accent-teal flex items-center justify-center shrink-0">
                           <Building2 className="w-4 h-4" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-xs group-hover:text-accent-teal transition-colors">
+                          <a
+                            href={`/admin/wholesale/${app.id}`}
+                            className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-xs hover:text-accent-teal transition-colors block"
+                          >
                             {app.businessName}
-                          </h4>
-                          <span className="font-mono text-[9px] text-[#1F1B16]/45 dark:text-[#F7F3EC]/45 font-bold uppercase">
+                          </a>
+                          <span className="font-mono text-[9px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-bold uppercase">
                             GSTIN: {app.gstin}
                           </span>
                         </div>
@@ -235,33 +234,22 @@ export default function WholesaleRequestQueuePage() {
                     </td>
 
                     {/* Representative contact */}
-                    <td
-                      onClick={() => setSelectedApp(app)}
-                      className="py-5 px-4"
-                    >
-                      <div className="font-bold text-[#1F1B16] dark:text-[#F7F3EC]">{app.contactPerson}</div>
-                      <div className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono leading-none mt-1">{app.email}</div>
-                      <div className="text-[10px] text-accent-teal font-mono font-bold mt-1">📞 {app.phone}</div>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] leading-tight">{app.contactPerson}</div>
+                      <div className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono leading-tight mt-0.5">{app.email}</div>
                     </td>
 
                     {/* Monthly Volume */}
-                    <td
-                      onClick={() => setSelectedApp(app)}
-                      className="py-5 px-4 font-mono font-bold text-[#1F1B16] dark:text-[#F7F3EC] tabular-nums"
-                    >
-                      <div className="flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs w-fit">
-                        <TrendingUp className="w-3.5 h-3.5" />
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                      <span className="text-emerald-600 dark:text-emerald-400 text-xs">
                         {formatPrice(app.expectedVolume)}
-                      </div>
+                      </span>
                     </td>
 
                     {/* Applicant Notes & Status Badge */}
-                    <td
-                      onClick={() => setSelectedApp(app)}
-                      className="py-5 px-4 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 leading-relaxed max-w-xs"
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                    <td className="py-3.5 px-4 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 max-w-xs">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
                           app.status === "Approved"
                             ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
                             : app.status === "Rejected"
@@ -271,56 +259,46 @@ export default function WholesaleRequestQueuePage() {
                           {app.status || "Pending"}
                         </span>
                       </div>
-                      <div className="flex gap-1.5 items-start text-[11px] truncate">
-                        <FileText className="w-3.5 h-3.5 text-accent-teal mt-0.5 shrink-0" />
-                        <span className="truncate">{app.notes}</span>
-                      </div>
+                      <p className="text-[11px] truncate text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">{app.notes}</p>
                     </td>
 
-                    {/* Admin Verification remarks */}
-                    <td className="py-5 px-4">
-                      <input
-                        type="text"
-                        value={adminNotes[app.id] ?? app.notes}
-                        onChange={(e) => handleNoteChange(app.id, e.target.value)}
-                        placeholder="Add review remarks..."
-                        className="border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-xl px-3.5 py-2 text-[11px] font-semibold bg-[#FAF7F2] dark:bg-[#12100E] text-[#1F1B16] dark:text-[#F7F3EC] focus:outline-none focus:border-accent-teal w-full max-w-[200px]"
-                      />
-                    </td>
-
-                    {/* Actions: Approve / Reject / Delete / View Profile */}
-                    <td className="py-5 px-6 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          onClick={() => setSelectedApp(app)}
-                          className="p-2 bg-[#FAF7F2] dark:bg-[#12100E] hover:bg-accent-teal hover:text-white rounded-xl text-xs font-bold transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
-                          title="View Full Profile & Purchase History"
+                    {/* Actions: Dynamic buttons based on status & link to profile page */}
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <a
+                          href={`/admin/wholesale/${app.id}`}
+                          className="px-2.5 py-1.5 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 hover:bg-accent-teal hover:text-white rounded-lg text-[11px] font-bold transition-all text-[#1F1B16] dark:text-[#F7F3EC]"
+                          title="Open Full Profile Page"
                         >
-                          View Details
-                        </button>
+                          View Profile
+                        </a>
 
-                        <button
-                          onClick={() => handleApprove(app.id)}
-                          className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold px-3 py-2 rounded-xl text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all shadow-md active:scale-95"
-                          title="Approve Wholesale Trade Account"
-                        >
-                          <UserCheck className="w-3.5 h-3.5" /> Approve
-                        </button>
+                        {app.status !== "Approved" && (
+                          <button
+                            onClick={() => handleApprove(app.id)}
+                            className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold px-2.5 py-1.5 rounded-lg text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all shadow-sm"
+                            title="Approve Trade Application"
+                          >
+                            <UserCheck className="w-3 h-3" /> Approve
+                          </button>
+                        )}
 
-                        <button
-                          onClick={() => handleReject(app.id)}
-                          className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold px-2.5 py-2 rounded-xl text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 border border-amber-500/20"
-                          title="Reject Application"
-                        >
-                          <XCircle className="w-3.5 h-3.5" /> Reject
-                        </button>
+                        {app.status !== "Rejected" && (
+                          <button
+                            onClick={() => handleReject(app.id)}
+                            className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold px-2 py-1.5 rounded-lg text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all border border-amber-500/20"
+                            title="Reject Trade Application"
+                          >
+                            <XCircle className="w-3 h-3" /> Reject
+                          </button>
+                        )}
 
                         <button
                           onClick={() => handleDelete(app.id, app.businessName)}
-                          className="p-2 bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 rounded-xl text-xs font-bold transition-all"
-                          title="Permanently Delete Application"
+                          className="p-1.5 bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 rounded-lg text-xs font-bold transition-all"
+                          title="Delete Record"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
                     </td>
@@ -328,7 +306,7 @@ export default function WholesaleRequestQueuePage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="py-16 text-center text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-serif">
+                  <td colSpan={5} className="py-12 text-center text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-serif">
                     Wholesale request queue is empty. Click "+ Add Wholesale Lead" to create an application.
                   </td>
                 </tr>
