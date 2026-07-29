@@ -20,6 +20,7 @@ import {
   Trash2,
   Banknote,
   Check,
+  FileDown,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -36,6 +37,10 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<"shipping" | "payment" | "review">("shipping");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
   const [isCompleted, setIsCompleted] = useState(false);
+  const [completedOrderId, setCompletedOrderId] = useState<string>("");
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [completedCartSnapshot, setCompletedCartSnapshot] = useState<typeof cart>([]);
+  const [completedTotal, setCompletedTotal] = useState(0);
 
   // Form Fields
   const [shippingForm, setShippingForm] = useState({
@@ -237,9 +242,52 @@ export default function CheckoutPage() {
       total: total,
     });
 
+    setCompletedOrderId(orderId);
+    setCompletedCartSnapshot([...cart]);
+    setCompletedTotal(total);
     setIsCompleted(true);
     setIsProcessingPayment(false);
     clearCart();
+  };
+
+  const downloadInvoicePdf = async () => {
+    setIsDownloadingPdf(true);
+    try {
+      const res = await fetch("/api/orders/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId: completedOrderId,
+          customerName: shippingForm.fullName,
+          customerEmail: shippingForm.email || "customer@millenniumfurniture.in",
+          customerPhone: shippingForm.phone,
+          address: shippingForm.address,
+          city: shippingForm.city,
+          state: shippingForm.state,
+          postalCode: shippingForm.postalCode,
+          items: completedCartSnapshot,
+          totalAmount: completedTotal,
+          date: new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }),
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.pdfBase64) {
+        // Trigger browser download
+        const link = document.createElement("a");
+        link.href = `data:application/pdf;base64,${data.pdfBase64}`;
+        link.download = `Invoice-${completedOrderId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        alert("Failed to generate PDF. Please contact support.");
+      }
+    } catch (err) {
+      console.error("PDF download error:", err);
+      alert("PDF download failed. Please try again.");
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   const stepsList = [
@@ -751,12 +799,34 @@ export default function CheckoutPage() {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono font-bold uppercase tracking-wider text-[10px]">Logistics & Tax Invoice</span>
-                  <span className="font-bold text-accent-teal">PDF Tax Invoice Emailed</span>
+                  <span className="text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono font-bold uppercase tracking-wider text-[10px]">Tax Invoice</span>
+                  <span className="font-bold text-accent-teal">Download Below ↓</span>
                 </div>
               </div>
 
-              <div className="pt-2">
+              {/* PDF Download Button */}
+              <button
+                onClick={downloadInvoicePdf}
+                disabled={isDownloadingPdf}
+                className="w-full flex items-center justify-center gap-2.5 bg-accent-teal/10 hover:bg-accent-teal/20 border-2 border-accent-teal text-accent-teal font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-wait"
+              >
+                {isDownloadingPdf ? (
+                  <>
+                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Generating PDF...
+                  </>
+                ) : (
+                  <>
+                    <FileDown className="w-4 h-4" />
+                    Download Tax Invoice PDF
+                  </>
+                )}
+              </button>
+
+              <div className="pt-1">
                 <a
                   href="/"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#1F1B16] dark:bg-[#F7F3EC] text-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal dark:hover:bg-accent-teal hover:text-white dark:hover:text-white font-extrabold text-xs uppercase tracking-widest px-9 py-4 rounded-full shadow-xl transition-all"
