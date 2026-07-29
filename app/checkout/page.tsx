@@ -124,6 +124,32 @@ export default function CheckoutPage() {
             name: shippingForm.fullName || "",
             email: shippingForm.email || "",
             contact: shippingForm.phone || "",
+            method: "upi",
+          },
+          config: {
+            display: {
+              blocks: {
+                utib: {
+                  name: "UPI",
+                  instruments: [
+                    { method: "upi" },
+                  ],
+                },
+                other: {
+                  name: "Other Payment Methods",
+                  instruments: [
+                    { method: "card" },
+                    { method: "netbanking" },
+                    { method: "wallet" },
+                    { method: "paylater" },
+                  ],
+                },
+              },
+              sequence: ["block.utib", "block.other"],
+              preferences: {
+                show_default_blocks: false,
+              },
+            },
           },
           theme: {
             color: "#0D5C53",
