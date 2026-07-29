@@ -44,16 +44,16 @@ export default function CheckoutPage() {
     email: "",
     phone: "",
     address: "",
-    city: "Bhubaneswar",
-    state: "Odisha",
-    postalCode: "751024",
+    city: "",
+    state: "",
+    postalCode: "",
   });
 
   const [paymentForm, setPaymentForm] = useState({
     cardName: "",
-    cardNumber: "4111 2222 3333 4444",
-    cardExpiry: "12/29",
-    cardCvc: "123",
+    cardNumber: "",
+    cardExpiry: "",
+    cardCvc: "",
   });
 
   // Calculate prices
@@ -346,6 +346,7 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.city}
                                 onChange={(e) => setShippingForm({ ...shippingForm, city: e.target.value })}
+                                placeholder="Bhubaneswar"
                                 className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
@@ -358,6 +359,7 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.state}
                                 onChange={(e) => setShippingForm({ ...shippingForm, state: e.target.value })}
+                                placeholder="Odisha"
                                 className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
@@ -370,6 +372,7 @@ export default function CheckoutPage() {
                                 required
                                 value={shippingForm.postalCode}
                                 onChange={(e) => setShippingForm({ ...shippingForm, postalCode: e.target.value })}
+                                placeholder="751015"
                                 className="w-full px-4 py-3 rounded-2xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-mono font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                               />
                             </div>
