@@ -78,9 +78,83 @@ export default function CheckoutPage() {
     setStep("review");
   };
 
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
   const handlePlaceOrder = async () => {
     const orderId = `RET-2026-${Math.floor(1000 + Math.random() * 9000)}`;
 
+    if (paymentMethod === "upi" || paymentMethod === "card") {
+      setIsProcessingPayment(true);
+      try {
+        // 1. Create Razorpay Order via backend API
+        const razorpayRes = await fetch("/api/razorpay/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: total,
+            currency: "INR",
+            receipt: orderId,
+            notes: {
+              customerName: shippingForm.fullName,
+              customerEmail: shippingForm.email,
+              phone: shippingForm.phone,
+            },
+          }),
+        });
+
+        const razorpayData = await razorpayRes.json();
+
+        if (razorpayData.success && (window as any).Razorpay) {
+          const options = {
+            key: razorpayData.keyId,
+            amount: razorpayData.amount,
+            currency: razorpayData.currency,
+            name: "Millennium Furniture",
+            description: "Handcrafted Teak & Organic Wood Furnishings",
+            image: "/logo.png",
+            order_id: razorpayData.orderId,
+            prefill: {
+              name: shippingForm.fullName,
+              email: shippingForm.email,
+              contact: shippingForm.phone,
+            },
+            theme: {
+              color: "#0D5C53",
+            },
+            handler: async function (response: any) {
+              // Verify Payment Signature
+              await fetch("/api/razorpay/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(response),
+              });
+
+              // Finalize Order Creation
+              await finalizeOrderPlacement(orderId, "Razorpay (Online Payment)");
+            },
+            modal: {
+              ondismiss: function () {
+                setIsProcessingPayment(false);
+              },
+            },
+          };
+
+          const rzp = new (window as any).Razorpay(options);
+          rzp.open();
+          return;
+        }
+      } catch (err) {
+        console.error("Razorpay Popup Launch Error:", err);
+      } finally {
+        setIsProcessingPayment(false);
+      }
+    }
+
+    // Fallback for COD or standard flow
+    await finalizeOrderPlacement(orderId, "Cash on Delivery (COD)");
+  };
+
+  const finalizeOrderPlacement = async (orderId: string, paymentTypeStr: string) => {
     try {
       await fetch("/api/orders", {
         method: "POST",
@@ -125,6 +199,7 @@ export default function CheckoutPage() {
     });
 
     setIsCompleted(true);
+    setIsProcessingPayment(false);
     clearCart();
   };
 

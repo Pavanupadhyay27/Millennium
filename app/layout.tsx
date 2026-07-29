@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import CartDrawer from "../components/CartDrawer";
 import LeadCaptureModal from "../components/LeadCaptureModal";
@@ -87,6 +88,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body className="antialiased bg-cream text-charcoal">
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
         <SmoothPageTransition>{children}</SmoothPageTransition>
         <CartDrawer />
         <AddedToCartToast />
