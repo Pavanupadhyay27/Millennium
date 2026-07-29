@@ -325,7 +325,7 @@ export function InvoicePDFDocument(props: InvoicePDFProps) {
       React.createElement(
         View,
         { style: styles.footer },
-        React.createElement(Text, { style: styles.footerText }, "Millennium Furniture | NH-16 Janpath, Master Canteen Square, Bhubaneswar, Odisha 751001"),
+        React.createElement(Text, { style: styles.footerText }, "Millennium Furniture | F, 2G/49, 15, Indradhanu Market, IRC Village, Complex, Bhubaneswar, Odisha 751015"),
         React.createElement(Text, { style: styles.footerText }, "Support: +91 93343 09230 | Email: support@millenniumfurniture.in")
       )
     )

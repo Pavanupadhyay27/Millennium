@@ -57,15 +57,15 @@ export default function Footer() {
           <ul className="flex flex-col gap-1.5 md:gap-2.5 text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 text-[11px] md:text-xs font-medium">
             <li>
               <a
-                href="https://maps.google.com/?q=Janpath+Road,+Kharvel+Nagar,+Bhubaneswar,+Odisha+751001"
+                href="https://maps.google.com/?q=F,+2G/49,+15,+Indradhanu+Market,+IRC+Village,+Complex,+Bhubaneswar,+Odisha+751015"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-2 group hover:text-accent-teal transition-colors"
-                title="Click to open Google Maps navigation"
+                title="Click to open Google Maps navigation to Indradhanu Market Studio"
               >
                 <MapPin className="w-4 h-4 text-accent-teal shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                 <span className="group-hover:underline">
-                  Janpath Road, Kharvel Nagar, Bhubaneswar - 751001, Odisha
+                  F, 2G/49, 15, Indradhanu Market, IRC Village, Complex, Bhubaneswar, Odisha 751015
                 </span>
                 <ArrowUpRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 shrink-0 mt-0.5" />
               </a>

@@ -136,7 +136,7 @@ export async function POST(request: Request) {
                 </div>
 
                 <p style="font-size: 12px; color: #666; margin-bottom: 0;">
-                  Dispatched from Master Canteen Square, Janpath Road, Bhubaneswar, Odisha 751001.<br/>
+                  Dispatched from Studio: F, 2G/49, 15, Indradhanu Market, IRC Village, Complex, Bhubaneswar, Odisha 751015.<br/>
                   If you have any custom joinery or delivery questions, reach our desk at <strong>+91 93343 09230</strong>.
                 </p>
               </div>
