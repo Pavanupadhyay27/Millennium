@@ -366,6 +366,39 @@ const INITIAL_WHOLESALE_APPLICATIONS: WholesaleApplication[] = [
   },
 ];
 
+const INITIAL_TESTIMONIALS: CustomerTestimonial[] = [
+  {
+    id: "t1",
+    name: "Aarav Mohapatra",
+    role: "Architect, Bhubaneswar",
+    quote: "Millennium's attention to teak joinery and finish is exceptional. Delivery inside Bhubaneswar was prompt and seamless.",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120",
+    verified: true,
+    date: "May 14, 2026",
+  },
+  {
+    id: "t2",
+    name: "Priyanka Patnaik",
+    role: "Homeowner, Cuttack",
+    quote: "Visiting their local studio in Bhubaneswar convinced me. The blush accent chair is now the highlight of our living room!",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120",
+    verified: true,
+    date: "Apr 28, 2026",
+  },
+  {
+    id: "t3",
+    name: "Ranjan Dash",
+    role: "Wholesale Partner, Rourkela",
+    quote: "Excellent commercial terms and reliable logistics. The build quality of solid wood frames is highly appreciated.",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120",
+    verified: true,
+    date: "Jun 02, 2026",
+  },
+];
+
 export interface AppNotification {
   id: string;
   orderId: string;
