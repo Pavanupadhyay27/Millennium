@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Phone, Mail, X, Send, Sparkles, CheckCircle2 } from "lucide-react";
+import { MessageSquare, Phone, Mail, X, Send, Sparkles, CheckCircle2, MessageCircle, Clock, ShieldCheck } from "lucide-react";
 import { useStore } from "../lib/store";
 
 export default function FloatingContactWidget() {
@@ -25,14 +25,13 @@ export default function FloatingContactWidget() {
       setIsSubmitting(false);
       setSubmitted(true);
 
-      // Save inquiry to localStorage
       const existingLeads = JSON.parse(localStorage.getItem("customer_inquiries") || "[]");
       existingLeads.push({
         id: Date.now(),
         name,
         phone,
         message: message || "Direct floating contact widget inquiry",
-        itemContext: "Floating Contact Widget",
+        itemContext: "Floating Luxury Concierge Widget",
         actionType: "Contact Us Widget",
         createdAt: new Date().toISOString(),
       });
@@ -49,75 +48,87 @@ export default function FloatingContactWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end pointer-events-auto">
-      {/* Expanded Quick Contact Panel */}
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-auto font-sans">
+      {/* Expanded Luxury Concierge Card */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.88, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="mb-4 w-80 md:w-96 rounded-3xl bg-cream/95 dark:bg-charcoal/95 border border-charcoal/10 dark:border-cream/15 backdrop-blur-xl shadow-2xl overflow-hidden text-charcoal dark:text-cream"
+            exit={{ opacity: 0, scale: 0.88, y: 30 }}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+            className="mb-4 w-[340px] sm:w-[380px] rounded-[28px] bg-cream/95 dark:bg-[#181614]/95 border border-charcoal/15 dark:border-cream/20 backdrop-blur-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden text-charcoal dark:text-cream relative"
           >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-charcoal via-charcoal/95 to-charcoal text-cream dark:from-black dark:to-charcoal p-5 relative">
+            {/* Ambient Animated Glow Header Background */}
+            <div className="relative bg-gradient-to-br from-[#1F1B16] via-[#2A241E] to-[#141210] text-cream p-6 pb-7 overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent-teal/30 rounded-full blur-2xl pointer-events-none" />
+              
+              {/* Close Button */}
               <button
                 onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-cream flex items-center justify-center transition-all"
+                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-cream flex items-center justify-center transition-all duration-200"
                 aria-label="Close contact widget"
               >
                 <X className="w-4 h-4" />
               </button>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Live Concierge
+
+              <div className="flex items-center gap-2 mb-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                </span>
+                <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3" /> Concierge Online
                 </span>
               </div>
-              <h4 className="font-serif text-lg font-bold">Millennium Support</h4>
-              <p className="text-xs text-cream/70 mt-0.5">
-                Solid Teak Furniture Consultants (Bhubaneswar, Odisha)
+              <h4 className="font-serif text-xl font-bold tracking-tight">Millennium Studio</h4>
+              <p className="text-xs text-cream/70 mt-1 font-light leading-relaxed">
+                Handcrafted Teak Furniture Experts & B2B Trade Advisors
               </p>
+
+              {/* Response Time Badge */}
+              <div className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-semibold text-cream/90 border border-white/10">
+                <Clock className="w-3 h-3 text-accent-teal" /> Typical callback within 15 mins
+              </div>
             </div>
 
-            {/* Quick Actions Bar */}
-            <div className="flex border-b border-charcoal/10 dark:border-cream/10 bg-charcoal/5 dark:bg-cream/5 p-1.5 gap-1.5">
+            {/* Quick Action Tabs */}
+            <div className="flex border-b border-charcoal/10 dark:border-cream/10 bg-charcoal/5 dark:bg-cream/5 p-1.5 gap-1">
               <button
                 onClick={() => setActiveTab("quick")}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === "quick"
-                    ? "bg-white dark:bg-charcoal text-accent-teal shadow-sm"
+                    ? "bg-white dark:bg-charcoal text-accent-teal shadow-md"
                     : "text-charcoal/60 dark:text-cream/60 hover:text-charcoal dark:hover:text-cream"
                 }`}
               >
-                <MessageSquare className="w-3.5 h-3.5" /> Request Call
+                <MessageSquare className="w-3.5 h-3.5" /> Fast Callback
               </button>
               <button
                 onClick={() => setActiveTab("call")}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === "call"
-                    ? "bg-white dark:bg-charcoal text-accent-teal shadow-sm"
+                    ? "bg-white dark:bg-charcoal text-accent-teal shadow-md"
                     : "text-charcoal/60 dark:text-cream/60 hover:text-charcoal dark:hover:text-cream"
                 }`}
               >
-                <Phone className="w-3.5 h-3.5" /> Direct Call
+                <Phone className="w-3.5 h-3.5" /> Call & Email
               </button>
             </div>
 
-            {/* Content Body */}
-            <div className="p-5">
+            {/* Form Content */}
+            <div className="p-5 sm:p-6">
               {activeTab === "quick" ? (
                 !submitted ? (
-                  <form onSubmit={handleQuickSubmit} className="space-y-3">
+                  <form onSubmit={handleQuickSubmit} className="space-y-3.5">
                     <div>
                       <input
                         type="text"
                         required
-                        placeholder="Your Name *"
+                        placeholder="Your Full Name *"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-xl px-3.5 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-accent-teal transition-all"
                       />
                     </div>
                     <div>
@@ -127,71 +138,71 @@ export default function FloatingContactWidget() {
                         placeholder="Phone Number *"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-xl px-3.5 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-accent-teal"
+                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-accent-teal transition-all"
                       />
                     </div>
                     <div>
                       <textarea
                         rows={2}
-                        placeholder="Message or specific furniture piece (Optional)"
+                        placeholder="Furniture item or custom enquiry (Optional)..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-xl px-3.5 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-accent-teal resize-none"
+                        className="w-full bg-white/80 dark:bg-charcoal/80 border border-charcoal/15 dark:border-cream/15 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-accent-teal resize-none transition-all"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-accent-teal hover:bg-accent-teal/90 text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md active:scale-95 disabled:opacity-50"
+                      className="w-full bg-accent-teal hover:bg-teal-700 text-white py-3 rounded-2xl text-xs font-extrabold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-accent-teal/20 active:scale-95 disabled:opacity-50"
                     >
-                      {isSubmitting ? "Sending..." : "Request Instant Callback"} <Send className="w-3.5 h-3.5" />
+                      {isSubmitting ? "Connecting..." : "Request Instant Callback"} <Send className="w-3.5 h-3.5" />
                     </button>
+
+                    <p className="text-[10px] text-center text-charcoal/50 dark:text-cream/50 flex items-center justify-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-accent-teal" /> 100% Privacy Protected & No Spam
+                    </p>
                   </form>
                 ) : (
-                  <div className="text-center py-4 space-y-3">
-                    <div className="w-12 h-12 bg-accent-teal/15 text-accent-teal rounded-full flex items-center justify-center mx-auto">
-                      <CheckCircle2 className="w-6 h-6" />
+                  <div className="text-center py-6 space-y-3">
+                    <div className="w-14 h-14 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                      <CheckCircle2 className="w-7 h-7" />
                     </div>
-                    <h5 className="font-serif font-bold text-base">Request Received!</h5>
-                    <p className="text-xs text-charcoal/70 dark:text-cream/70">
-                      Our specialist will reach out to <strong>{phone}</strong> within 15 minutes.
+                    <h5 className="font-serif font-bold text-lg">Inquiry Received!</h5>
+                    <p className="text-xs text-charcoal/70 dark:text-cream/70 max-w-xs mx-auto leading-relaxed">
+                      Thank you <strong>{name}</strong>! Our teak furniture consultant will call you shortly at <strong>{phone}</strong>.
                     </p>
                     <button
                       onClick={handleReset}
-                      className="px-5 py-2 bg-charcoal text-cream dark:bg-cream dark:text-charcoal rounded-full text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all"
+                      className="px-6 py-2.5 bg-charcoal text-cream dark:bg-cream dark:text-charcoal rounded-full text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-md"
                     >
-                      Done
+                      Close Window
                     </button>
                   </div>
                 )
               ) : (
-                <div className="space-y-4 py-2">
-                  <p className="text-xs text-charcoal/70 dark:text-cream/70 leading-relaxed">
-                    Have questions about customized solid teak wood designs, bulk B2B orders, or store visits?
-                  </p>
-                  
+                <div className="space-y-3.5 py-1">
                   <a
                     href="tel:+919876543210"
-                    className="flex items-center gap-3 p-3 rounded-2xl bg-accent-teal/10 hover:bg-accent-teal/20 text-accent-teal border border-accent-teal/20 transition-all group"
+                    className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-accent-teal/10 hover:bg-accent-teal/20 border border-accent-teal/20 text-accent-teal transition-all group shadow-sm"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-accent-teal text-white flex items-center justify-center shadow-md">
+                    <div className="w-10 h-10 rounded-2xl bg-accent-teal text-white flex items-center justify-center shadow-md">
                       <Phone className="w-4 h-4 group-hover:rotate-12 transition-transform" />
                     </div>
                     <div>
-                      <div className="text-[10px] uppercase font-bold text-charcoal/50 dark:text-cream/50">Call Sales Hotline</div>
-                      <div className="text-xs font-bold text-charcoal dark:text-cream">+91 98765 43210</div>
+                      <div className="text-[10px] uppercase font-bold text-charcoal/50 dark:text-cream/50">Call Showroom Directly</div>
+                      <div className="text-xs font-extrabold text-charcoal dark:text-cream">+91 98765 43210</div>
                     </div>
                   </a>
 
                   <a
                     href="mailto:contact@millenniumfurniture.in"
-                    className="flex items-center gap-3 p-3 rounded-2xl bg-charcoal/5 dark:bg-cream/5 hover:bg-charcoal/10 dark:hover:bg-cream/10 border border-charcoal/10 dark:border-cream/10 transition-all group"
+                    className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-charcoal/5 dark:bg-cream/5 hover:bg-charcoal/10 dark:hover:bg-cream/10 border border-charcoal/10 dark:border-cream/10 transition-all group"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-charcoal text-cream dark:bg-cream dark:text-charcoal flex items-center justify-center shadow-md">
+                    <div className="w-10 h-10 rounded-2xl bg-charcoal text-cream dark:bg-cream dark:text-charcoal flex items-center justify-center shadow-md">
                       <Mail className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-[10px] uppercase font-bold text-charcoal/50 dark:text-cream/50">Send Email</div>
+                      <div className="text-[10px] uppercase font-bold text-charcoal/50 dark:text-cream/50">Send Official Email</div>
                       <div className="text-xs font-bold text-charcoal dark:text-cream">contact@millenniumfurniture.in</div>
                     </div>
                   </a>
@@ -199,11 +210,11 @@ export default function FloatingContactWidget() {
                   <button
                     onClick={() => {
                       setIsOpen(false);
-                      openLeadModal({ actionType: "Floating Widget Customization" });
+                      openLeadModal({ actionType: "Floating Luxury Widget Customization" });
                     }}
-                    className="w-full text-center py-2 text-[11px] font-bold text-accent-teal hover:underline tracking-wide"
+                    className="w-full text-center py-2.5 text-xs font-bold text-accent-teal hover:underline tracking-wide border border-accent-teal/30 rounded-2xl bg-accent-teal/5"
                   >
-                    Looking for Custom B2B / Wholesale Quotes? Click Here &rarr;
+                    Need B2B Wholesale / Trade Pricing? Click &rarr;
                   </button>
                 </div>
               )}
@@ -212,33 +223,36 @@ export default function FloatingContactWidget() {
         )}
       </AnimatePresence>
 
-      {/* Floating Trigger Button */}
+      {/* Modern Floating Trigger Button with Glassmorphism & Micro-Pulsing Ring */}
       <motion.button
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: 1.05, y: -2 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-3 px-5 py-3.5 rounded-full bg-gradient-to-r from-accent-teal via-teal-600 to-charcoal text-white shadow-2xl hover:shadow-accent-teal/40 transition-all border border-white/20"
+        className="group relative flex items-center gap-3 px-5 py-3.5 rounded-full bg-[#1F1B16] dark:bg-[#FAF7F2] text-cream dark:text-[#1F1B16] shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:shadow-accent-teal/40 transition-all duration-300 border border-white/20 dark:border-black/20"
         aria-label="Contact Us"
       >
-        {/* Animated Pulsing Ring */}
-        <span className="absolute -inset-0.5 rounded-full bg-accent-teal/40 animate-ping pointer-events-none opacity-40" />
+        {/* Glow halo animation */}
+        <span className="absolute -inset-1 rounded-full bg-accent-teal/40 animate-pulse pointer-events-none opacity-40 blur-sm" />
 
-        {/* Icon */}
-        <div className="relative flex items-center justify-center">
+        {/* Dynamic Icon */}
+        <div className="relative w-7 h-7 rounded-full bg-accent-teal text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
           {isOpen ? (
-            <X className="w-5 h-5 text-white transition-transform duration-200 rotate-90" />
+            <X className="w-4 h-4 transition-transform duration-200 rotate-90" />
           ) : (
-            <MessageSquare className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-200" />
+            <MessageCircle className="w-4 h-4 fill-white/20" />
           )}
         </div>
 
-        {/* Label */}
-        <span className="relative text-xs font-extrabold uppercase tracking-wider text-white">
-          Contact Us
+        {/* Text Label */}
+        <span className="relative text-xs font-extrabold uppercase tracking-widest">
+          {isOpen ? "Close" : "Contact Us"}
         </span>
 
-        {/* Active Online Indicator */}
-        <span className="relative w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-charcoal" />
+        {/* Live Status Green Pill */}
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+        </span>
       </motion.button>
     </div>
   );
