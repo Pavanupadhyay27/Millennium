@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       const resend = new Resend(resendApiKey);
 
       await resend.emails.send({
-        from: "Millennium Furniture <orders@millenniumfurniture.in>",
+        from: "Millennium Furniture <onboarding@resend.dev>",
         to: [customerEmail],
         subject: `Tax Invoice PDF - Order ${orderId || 'Confirmation'} | Millennium Furniture`,
         html: `

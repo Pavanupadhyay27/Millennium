@@ -101,7 +101,7 @@ export async function POST(request: Request) {
           .join("");
 
         await resend.emails.send({
-          from: "Millennium Furniture <orders@millenniumfurniture.in>",
+          from: "Millennium Furniture <onboarding@resend.dev>",
           to: [newOrder.customerEmail],
           subject: `Tax Invoice & Order Confirmation - ${orderNumber} | Millennium Furniture`,
           html: `
