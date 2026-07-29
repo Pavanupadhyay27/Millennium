@@ -754,28 +754,34 @@ export default function HomePage() {
                 <div
                   key={test.id}
                   onClick={() => setActiveTestimonial(index)}
-                  className={`min-w-[280px] sm:min-w-[340px] md:min-w-[380px] max-w-[400px] snap-start rounded-3xl p-6 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 ${
+                  className={`min-w-[300px] sm:min-w-[350px] md:min-w-[400px] max-w-[420px] snap-start rounded-3xl p-6 md:p-7 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 relative overflow-hidden ${
                     isActive
-                      ? "bg-white dark:bg-[#1C1814] border-amber-600/60 dark:border-amber-500/60 shadow-lg scale-[1.02]"
-                      : "bg-white/90 dark:bg-[#1C1814]/90 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm hover:border-amber-600/30"
+                      ? "bg-white dark:bg-[#1C1814] border-amber-500/80 shadow-2xl scale-[1.02] ring-1 ring-amber-500/30"
+                      : "bg-white/95 dark:bg-[#1C1814]/95 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-md hover:border-amber-500/40"
                   }`}
                 >
+                  {/* Decorative background quote mark watermark */}
+                  <span className="absolute top-2 right-4 text-7xl font-serif font-black opacity-[0.06] text-[#1F1B16] dark:text-[#F7F3EC] select-none pointer-events-none">
+                    &ldquo;
+                  </span>
+
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-4">
-                      <div className="flex items-center gap-1">
-                        {[...Array(test.rating)].map((_, i) => (
+                      <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                        {[...Array(test.rating || 5)].map((_, i) => (
                           <Star
                             key={i}
                             className="w-4 h-4 fill-amber-400 text-amber-400"
                           />
                         ))}
                       </div>
-                      <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-500/30 px-3 py-0.5 rounded-full flex items-center gap-1">
-                        ✓ Verified Buyer
+                      <span className="text-[10px] font-mono font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Verified Buyer
                       </span>
                     </div>
 
-                    <p className="font-serif italic text-xs sm:text-sm leading-relaxed text-[#1F1B16]/90 dark:text-[#F7F3EC]/90 mb-6 line-clamp-4">
+                    <p className="font-serif italic text-sm sm:text-base leading-relaxed text-[#1F1B16]/95 dark:text-[#F7F3EC]/95 mb-6 line-clamp-4 font-medium">
                       &ldquo;{test.quote}&rdquo;
                     </p>
                   </div>
@@ -785,11 +791,11 @@ export default function HomePage() {
                     <img
                       src={test.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120"}
                       alt={test.name}
-                      className="w-11 h-11 rounded-full object-cover border-2 border-amber-500/30 shrink-0 shadow-sm"
+                      className="w-11 h-11 rounded-full object-cover border-2 border-amber-500/40 shrink-0 shadow-md"
                     />
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-xs sm:text-sm leading-tight truncate text-[#1F1B16] dark:text-[#F7F3EC]">{test.name}</h4>
-                      <p className="text-[10px] sm:text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 truncate mt-0.5 font-medium">
+                      <h4 className="font-serif font-bold text-sm leading-tight truncate text-[#1F1B16] dark:text-[#F7F3EC]">{test.name}</h4>
+                      <p className="text-[11px] text-accent-teal font-medium truncate mt-0.5">
                         {test.role}
                       </p>
                     </div>
@@ -914,26 +920,29 @@ export default function HomePage() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-extrabold uppercase tracking-wider mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                    <label className="block text-[10px] font-extrabold uppercase tracking-wider mb-2 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                       Rating *
                     </label>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-3 items-center bg-[#FAF7F2] dark:bg-[#12100E] p-3 rounded-2xl border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
                           type="button"
                           onClick={() => setNewReview({ ...newReview, rating: star })}
-                          className="p-1 hover:scale-110 transition-transform"
+                          className="p-1 hover:scale-125 transition-transform"
                         >
                           <Star
-                            className={`w-6 h-6 transition-all ${
+                            className={`w-7 h-7 transition-all ${
                               star <= newReview.rating
-                                ? "fill-amber-400 text-amber-400 scale-110"
-                                : "text-gray-300 dark:text-gray-600"
+                                ? "fill-amber-400 text-amber-400 drop-shadow-sm scale-110"
+                                : "fill-transparent text-gray-400 dark:text-gray-600"
                             }`}
                           />
                         </button>
                       ))}
+                      <span className="text-xs font-bold font-mono text-amber-600 dark:text-amber-400 ml-auto">
+                        {newReview.rating} / 5 Stars
+                      </span>
                     </div>
                   </div>
 
