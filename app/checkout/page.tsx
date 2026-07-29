@@ -108,24 +108,36 @@ export default function CheckoutPage() {
 
         const razorpayData = await razorpayRes.json();
 
-        if (razorpayData.success && (window as any).Razorpay) {
-          const options = {
-            key: razorpayData.keyId,
-            amount: razorpayData.amount,
-            currency: razorpayData.currency,
-            name: "Millennium Furniture",
-            description: "Handcrafted Teak & Organic Wood Furnishings",
-            image: "/logo.png",
-            order_id: razorpayData.orderId,
-            prefill: {
-              name: shippingForm.fullName,
-              email: shippingForm.email,
-              contact: shippingForm.phone,
-            },
-            theme: {
-              color: "#0D5C53",
-            },
-            handler: async function (response: any) {
+        if (!razorpayData.success) {
+          alert(`Razorpay Order Error: ${razorpayData.error || "Failed to initialize order."}`);
+          setIsProcessingPayment(false);
+          return;
+        }
+
+        if (typeof window === "undefined" || !(window as any).Razorpay) {
+          alert("Razorpay SDK is loading or blocked by adblocker. Please refresh the page and try again.");
+          setIsProcessingPayment(false);
+          return;
+        }
+
+        const options = {
+          key: razorpayData.keyId,
+          amount: razorpayData.amount,
+          currency: razorpayData.currency,
+          name: "Millennium Furniture",
+          description: "Handcrafted Teak & Organic Wood Furnishings",
+          image: "/logo.png",
+          order_id: razorpayData.orderId,
+          prefill: {
+            name: shippingForm.fullName,
+            email: shippingForm.email,
+            contact: shippingForm.phone,
+          },
+          theme: {
+            color: "#0D5C53",
+          },
+          handler: async function (response: any) {
+            try {
               // Verify Payment Signature
               await fetch("/api/razorpay/verify-payment", {
                 method: "POST",
@@ -133,28 +145,33 @@ export default function CheckoutPage() {
                 body: JSON.stringify(response),
               });
 
-              // Finalize Order Creation
+              // Finalize Order Creation after successful payment
+              await finalizeOrderPlacement(orderId, paymentMethod === "upi" ? "UPI Instant (Razorpay)" : "Credit/Debit Card (Razorpay)");
+            } catch (vErr) {
+              console.error("Payment verification error:", vErr);
               await finalizeOrderPlacement(orderId, "Razorpay (Online Payment)");
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              setIsProcessingPayment(false);
             },
-            modal: {
-              ondismiss: function () {
-                setIsProcessingPayment(false);
-              },
-            },
-          };
+          },
+        };
 
-          const rzp = new (window as any).Razorpay(options);
-          rzp.open();
-          return;
-        }
-      } catch (err) {
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
+        // IMPORTANT: STOP HERE so it doesn't fall through to COD placement!
+        return;
+      } catch (err: any) {
         console.error("Razorpay Popup Launch Error:", err);
-      } finally {
+        alert(`Payment Launch Error: ${err.message || "Failed to open gateway"}`);
         setIsProcessingPayment(false);
+        return;
       }
     }
 
-    // Fallback for COD or standard flow
+    // Cash on Delivery (COD) flow
     await finalizeOrderPlacement(orderId, "Cash on Delivery (COD)");
   };
 
