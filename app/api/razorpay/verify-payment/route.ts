@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET || "dummy_secret_for_demo";
+    const secret = process.env.RAZORPAY_KEY_SECRET || "CE3e1InOR0tJJPkzo0JbVq7R";
 
     // HMAC SHA256 Signature Verification
     const generatedSignature = crypto
