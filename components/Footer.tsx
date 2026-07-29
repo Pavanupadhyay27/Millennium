@@ -55,11 +55,22 @@ export default function Footer() {
             Bhubaneswar Studio
           </h4>
           <ul className="flex flex-col gap-1.5 md:gap-2.5 text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 text-[11px] md:text-xs font-medium">
-            <li className="flex items-start gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-accent-teal shrink-0 mt-0.5" />
-              <span>Janpath Road, Kharvel Nagar, Bhubaneswar - 751001</span>
+            <li>
+              <a
+                href="https://maps.google.com/?q=Janpath+Road,+Kharvel+Nagar,+Bhubaneswar,+Odisha+751001"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2 group hover:text-accent-teal transition-colors"
+                title="Click to open Google Maps navigation"
+              >
+                <MapPin className="w-4 h-4 text-accent-teal shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                <span className="group-hover:underline">
+                  Janpath Road, Kharvel Nagar, Bhubaneswar - 751001, Odisha
+                </span>
+                <ArrowUpRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 shrink-0 mt-0.5" />
+              </a>
             </li>
-            <li className="flex items-center gap-1.5">
+            <li className="flex items-center gap-2">
               <Phone className="w-3.5 h-3.5 text-accent-teal shrink-0" />
               <a href="tel:+919337721647" className="hover:underline font-bold">+91 93377 21647</a>
             </li>
