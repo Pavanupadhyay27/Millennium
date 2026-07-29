@@ -271,10 +271,11 @@ export default function HomePage() {
 
     const testimonialInterval = setInterval(() => {
       setActiveTestimonial((prev) => {
-        const nextIdx = (prev + 1) % TESTIMONIALS.length;
+        const listLength = (customerTestimonials && customerTestimonials.length > 0) ? customerTestimonials.length : TESTIMONIALS.length;
+        const nextIdx = (prev + 1) % listLength;
         if (testimonialCarouselRef.current) {
           const container = testimonialCarouselRef.current;
-          const cardWidth = container.scrollWidth / TESTIMONIALS.length;
+          const cardWidth = container.scrollWidth / listLength;
           container.scrollTo({
             left: cardWidth * nextIdx,
             behavior: "smooth",
@@ -282,7 +283,7 @@ export default function HomePage() {
         }
         return nextIdx;
       });
-    }, 4000);
+    }, 4500);
 
     return () => {
       clearInterval(heroInterval);
@@ -725,12 +726,12 @@ export default function HomePage() {
       </section>
 
       {/* TESTIMONIALS & CUSTOMER REVIEWS */}
-      <section id="about-us" className="py-10 md:py-16 bg-[#F7F3EC] dark:bg-[#12100e] transition-colors duration-300 relative">
+      <section id="about-us" className="py-10 md:py-16 bg-[#F7F3EC] dark:bg-[#12100e] transition-colors duration-300 relative overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 md:mb-10">
             <div>
-              <span className="text-accent-teal text-xs font-bold tracking-widest uppercase mb-1 block">
-                Customer Voices
+              <span className="text-accent-teal text-xs font-extrabold tracking-widest uppercase mb-1 block">
+                Customer Voices & Reviews
               </span>
               <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
                 What Our Buyers Say
@@ -739,31 +740,35 @@ export default function HomePage() {
             
             <button
               onClick={() => setReviewModalOpen(true)}
-              className="bg-accent-teal hover:bg-accent-teal/90 text-white rounded-full px-5 py-2.5 text-xs font-bold inline-flex items-center gap-2 shadow-md hover:shadow-lg transition-all self-start sm:self-auto"
+              className="group relative inline-flex items-center gap-2.5 bg-gradient-to-r from-accent-teal to-emerald-700 hover:from-emerald-700 hover:to-accent-teal text-white rounded-full px-6 py-3 text-xs font-extrabold uppercase tracking-wider shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 border border-white/20 self-start sm:self-auto"
             >
-              <Star className="w-3.5 h-3.5 fill-white" /> + Write a Review
+              <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:rotate-12 transition-transform">
+                <Star className="w-3 h-3 fill-white text-white" />
+              </span>
+              <span>+ Write a Review</span>
             </button>
           </div>
 
-          {/* Compact Attractive Testimonials Track */}
+          {/* Auto-sliding Horizontal Track when items exceed 3 */}
           <div
             ref={testimonialCarouselRef}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"
+            className="flex flex-row gap-4 sm:gap-6 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory"
+            style={{ scrollbarWidth: "none" }}
           >
-            {(customerTestimonials || TESTIMONIALS).map((test, index) => {
+            {(customerTestimonials && customerTestimonials.length > 0 ? customerTestimonials : TESTIMONIALS).map((test, index) => {
               const isActive = index === activeTestimonial;
               return (
                 <div
                   key={test.id}
                   onClick={() => setActiveTestimonial(index)}
-                  className={`rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between cursor-pointer border shadow-sm hover:shadow-md ${
+                  className={`min-w-[280px] sm:min-w-[340px] md:min-w-[380px] max-w-[400px] snap-start rounded-3xl p-6 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 ${
                     isActive
-                      ? "bg-white dark:bg-[#1C1814] border-accent-teal ring-2 ring-accent-teal/30 scale-[1.01]"
-                      : "bg-white/80 dark:bg-[#1C1814]/80 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 opacity-90 hover:opacity-100"
+                      ? "bg-white dark:bg-[#1C1814] border-accent-teal ring-2 ring-accent-teal/40 shadow-xl scale-[1.02]"
+                      : "bg-white/80 dark:bg-[#1C1814]/80 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm opacity-90 hover:opacity-100"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                    <div className="flex items-center justify-between gap-2 mb-3">
                       <div className="flex items-center gap-1">
                         {[...Array(test.rating)].map((_, i) => (
                           <Star
@@ -772,26 +777,26 @@ export default function HomePage() {
                           />
                         ))}
                       </div>
-                      <span className="text-[9px] font-mono font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="text-[9px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
                         ✓ Verified Buyer
                       </span>
                     </div>
 
-                    <p className="font-serif italic text-xs leading-relaxed text-[#1F1B16]/85 dark:text-[#F7F3EC]/85 mb-4 line-clamp-3">
+                    <p className="font-serif italic text-xs sm:text-sm leading-relaxed text-[#1F1B16]/90 dark:text-[#F7F3EC]/90 mb-6 line-clamp-4">
                       &ldquo;{test.quote}&rdquo;
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-3 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                  <div className="flex items-center gap-3 pt-3.5 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={test.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120"}
                       alt={test.name}
-                      className="w-8 h-8 rounded-full object-cover border border-accent-teal/40 shrink-0"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-accent-teal/40 shrink-0 shadow-sm"
                     />
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-xs leading-tight truncate text-[#1F1B16] dark:text-[#F7F3EC]">{test.name}</h4>
-                      <p className="text-[10px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 truncate mt-0.5">
+                      <h4 className="font-bold text-xs sm:text-sm leading-tight truncate text-[#1F1B16] dark:text-[#F7F3EC]">{test.name}</h4>
+                      <p className="text-[10px] sm:text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 truncate mt-0.5 font-medium">
                         {test.role}
                       </p>
                     </div>
@@ -800,10 +805,24 @@ export default function HomePage() {
               );
             })}
           </div>
+
+          {/* Indicator Dots */}
+          <div className="flex justify-center items-center gap-2 mt-4">
+            {(customerTestimonials && customerTestimonials.length > 0 ? customerTestimonials : TESTIMONIALS).map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveTestimonial(idx)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeTestimonial === idx ? "w-6 bg-accent-teal" : "w-1.5 bg-[#1F1B16]/20 dark:bg-[#F7F3EC]/20"
+                }`}
+                aria-label={`Go to review ${idx + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CUSTOMER REVIEW SUBMISSION MODAL */}
+      {/* CUSTOMER REVIEW SUBMISSION MODAL (FIXED MAX-HEIGHT & SCROLLABLE) */}
       <AnimatePresence>
         {reviewModalOpen && (
           <>
@@ -812,28 +831,28 @@ export default function HomePage() {
               animate={{ opacity: 0.6 }}
               exit={{ opacity: 0 }}
               onClick={() => setReviewModalOpen(false)}
-              className="fixed inset-0 bg-black z-50 cursor-pointer"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 cursor-pointer"
             />
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-2xl z-50 text-[#1F1B16] dark:text-[#F7F3EC]"
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-md max-h-[85vh] overflow-y-auto bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-2xl z-50 text-[#1F1B16] dark:text-[#F7F3EC] scrollbar-thin"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-accent-teal/10 text-accent-teal flex items-center justify-center">
-                    <Star className="w-4 h-4 fill-accent-teal text-accent-teal" />
+              <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 mb-4 sticky top-0 bg-white dark:bg-[#1C1814] z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-2xl bg-accent-teal/10 text-accent-teal flex items-center justify-center shrink-0">
+                    <Star className="w-5 h-5 fill-accent-teal text-accent-teal" />
                   </div>
                   <div>
                     <h3 className="font-serif text-lg font-bold">Write a Review</h3>
-                    <p className="text-[10px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">Share your experience with Millennium</p>
+                    <p className="text-[10px] text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 font-medium">Share your experience with Millennium Furniture</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setReviewModalOpen(false)}
-                  className="w-7 h-7 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 hover:bg-accent-teal hover:text-white flex items-center justify-center transition-all text-xs font-bold"
+                  className="w-8 h-8 rounded-full bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 hover:bg-accent-teal hover:text-white flex items-center justify-center transition-all text-xs font-bold shrink-0"
                 >
                   ✕
                 </button>
@@ -841,17 +860,17 @@ export default function HomePage() {
 
               {reviewSuccess ? (
                 <div className="py-8 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto text-xl font-black">
+                  <div className="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-black">
                     ✓
                   </div>
-                  <h4 className="font-serif font-bold text-base">Thank You for Your Feedback!</h4>
-                  <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">Your review has been verified and published.</p>
+                  <h4 className="font-serif font-bold text-lg">Thank You for Your Review!</h4>
+                  <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">Your review has been verified and published to the customer showcase.</p>
                   <button
                     onClick={() => {
                       setReviewSuccess(false);
                       setReviewModalOpen(false);
                     }}
-                    className="bg-accent-teal text-white rounded-full px-6 py-2 text-xs font-bold"
+                    className="bg-accent-teal text-white font-bold rounded-full px-8 py-2.5 text-xs uppercase tracking-wider shadow-md hover:bg-accent-teal/90 transition-all"
                   >
                     Done
                   </button>
@@ -863,7 +882,7 @@ export default function HomePage() {
                     if (!newReview.name || !newReview.quote) return;
                     addCustomerTestimonial({
                       name: newReview.name,
-                      role: newReview.role || "Verified Buyer, Odisha",
+                      role: newReview.role || "Verified Customer, Odisha",
                       quote: newReview.quote,
                       rating: newReview.rating,
                       avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120",
@@ -873,7 +892,7 @@ export default function HomePage() {
                   className="space-y-4"
                 >
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                    <label className="block text-[10px] font-extrabold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                       Your Name *
                     </label>
                     <input
@@ -882,25 +901,25 @@ export default function HomePage() {
                       value={newReview.name}
                       onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
                       placeholder="e.g. Sweta Mishra"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                      className="w-full px-4 py-3 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
-                      City & Occupation (Optional)
+                    <label className="block text-[10px] font-extrabold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                      City & Occupation
                     </label>
                     <input
                       type="text"
                       value={newReview.role}
                       onChange={(e) => setNewReview({ ...newReview, role: e.target.value })}
                       placeholder="e.g. Homeowner, Bhubaneswar"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                      className="w-full px-4 py-3 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                    <label className="block text-[10px] font-extrabold uppercase tracking-wider mb-1.5 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                       Rating *
                     </label>
                     <div className="flex gap-2 items-center">
@@ -909,7 +928,7 @@ export default function HomePage() {
                           key={star}
                           type="button"
                           onClick={() => setNewReview({ ...newReview, rating: star })}
-                          className="p-1"
+                          className="p-1 hover:scale-110 transition-transform"
                         >
                           <Star
                             className={`w-6 h-6 transition-all ${
@@ -924,7 +943,7 @@ export default function HomePage() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
+                    <label className="block text-[10px] font-extrabold uppercase tracking-wider mb-1 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                       Your Review *
                     </label>
                     <textarea
@@ -932,14 +951,14 @@ export default function HomePage() {
                       rows={3}
                       value={newReview.quote}
                       onChange={(e) => setNewReview({ ...newReview, quote: e.target.value })}
-                      placeholder="Tell us about the quality, delivery, or custom joinery..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC] resize-none"
+                      placeholder="Tell us about the teak wood quality, custom joinery, or delivery..."
+                      className="w-full px-4 py-3 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC] resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full bg-accent-teal text-white font-bold py-3 rounded-full text-xs uppercase tracking-wider hover:bg-accent-teal/90 transition-all shadow-md"
+                    className="w-full bg-accent-teal text-white font-extrabold py-3.5 rounded-full text-xs uppercase tracking-wider hover:bg-accent-teal/90 transition-all shadow-md mt-2"
                   >
                     Submit Review
                   </button>
