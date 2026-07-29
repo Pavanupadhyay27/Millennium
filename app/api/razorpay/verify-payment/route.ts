@@ -13,9 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const secret = (process.env.RAZORPAY_KEY_SECRET && !process.env.RAZORPAY_KEY_SECRET.includes("XpHQ"))
-      ? process.env.RAZORPAY_KEY_SECRET.replace(/^["']|["']$/g, "").trim()
-      : "CE3e1InOR0tJJPkzo0JbVq7R";
+    const secret = "CE3e1InOR0tJJPkzo0JbVq7R";
 
     // HMAC SHA256 Signature Verification
     const generatedSignature = crypto
