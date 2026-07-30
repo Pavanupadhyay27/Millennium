@@ -394,7 +394,14 @@ export default function CheckoutPage() {
         };
 
         const rzp = new (window as any).Razorpay(options);
+
+        rzp.on("payment.failed", function (response: any) {
+          console.error("Razorpay Payment Failed:", response.error);
+          setIsProcessingPayment(false);
+        });
+
         rzp.open();
+        return;
       } catch (err: any) {
         alert(`Payment Gateway Error: ${err.message || "Failed to open gateway"}`);
         setIsProcessingPayment(false);
