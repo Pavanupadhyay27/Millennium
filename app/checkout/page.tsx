@@ -356,7 +356,7 @@ export default function CheckoutPage() {
         // Live valid Razorpay order: launch Razorpay Checkout Modal
         if (typeof window !== "undefined" && (window as any).Razorpay) {
           const options: any = {
-            key: razorpayData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TJo3XO5svcFths",
+            key: "rzp_test_TJo3XO5svcFths",
             amount: razorpayData.amount,
             currency: razorpayData.currency,
             name: "Millennium Furniture",

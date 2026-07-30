@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET || "lPOgniyN6wzLNhO5ftQUHBQr";
+    const secret = "lPOgniyN6wzLNhO5ftQUHBQr";
 
     // HMAC SHA256 Signature Verification
     const generatedSignature = crypto
