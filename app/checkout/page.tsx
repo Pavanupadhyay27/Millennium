@@ -155,7 +155,6 @@ function StateAutocompleteInput({
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           className={`${inputCls} pr-9`}
-          placeholder="Select or type State"
           autoComplete="off"
         />
         <ChevronDown
@@ -514,22 +513,22 @@ export default function CheckoutPage() {
                           </div>
                           <div className="space-y-4">
                             <Field label="Full Name *">
-                              <input type="text" required value={shippingForm.fullName} onChange={sf("fullName")} className={inputCls} placeholder="Rajan Mehta" />
+                              <input type="text" required value={shippingForm.fullName} onChange={sf("fullName")} className={inputCls} />
                             </Field>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <Field label="Email *">
-                                <input type="email" required value={shippingForm.email} onChange={sf("email")} className={inputCls} placeholder="you@email.com" />
+                                <input type="email" required value={shippingForm.email} onChange={sf("email")} className={inputCls} />
                               </Field>
                               <Field label="Phone *">
-                                <input type="tel" required value={shippingForm.phone} onChange={sf("phone")} className={inputCls} placeholder="+91 98765 43210" />
+                                <input type="tel" required value={shippingForm.phone} onChange={sf("phone")} className={inputCls} placeholder="+91 " />
                               </Field>
                             </div>
                             <Field label="Street Address *">
-                              <input type="text" required value={shippingForm.address} onChange={sf("address")} className={inputCls} placeholder="Flat 4B, Green Valley Apartments" />
+                              <input type="text" required value={shippingForm.address} onChange={sf("address")} className={inputCls} />
                             </Field>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                               <Field label="City *">
-                                <input type="text" required value={shippingForm.city} onChange={sf("city")} className={inputCls} placeholder="Bhubaneswar" />
+                                <input type="text" required value={shippingForm.city} onChange={sf("city")} className={inputCls} />
                               </Field>
                               <Field label="State *">
                                 <StateAutocompleteInput
@@ -538,7 +537,7 @@ export default function CheckoutPage() {
                                 />
                               </Field>
                               <Field label="PIN Code *">
-                                <input type="text" required value={shippingForm.postalCode} onChange={sf("postalCode")} className={inputCls} placeholder="751001" maxLength={6} />
+                                <input type="text" required value={shippingForm.postalCode} onChange={sf("postalCode")} className={inputCls} maxLength={6} />
                               </Field>
                             </div>
                           </div>
@@ -727,45 +726,44 @@ export default function CheckoutPage() {
 
                   {/* ── Right: Order Summary ── */}
                   <div className="bg-white dark:bg-[#1A1714] rounded-2xl border border-[#1F1B16]/8 dark:border-[#F7F3EC]/8 shadow-warm-md sticky top-28 overflow-hidden">
-                    <div className="px-6 pt-6 pb-4 border-b border-[#1F1B16]/8 dark:border-[#F7F3EC]/8">
-                      <h3 className="font-serif text-base font-bold">
-                        Your Order
-                        <span className="ml-2 text-xs font-sans font-normal text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">
-                          ({cart.reduce((s, i) => s + i.quantity, 0)} item{cart.reduce((s, i) => s + i.quantity, 0) !== 1 ? "s" : ""})
+                    <div className="px-6 pt-5 pb-4 border-b border-[#1F1B16]/8 dark:border-[#F7F3EC]/8">
+                      <h3 className="font-serif text-base font-bold flex items-center justify-between">
+                        <span>Your Order</span>
+                        <span className="text-xs font-sans font-medium text-[#1F1B16]/40 dark:text-[#F7F3EC]/40">
+                          {cart.reduce((s, i) => s + i.quantity, 0)} {cart.reduce((s, i) => s + i.quantity, 0) === 1 ? "item" : "items"}
                         </span>
                       </h3>
                     </div>
-                    <div className="max-h-64 overflow-y-auto">
+                    <div className="max-h-64 overflow-y-auto divide-y divide-[#1F1B16]/5 dark:divide-[#F7F3EC]/5">
                       {cart.map((item) => (
-                        <div key={item.id} className="flex items-center gap-3 px-6 py-4 border-b border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 last:border-0">
-                          <div className="w-11 h-11 rounded-lg overflow-hidden bg-[#F7F3EC] dark:bg-[#0E0C0A] shrink-0 border border-[#1F1B16]/8 dark:border-[#F7F3EC]/8">
+                        <div key={item.id} className="flex items-center gap-3 px-6 py-3.5">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#F7F3EC] dark:bg-[#0E0C0A] shrink-0 border border-[#1F1B16]/8 dark:border-[#F7F3EC]/8">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold truncate">{item.name}</p>
-                            <p className="text-[10px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 mb-1.5">{item.color || "Natural"}</p>
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center gap-1 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full px-2 py-0.5">
+                            <div className="flex items-center gap-3 mt-1">
+                              <div className="flex items-center gap-1.5 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full px-2 py-0.5">
                                 <button
                                   onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
-                                  className="w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#1F1B16]/8 dark:hover:bg-[#F7F3EC]/8 transition-colors"
+                                  className="w-3.5 h-3.5 flex items-center justify-center rounded-full hover:bg-[#1F1B16]/8 dark:hover:bg-[#F7F3EC]/8 transition-colors"
                                 >
-                                  <Minus className="w-2.5 h-2.5" />
+                                  <Minus className="w-2 h-2" />
                                 </button>
-                                <span className="text-[11px] font-mono font-bold w-4 text-center">{item.quantity}</span>
+                                <span className="text-[10px] font-mono font-bold w-3 text-center">{item.quantity}</span>
                                 <button
                                   onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
-                                  className="w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#1F1B16]/8 dark:hover:bg-[#F7F3EC]/8 transition-colors"
+                                  className="w-3.5 h-3.5 flex items-center justify-center rounded-full hover:bg-[#1F1B16]/8 dark:hover:bg-[#F7F3EC]/8 transition-colors"
                                 >
-                                  <Plus className="w-2.5 h-2.5" />
+                                  <Plus className="w-2 h-2" />
                                 </button>
                               </div>
                               <button
                                 onClick={() => removeFromCart(item.id)}
                                 className="text-[#1F1B16]/25 dark:text-[#F7F3EC]/25 hover:text-red-500 transition-colors"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
+                                <Trash2 className="w-3 h-3" />
                               </button>
                             </div>
                           </div>
@@ -773,7 +771,7 @@ export default function CheckoutPage() {
                         </div>
                       ))}
                     </div>
-                    <div className="px-6 pt-4 pb-6 space-y-2.5 border-t border-[#1F1B16]/8 dark:border-[#F7F3EC]/8">
+                    <div className="px-6 pt-4 pb-5 space-y-2 border-t border-[#1F1B16]/8 dark:border-[#F7F3EC]/8">
                       {[
                         { label: "Subtotal", value: fmt(subtotal), highlight: false },
                         { label: "GST (18%)", value: fmt(gst), highlight: false },
@@ -784,15 +782,10 @@ export default function CheckoutPage() {
                           <span className={`font-semibold ${highlight ? "text-accent-teal" : ""}`}>{value}</span>
                         </div>
                       ))}
-                      <div className="pt-3 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex items-center justify-between">
+                      <div className="pt-2.5 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex items-center justify-between">
                         <span className="text-sm font-semibold">Total</span>
                         <span className="font-serif text-xl font-bold text-accent-teal">{fmt(total)}</span>
                       </div>
-                      {shipping === 0 && (
-                        <p className="text-[10px] text-accent-teal/70 text-center pt-1">
-                          🎉 Free shipping on orders above ₹15,000
-                        </p>
-                      )}
                     </div>
                   </div>
 
