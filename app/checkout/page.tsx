@@ -243,7 +243,7 @@ export default function CheckoutPage() {
     [cart]
   );
   const gst = useMemo(() => Math.round(subtotal * 0.18), [subtotal]);
-  const shipping = subtotal > 15000 ? 0 : 2500;
+  const shipping = shippingForm.state === "Odisha" || subtotal > 15000 ? 0 : 2500;
   const total = subtotal + gst + shipping;
 
   const sf =
