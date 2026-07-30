@@ -338,68 +338,63 @@ export default function CheckoutPage() {
           return;
         }
 
-        // If test mode fallback (invalid/expired test key or demo checkout)
-        if (razorpayData.isTestMode || razorpayData.orderId?.startsWith("order_test_")) {
-          await fetch("/api/razorpay/verify-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              razorpay_order_id: razorpayData.orderId || `order_test_${Date.now()}`,
-              razorpay_payment_id: `pay_test_${Date.now()}`,
-              razorpay_signature: "test_signature",
-            }),
+        // Ensure Razorpay checkout.js is loaded before opening modal
+        const loadRazorpayScript = (): Promise<void> => {
+          return new Promise((resolve) => {
+            if (typeof window !== "undefined" && (window as any).Razorpay) {
+              resolve();
+              return;
+            }
+            const script = document.createElement("script");
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.onload = () => resolve();
+            script.onerror = () => resolve();
+            document.body.appendChild(script);
           });
-          await finalizeOrderPlacement(orderId, "Online Payment (Verified Test Mode)");
+        };
+
+        await loadRazorpayScript();
+
+        if (!(window as any).Razorpay) {
+          alert("Unable to load payment gateway. Please refresh the page and try again.");
+          setIsProcessingPayment(false);
           return;
         }
 
-        // Live valid Razorpay order: launch Razorpay Checkout Modal
-        if (typeof window !== "undefined" && (window as any).Razorpay) {
-          const options: any = {
-            key: razorpayData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TJo3XO5svcFths",
-            amount: razorpayData.amount,
-            currency: razorpayData.currency,
-            name: "Millennium Furniture",
-            description: "Solid Teak & Heirloom Furniture Payment",
-            image: "/logo.png",
-            order_id: razorpayData.orderId,
-            prefill: {
-              name: shippingForm.fullName,
-              email: shippingForm.email,
-              contact: shippingForm.phone,
-            },
-            notes: {
-              address: `${shippingForm.address}, ${shippingForm.city}, ${shippingForm.state} - ${shippingForm.postalCode}`,
-            },
-            theme: { color: "#0D5C53" },
-            handler: async (response: any) => {
-              try {
-                await fetch("/api/razorpay/verify-payment", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(response),
-                });
-              } catch {}
-              await finalizeOrderPlacement(orderId, "Online Payment (Razorpay UPI/Card)");
-            },
-            modal: {
-              ondismiss: () => setIsProcessingPayment(false),
-            },
-          };
+        const options: any = {
+          key: razorpayData.keyId || "rzp_test_TJo3XO5svcFths",
+          amount: razorpayData.amount,
+          currency: razorpayData.currency,
+          name: "Millennium Furniture",
+          description: "Solid Teak & Heirloom Furniture Payment",
+          image: "/logo.png",
+          order_id: razorpayData.orderId,
+          prefill: {
+            name: shippingForm.fullName,
+            email: shippingForm.email,
+            contact: shippingForm.phone,
+          },
+          notes: {
+            address: `${shippingForm.address}, ${shippingForm.city}, ${shippingForm.state} - ${shippingForm.postalCode}`,
+          },
+          theme: { color: "#0D5C53" },
+          handler: async (response: any) => {
+            try {
+              await fetch("/api/razorpay/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(response),
+              });
+            } catch {}
+            await finalizeOrderPlacement(orderId, "Online Payment (Razorpay UPI/Card)");
+          },
+          modal: {
+            ondismiss: () => setIsProcessingPayment(false),
+          },
+        };
 
-          const rzp = new (window as any).Razorpay(options);
-
-          rzp.on("payment.failed", async function (response: any) {
-            console.warn("Razorpay payment failure event caught in test environment:", response);
-            await finalizeOrderPlacement(orderId, "Online Payment (Verified Test Mode)");
-          });
-
-          rzp.open();
-          return;
-        } else {
-          await finalizeOrderPlacement(orderId, "Online Payment (Razorpay Test Mode)");
-          return;
-        }
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
       } catch (err: any) {
         alert(`Payment Gateway Error: ${err.message || "Failed to open gateway"}`);
         setIsProcessingPayment(false);

@@ -88,7 +88,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body className="antialiased bg-cream text-charcoal">
-        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
         <SmoothPageTransition>{children}</SmoothPageTransition>
         <CartDrawer />
         <AddedToCartToast />
