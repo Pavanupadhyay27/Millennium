@@ -23,11 +23,11 @@ export default function AddedToCartToast() {
     <AnimatePresence>
       {lastAddedItem && (
         <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 50, scale: 0.95 }}
+          initial={{ opacity: 0, y: 50, x: "-50%", scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
+          exit={{ opacity: 0, y: 50, x: "-50%", scale: 0.95 }}
           transition={{ type: "spring", stiffness: 350, damping: 25 }}
-          className="fixed bottom-6 left-6 z-50 w-[90%] max-w-[360px] bg-[#1F1B16] text-[#F7F3EC] border border-white/20 rounded-2xl p-3.5 shadow-[0_16px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl flex items-center justify-between gap-3"
+          className="fixed bottom-6 left-1/2 z-50 w-[90%] max-w-[360px] bg-[#1F1B16] text-[#F7F3EC] border border-white/20 rounded-2xl p-3.5 shadow-[0_16px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl flex items-center justify-between gap-3"
         >
           {/* Left Item Info */}
           <div className="flex items-center gap-3 min-w-0">
