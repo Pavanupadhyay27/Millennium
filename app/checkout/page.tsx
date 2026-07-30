@@ -94,13 +94,19 @@ function StateAutocompleteInput({
   onChange: (val: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
   const filteredStates = useMemo(() => {
     if (!value.trim()) return INDIAN_STATES;
     const query = value.toLowerCase().trim();
     return INDIAN_STATES.filter((s) => s.toLowerCase().includes(query));
   }, [value]);
+
+  useEffect(() => {
+    setHighlightedIndex(0);
+  }, [filteredStates]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -112,60 +118,88 @@ function StateAutocompleteInput({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        setIsOpen(true);
+        return;
+      }
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev + 1) % filteredStates.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev - 1 + filteredStates.length) % filteredStates.length);
+    } else if (e.key === "Enter" && filteredStates[highlightedIndex]) {
+      e.preventDefault();
+      onChange(filteredStates[highlightedIndex]);
+      setIsOpen(false);
+    } else if (e.key === "Escape") {
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <div ref={wrapperRef} className="relative">
-      <div className="relative">
+    <div ref={wrapperRef} className="relative w-full">
+      <div className="relative cursor-pointer" onClick={() => setIsOpen((prev) => !prev)}>
         <input
           type="text"
           required
-          list="indian-states-list"
           value={value}
           onChange={(e) => {
             onChange(e.target.value);
-            setIsOpen(true);
+            if (!isOpen) setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
+          onKeyDown={handleKeyDown}
           className={`${inputCls} pr-9`}
-          placeholder="e.g. Odisha, Maharashtra"
+          placeholder="Select or type State"
           autoComplete="off"
         />
-        <ChevronDown className="w-4 h-4 text-[#1F1B16]/30 dark:text-[#F7F3EC]/30 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <ChevronDown
+          className={`w-4 h-4 text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-200 pointer-events-none ${
+            isOpen ? "rotate-180 text-accent-teal" : ""
+          }`}
+        />
       </div>
-
-      <datalist id="indian-states-list">
-        {INDIAN_STATES.map((state) => (
-          <option key={state} value={state} />
-        ))}
-      </datalist>
 
       <AnimatePresence>
         {isOpen && filteredStates.length > 0 && (
           <motion.ul
-            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+            ref={listRef}
+            initial={{ opacity: 0, y: 6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.98 }}
-            transition={{ duration: 0.15 }}
-            className="absolute left-0 right-0 top-full mt-1.5 z-50 max-h-48 overflow-y-auto bg-white dark:bg-[#1A1714] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/15 rounded-xl shadow-2xl backdrop-blur-xl py-1 text-xs divide-y divide-[#1F1B16]/5 dark:divide-[#F7F3EC]/5"
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="absolute left-0 right-0 top-full mt-1.5 z-50 max-h-56 overflow-y-auto bg-white/95 dark:bg-[#1A1714]/95 border border-[#1F1B16]/12 dark:border-[#F7F3EC]/15 rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.35)] backdrop-blur-2xl py-1.5 text-xs overflow-x-hidden scrollbar-thin"
           >
-            {filteredStates.map((st) => (
-              <li
-                key={st}
-                onClick={() => {
-                  onChange(st);
-                  setIsOpen(false);
-                }}
-                className={`px-4 py-2.5 cursor-pointer font-medium transition-colors flex items-center justify-between hover:bg-accent-teal/10 hover:text-accent-teal ${
-                  value.toLowerCase() === st.toLowerCase()
-                    ? "bg-accent-teal/15 text-accent-teal font-bold"
-                    : "text-[#1F1B16] dark:text-[#F7F3EC]"
-                }`}
-              >
-                <span>{st}</span>
-                {value.toLowerCase() === st.toLowerCase() && (
-                  <Check className="w-3.5 h-3.5 text-accent-teal" />
-                )}
-              </li>
-            ))}
+            {filteredStates.map((st, index) => {
+              const isSelected = value.toLowerCase() === st.toLowerCase();
+              const isHighlighted = index === highlightedIndex;
+
+              return (
+                <li
+                  key={st}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                  onClick={() => {
+                    onChange(st);
+                    setIsOpen(false);
+                  }}
+                  className={`px-4 py-2.5 cursor-pointer font-medium transition-all duration-150 flex items-center justify-between ${
+                    isSelected
+                      ? "bg-accent-teal/20 text-accent-teal font-bold"
+                      : isHighlighted
+                      ? "bg-[#1F1B16]/6 dark:bg-[#F7F3EC]/8 text-[#1F1B16] dark:text-[#F7F3EC]"
+                      : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80"
+                  }`}
+                >
+                  <span>{st}</span>
+                  {isSelected && <Check className="w-3.5 h-3.5 text-accent-teal shrink-0 stroke-[2.5]" />}
+                </li>
+              );
+            })}
           </motion.ul>
         )}
       </AnimatePresence>
