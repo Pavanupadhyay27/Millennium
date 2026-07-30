@@ -362,7 +362,7 @@ export default function CheckoutPage() {
         }
 
         const options: any = {
-          key: razorpayData.keyId || "rzp_test_TJo3XO5svcFths",
+          key: razorpayData.keyId || "rzp_test_TJpBtam2fIU9sy",
           amount: razorpayData.amount,
           currency: razorpayData.currency,
           name: "Millennium Furniture",
