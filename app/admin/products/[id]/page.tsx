@@ -35,7 +35,7 @@ export default function DedicatedAdminProductPage() {
   const router = useRouter();
   const productId = params?.id as string;
 
-  const { products: storeProducts, updateProduct, deleteProduct } = useStore();
+  const { products: storeProducts, updateProduct, deleteProduct, orders } = useStore();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   // Find product from store
@@ -62,6 +62,16 @@ export default function DedicatedAdminProductPage() {
       { id: "r2", author: "Ananya Mishra", rating: 5, date: "June 28, 2026", comment: "Clean minimalist design. Delivered fully assembled with zero hassle.", verified: true }
     ],
   };
+
+  // Calculate dynamic sales data
+  const productOrders = (orders || []).flatMap((order) => 
+    order.items
+      .filter((item) => item.name === product.name)
+      .map((item) => ({ ...item, orderStatus: order.status }))
+  );
+  
+  const totalUnitsSold = productOrders.reduce((sum, item) => sum + item.quantity, 0);
+  const lifetimeSales = productOrders.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   const [stockInput, setStockInput] = useState(product.stock);
 
@@ -158,15 +168,15 @@ export default function DedicatedAdminProductPage() {
           <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 flex items-center gap-1.5">
             <TrendingUp className="w-4 h-4 text-accent-teal" /> Lifetime Sales
           </span>
-          <p className="font-mono text-2xl font-extrabold text-accent-teal">₹1,47,000</p>
-          <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">+24% vs last quarter</span>
+          <p className="font-mono text-2xl font-extrabold text-accent-teal">{formatPrice(lifetimeSales)}</p>
+          <span className="text-[9px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-bold">Total revenue</span>
         </div>
 
         <div className="bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-5 shadow-sm space-y-1">
           <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 flex items-center gap-1.5">
             <Box className="w-4 h-4 text-accent-teal" /> Total Units Sold
           </span>
-          <p className="font-mono text-2xl font-extrabold text-[#1F1B16] dark:text-[#F7F3EC]">6 Units</p>
+          <p className="font-mono text-2xl font-extrabold text-[#1F1B16] dark:text-[#F7F3EC]">{totalUnitsSold} Units</p>
           <span className="text-[9px] text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 font-medium">B2B & Retail Combined</span>
         </div>
 
