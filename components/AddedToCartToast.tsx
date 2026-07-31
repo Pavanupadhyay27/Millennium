@@ -56,7 +56,11 @@ export default function AddedToCartToast() {
                 dismissToast();
                 toggleCartDrawer(true);
               }}
-              className="bg-accent-teal hover:bg-accent-teal/90 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md transition-all active:scale-95"
+              className="text-white font-extrabold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 border border-emerald-850/15"
+              style={{
+                background: "linear-gradient(180deg, #34D399 0%, #10B981 100%)",
+                boxShadow: "inset 0 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1.5px 0 rgba(0, 0, 0, 0.2)",
+              }}
             >
               <ShoppingBag className="w-3.5 h-3.5" /> View ({totalCartCount})
             </button>

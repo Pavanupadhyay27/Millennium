@@ -111,14 +111,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   useEffect(() => {
-    // Check local admin authentication state
-    const authState = localStorage.getItem("millennium_admin_auth");
-    if (authState === "true") {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
+    // Check server authentication state via HttpOnly cookie / API session
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/orders", { method: "GET" });
+        if (res.status === 401 || res.status === 403) {
+          setIsAuthenticated(false);
+        } else {
+          setIsAuthenticated(true);
+        }
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
+
+    if (pathname !== "/admin/login") {
+      checkAuth();
     }
-  }, []);
+  }, [pathname]);
 
   // Allow unrestricted rendering for the login page route itself
   if (pathname === "/admin/login") {

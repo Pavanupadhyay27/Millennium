@@ -7,6 +7,7 @@ import {
   ArrowRight,
   Compass,
   Heart,
+  ShoppingBag,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -231,11 +232,72 @@ const TESTIMONIALS = [
   },
 ];
 
+const getBrandLogo = (name: string) => {
+  switch (name.toLowerCase()) {
+    case "sleepwell":
+      return (
+        <div className="w-5 h-5 rounded bg-blue-600/15 text-blue-600 dark:text-blue-400 flex items-center justify-center font-serif font-black text-[9px] tracking-tight shrink-0 border border-blue-500/20">
+          S
+        </div>
+      );
+    case "centuryply":
+      return (
+        <div className="w-5 h-5 rounded bg-rose-600/15 text-rose-600 dark:text-rose-400 flex items-center justify-center font-sans font-black text-[9px] tracking-tight shrink-0 border border-rose-500/20">
+          CP
+        </div>
+      );
+    case "featherlite":
+      return (
+        <div className="w-5 h-5 rounded bg-slate-600/15 text-slate-500 dark:text-slate-400 flex items-center justify-center font-sans font-bold text-[9px] shrink-0 border border-slate-500/20">
+          F
+        </div>
+      );
+    case "godrej interio":
+    case "godrej":
+      return (
+        <div className="w-5 h-5 rounded bg-teal-600/15 text-teal-600 dark:text-teal-400 flex items-center justify-center font-serif italic font-extrabold text-[9px] shrink-0 border border-teal-500/20">
+          G
+        </div>
+      );
+    case "pepperfry":
+      return (
+        <div className="w-5 h-5 rounded bg-orange-600/15 text-orange-600 dark:text-orange-400 flex items-center justify-center font-sans font-black text-[7px] tracking-tighter shrink-0 border border-orange-500/20">
+          pf
+        </div>
+      );
+    default:
+      return (
+        <div className="w-5 h-5 rounded bg-stone-600/15 text-stone-600 dark:text-stone-400 flex items-center justify-center font-extrabold text-[9px] shrink-0 border border-stone-500/20">
+          {name.substring(0, 2).toUpperCase()}
+        </div>
+      );
+  }
+};
+
 export default function HomePage() {
   const { wishlist, toggleWishlist, products: storeProducts, customerTestimonials, addCustomerTestimonial, orders, brandPartners } = useStore();
   const [heroImageIdx, setHeroImageIdx] = useState(0);
   const [activeRoomTab, setActiveRoomTab] = useState<"Living Room" | "Study" | "Media Room" | "Dining Room">("Living Room");
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      setTheme("dark");
+    }
+
+    const handleThemeChange = () => {
+      const currentTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+      if (currentTheme) setTheme(currentTheme);
+    };
+    window.addEventListener("theme-change", handleThemeChange);
+    return () => {
+      window.removeEventListener("theme-change", handleThemeChange);
+    };
+  }, []);
 
   // Review Modal State
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -243,8 +305,9 @@ export default function HomePage() {
     name: "",
     role: "Verified Customer",
     quote: "",
-    rating: 5,
+    rating: 0,
   });
+  const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewSuccess, setReviewSuccess] = useState(false);
 
   // Marquee hover state
@@ -341,18 +404,18 @@ export default function HomePage() {
               </motion.div>
             </AnimatePresence>
 
-            <div className="flex flex-row gap-2.5 w-full sm:w-auto justify-start">
+            <div className="flex flex-row gap-3 w-full sm:w-auto justify-start">
               <a
                 href="#collections"
-                className="bg-accent-teal hover:bg-accent-teal/90 text-white rounded-full px-5 py-2.5 sm:px-8 sm:py-4 text-[11px] sm:text-sm font-semibold text-center hover:scale-[1.02] shadow-md transition-all duration-300 active:scale-95"
+                className="bg-gradient-to-b from-[#14b8a6] to-[#0d9488] hover:from-[#2dd4bf] hover:to-[#0f766e] text-white rounded-full px-5 py-2.5 sm:px-8 sm:py-4 text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.15em] text-center shadow-[0_6px_18px_rgba(13,148,136,0.3),inset_0_1.5px_2.5px_rgba(255,255,255,0.4)] active:shadow-[inset_2.5px_2.5px_6px_rgba(0,0,0,0.45)] border border-teal-900 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                Shop Now
+                <ShoppingBag className="w-4 h-4" /> Shop Now
               </a>
               <a
                 href="#lookbook"
-                className="border border-white/40 text-white backdrop-blur-sm rounded-full px-5 py-2.5 sm:px-8 sm:py-4 text-[11px] sm:text-sm font-semibold text-center hover:bg-white hover:text-charcoal transition-all duration-300 active:scale-95"
+                className="bg-gradient-to-b from-white/12 to-white/3 backdrop-blur-md hover:from-white/20 hover:to-white/10 text-white rounded-full px-5 py-2.5 sm:px-8 sm:py-4 text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.15em] text-center shadow-[0_6px_18px_rgba(0,0,0,0.15),inset_0_1.5px_2px_rgba(255,255,255,0.25)] active:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.3)] border border-white/20 hover:border-white/40 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                Explore Collection
+                <Compass className="w-4 h-4 animate-spin" style={{ animationDuration: "12s" }} /> Explore Collection
               </a>
             </div>
           </div>
@@ -374,143 +437,60 @@ export default function HomePage() {
       </section>
 
       {/* AUTO-MOVING BRAND PARTNERS CAROUSEL WITH HOVER PAUSE & REAL LOGOS */}
-      <section
-        className="bg-white dark:bg-[#1C1814] py-6 relative z-20 overflow-hidden border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-sm"
-        onMouseEnter={() => setIsPartnersHovered(true)}
-        onMouseLeave={() => setIsPartnersHovered(false)}
-      >
+      <section className="bg-white dark:bg-[#1C1814] py-2 relative z-20 overflow-hidden">
         {/* Continuous Auto-Moving Marquee Track with Working Hover Pause */}
-        <div className="relative w-full overflow-hidden flex py-1">
+        <div className="relative w-full overflow-hidden flex py-0.5">
           {/* Soft ambient gradient blur on left & right edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white dark:from-[#1C1814] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white dark:from-[#1C1814] to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white dark:from-[#1C1814] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white dark:from-[#1C1814] to-transparent z-10 pointer-events-none" />
 
-          <motion.div
-            className="flex items-center gap-6 sm:gap-10 shrink-0 whitespace-nowrap"
-            animate={{ x: isPartnersHovered ? undefined : ["0%", "-50%"] }}
-            transition={{
-              repeat: Infinity,
-              ease: "linear",
-              duration: 25,
-            }}
-          >
+          <div className="flex items-center gap-3 shrink-0 whitespace-nowrap animate-marquee">
             {(brandPartners && brandPartners.length > 0 ? brandPartners : [
-              {
-                id: "1",
-                name: "Sleepwell",
-                tag: "Mattress Tech Partner",
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
-                fallbackLogo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=120",
-              },
-              {
-                id: "2",
-                name: "CenturyPly",
-                tag: "Marine Teak Grade",
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CenturyPly_logo.svg/640px-CenturyPly_logo.svg.png",
-                fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
-              },
-              {
-                id: "3",
-                name: "Featherlite",
-                tag: "Ergonomic Hardware",
-                logo: "https://featherlitefurniture.com/wp-content/uploads/2021/04/Featherlite-Logo-1.png",
-                fallbackLogo: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=120",
-              },
-              {
-                id: "4",
-                name: "Godrej Interio",
-                tag: "Steel Joinery",
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Godrej_Logo.svg/512px-Godrej_Logo.svg.png",
-                fallbackLogo: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=120",
-              },
-              {
-                id: "5",
-                name: "Pepperfry",
-                tag: "Verified Merchant",
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepperfry_Logo.png/640px-Pepperfry_Logo.png",
-                fallbackLogo: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=120",
-              },
+              { id: "1", name: "Sleepwell", tag: "Mattress Tech Partner", logo: "" },
+              { id: "2", name: "CenturyPly", tag: "Marine Teak Grade", logo: "" },
+              { id: "3", name: "Featherlite", tag: "Ergonomic Hardware", logo: "" },
+              { id: "4", name: "Godrej Interio", tag: "Steel Joinery", logo: "" },
+              { id: "5", name: "Pepperfry", tag: "Verified Merchant", logo: "" },
             ])
               .concat(
                 brandPartners && brandPartners.length > 0 ? brandPartners : [
-                  {
-                    id: "1b",
-                    name: "Sleepwell",
-                    tag: "Mattress Tech Partner",
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Sleepwell_Logo.png/640px-Sleepwell_Logo.png",
-                    fallbackLogo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=120",
-                  },
-                  {
-                    id: "2b",
-                    name: "CenturyPly",
-                    tag: "Marine Teak Grade",
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/CenturyPly_logo.svg/640px-CenturyPly_logo.svg.png",
-                    fallbackLogo: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=120",
-                  },
-                  {
-                    id: "3b",
-                    name: "Featherlite",
-                    tag: "Ergonomic Hardware",
-                    logo: "https://featherlitefurniture.com/wp-content/uploads/2021/04/Featherlite-Logo-1.png",
-                    fallbackLogo: "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=120",
-                  },
-                  {
-                    id: "4b",
-                    name: "Godrej Interio",
-                    tag: "Steel Joinery",
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Godrej_Logo.svg/512px-Godrej_Logo.svg.png",
-                    fallbackLogo: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=120",
-                  },
-                  {
-                    id: "5b",
-                    name: "Pepperfry",
-                    tag: "Verified Merchant",
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepperfry_Logo.png/640px-Pepperfry_Logo.png",
-                    fallbackLogo: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=120",
-                  },
+                  { id: "1b", name: "Sleepwell", tag: "Mattress Tech Partner", logo: "" },
+                  { id: "2b", name: "CenturyPly", tag: "Marine Teak Grade", logo: "" },
+                  { id: "3b", name: "Featherlite", tag: "Ergonomic Hardware", logo: "" },
+                  { id: "4b", name: "Godrej Interio", tag: "Steel Joinery", logo: "" },
+                  { id: "5b", name: "Pepperfry", tag: "Verified Merchant", logo: "" },
                 ]
               )
               .map((brand, idx) => (
                 <div
                   key={`${brand.id}-${idx}`}
-                  className="flex items-center gap-3.5 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl px-5 py-3 shrink-0 shadow-sm hover:border-accent-teal hover:shadow-md transition-all duration-300 cursor-pointer hover:scale-105"
+                  className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 shrink-0 transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
+                  style={theme === "light" ? {
+                    background: "rgba(31,27,22,0.02)",
+                    border: "1px solid rgba(31, 27, 22, 0.06)",
+                  } : {
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                  }}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 p-1.5 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={brand.logo}
-                      alt={`${brand.name} logo`}
-                      className="w-full h-full object-contain"
-                      onError={(e) => {
-                        if (brand.fallbackLogo) {
-                          (e.target as HTMLImageElement).src = brand.fallbackLogo;
-                        }
-                      }}
-                    />
-                  </div>
+                  {getBrandLogo(brand.name)}
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[8px] font-black shrink-0 shadow-sm">
-                        ✓
-                      </span>
-                      <span className="font-serif text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors">
-                        {brand.name}
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-medium text-[#1F1B16]/60 dark:text-[#F7F3EC]/60">
-                      • {brand.tag}
+                    <span className="font-serif text-[10px] font-bold text-[#1F1B16] dark:text-[#F7F3EC] leading-none mb-0.5">
+                      {brand.name}
+                    </span>
+                    <span className="text-[8px] font-medium text-[#1F1B16]/40 dark:text-[#F7F3EC]/30 leading-none">
+                      {brand.tag}
                     </span>
                   </div>
                 </div>
               ))}
-          </motion.div>
+          </div>
         </div>
       </section>
-
       {/* POPULAR PRODUCTS CATALOG */}
       <section
         id="collections"
-        className="py-8 md:py-12 bg-[#FAF8F5] dark:bg-[#1A1612] border-y border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 transition-colors duration-300"
+        className="py-8 md:py-12 bg-[#FAF8F5] dark:bg-[#1A1612] border-b border-[#1F1B16]/5 dark:border-[#F7F3EC]/5 transition-colors duration-300"
       >
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
@@ -542,15 +522,31 @@ export default function HomePage() {
             {displayProducts.map((prod) => (
               <div
                 key={prod.id}
-                className="min-w-[260px] max-w-[280px] sm:min-w-[340px] sm:max-w-[340px] snap-start flex flex-col bg-white dark:bg-[#1C1814] rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 group cursor-pointer shadow-sm hover:shadow-lg transition-all shrink-0"
+                className="min-w-[260px] max-w-[280px] sm:min-w-[320px] sm:max-w-[320px] snap-start flex flex-col rounded-3xl p-3 sm:p-4 group cursor-pointer shrink-0"
+                style={theme === "light" ? {
+                  background: "linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%)",
+                  boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.9), inset 0 -3px 0 rgba(31,27,22,0.05)",
+                  border: "1px solid rgba(31,27,22,0.1)",
+                } : {
+                  background: "linear-gradient(180deg, #25201A 0%, #161310 100%)",
+                  boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.15), inset 0 -3px 0 rgba(0,0,0,0.4)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                }}
               >
                 {/* Image Frame */}
-                <div className="w-full aspect-[4/3] sm:aspect-[4/3] bg-[#FAF8F5] dark:bg-[#1C1814] rounded-xl sm:rounded-2xl relative overflow-hidden flex items-center justify-center border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
+                <div
+                  className={`w-full aspect-[4/3] sm:aspect-[4/3] rounded-2xl relative overflow-hidden flex items-center justify-center border ${
+                    theme === "light" ? "bg-[#FAF7F2] border-charcoal/10" : "bg-[#12100E] border-white/10"
+                  }`}
+                  style={{
+                    boxShadow: "inset 0 4px 14px rgba(0, 0, 0, 0.6)",
+                  }}
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={prod.image}
                     alt={prod.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover"
                   />
                   <button
                     onClick={(e) => {
@@ -565,13 +561,23 @@ export default function HomePage() {
                         bg: "bg-[#FAF8F5]",
                       });
                     }}
-                    className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 p-2 rounded-full bg-white/80 dark:bg-black/80 backdrop-blur-md transition-all text-[#1F1B16] dark:text-[#F7F3EC] shadow-md"
+                    className="absolute top-2.5 right-2.5 z-10 p-2 rounded-full active:scale-90 border"
+                    style={theme === "light" ? {
+                      background: "linear-gradient(180deg, rgba(250,247,242,0.9) 0%, rgba(247,243,236,0.95) 100%)",
+                      boxShadow: "0 6px 14px rgba(31,27,22,0.1), inset 0 1.5px 0 rgba(255,255,255,0.8)",
+                      borderColor: "rgba(31,27,22,0.15)",
+                    } : {
+                      background: "linear-gradient(180deg, rgba(30,24,18,0.85) 0%, rgba(15,12,9,0.95) 100%)",
+                      boxShadow: "0 6px 14px rgba(0,0,0,0.4), inset 0 1.5px 0 rgba(255,255,255,0.3)",
+                      borderColor: "rgba(255,255,255,0.3)",
+                    }}
+                    title={wishlist.some((w) => w.slug === prod.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")) ? "Remove from Wishlist" : "Save to Wishlist"}
                   >
                     <Heart
-                      className={`w-3.5 h-3.5 ${
+                      className={`w-3.5 h-3.5 transition-all duration-300 ${
                         wishlist.some((w) => w.slug === prod.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"))
-                          ? "fill-accent-terracotta text-accent-terracotta"
-                          : "opacity-60"
+                          ? "fill-rose-500 text-rose-500"
+                          : "text-rose-400 stroke-[2.5] hover:text-rose-500"
                       }`}
                     />
                   </button>
@@ -580,13 +586,17 @@ export default function HomePage() {
                 {/* Info block */}
                 <div className="mt-3 flex justify-between items-end flex-1">
                   <div className="flex-1 min-w-0 pr-2">
-                    <span className="text-[9px] font-bold text-accent-teal uppercase tracking-widest block mb-0.5">
+                    <span className={`text-[9px] font-extrabold uppercase tracking-widest block mb-0.5 ${
+                      theme === "light" ? "text-accent-teal" : "text-amber-400"
+                    }`}>
                       {prod.category}
                     </span>
-                    <h3 className="font-serif font-bold text-sm sm:text-base text-[#1F1B16] dark:text-[#F7F3EC] leading-snug group-hover:text-accent-teal transition-colors truncate">
+                    <h3 className={`font-serif font-bold text-sm sm:text-base leading-snug group-hover:text-emerald-400 transition-colors truncate ${
+                      theme === "light" ? "text-charcoal" : "text-[#F7F3EC]"
+                    }`}>
                       {prod.name}
                     </h3>
-                    <span className="font-mono text-xs sm:text-sm font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] block mt-1">
+                    <span className="font-mono text-xs sm:text-sm font-extrabold text-emerald-400 block mt-1">
                       {formatPrice(prod.price)}
                     </span>
                   </div>
@@ -605,7 +615,11 @@ export default function HomePage() {
                         bg: "bg-[#FAF8F5]",
                       });
                     }}
-                    className="flex-shrink-0 px-3.5 py-1.5 border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 text-[#1F1B16] dark:text-[#F7F3EC] hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal dark:hover:text-white rounded-full text-[10px] font-bold tracking-wider uppercase transition-colors"
+                    className="flex-shrink-0 px-4 py-2 text-white rounded-xl text-[10px] font-extrabold tracking-wider uppercase border border-emerald-800/10 active:scale-95 transition-all"
+                    style={{
+                      background: "linear-gradient(180deg, #34D399 0%, #10B981 100%)",
+                      boxShadow: "inset 0 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1.5px 0 rgba(0, 0, 0, 0.2)",
+                    }}
                   >
                     + Add
                   </button>
@@ -639,7 +653,7 @@ export default function HomePage() {
                     className={`rounded-full px-4 py-2 text-xs font-semibold transition-all ${
                       activeRoomTab === tab
                         ? "bg-charcoal text-cream shadow-sm"
-                        : "bg-charcoal/5 text-charcoal dark:bg-cream/10 dark:text-cream"
+                        : "bg-charcoal/5 hover:bg-charcoal/10 text-charcoal"
                     }`}
                   >
                     {tab}
@@ -664,22 +678,63 @@ export default function HomePage() {
                   .map((item) => (
                     <div
                       key={item.id}
-                      className="md:col-span-7 relative h-[320px] sm:h-[450px] md:h-[600px] rounded-3xl overflow-hidden group shadow-md"
+                      className="md:col-span-7 relative h-[320px] sm:h-[450px] md:h-[600px] rounded-3xl group transition-all duration-500 hover:-translate-y-1 p-3.5"
+                      style={theme === "light" ? {
+                        background: "linear-gradient(135deg, #FAF7F2 0%, #DED6C9 100%)",
+                        boxShadow: "0 14px 32px -4px rgba(31, 27, 22, 0.1), inset 0 1.5px 0 #FFF, inset 0 -3px 0 rgba(31, 27, 22, 0.05)",
+                        border: "1px solid rgba(31, 27, 22, 0.12)",
+                      } : {
+                        background: "linear-gradient(135deg, #2C2620 0%, #161310 100%)",
+                        boxShadow: "0 18px 40px -6px rgba(0, 0, 0, 0.65), inset 0 1.5px 0 rgba(255, 255, 255, 0.12), inset 0 -3px 0 rgba(0, 0, 0, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                      }}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent flex items-end p-6 sm:p-8">
-                        <div>
-                          <h3 className="font-serif text-xl sm:text-3xl font-bold text-cream">
-                            {item.title}
-                          </h3>
-                          <p className="text-cream/80 text-[10px] sm:text-xs mt-1 font-semibold flex items-center gap-1.5 uppercase tracking-wider">
-                            <Compass className="w-3.5 h-3.5" /> Millennium Showcase
-                          </p>
+                      {/* Image Frame */}
+                      <div
+                        className={`w-full h-full rounded-2xl relative overflow-hidden flex items-center justify-center border ${
+                          theme === "light" ? "border-charcoal/10" : "border-white/10"
+                        }`}
+                        style={{
+                          boxShadow: "inset 0 4px 14px rgba(0, 0, 0, 0.6)",
+                        }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                        {/* Glossy diagonal sheen reflection layer */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
+                        
+                        {/* Ambient bottom shadow overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+                        {/* Beveled Museum Plate */}
+                        <div
+                          className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl backdrop-blur-md border flex items-center justify-between z-20"
+                          style={theme === "light" ? {
+                            background: "linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(250,247,242,0.85) 100%)",
+                            borderColor: "rgba(255,255,255,0.7)",
+                            boxShadow: "0 8px 24px rgba(31,27,22,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
+                          } : {
+                            background: "linear-gradient(135deg, rgba(37,32,26,0.92) 0%, rgba(22,19,16,0.85) 100%)",
+                            borderColor: "rgba(212,168,83,0.25)",
+                            boxShadow: "0 10px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15)",
+                          }}
+                        >
+                          <div>
+                            <h3 className={`font-serif text-base sm:text-lg md:text-xl font-bold leading-tight ${
+                              theme === "light" ? "text-charcoal" : "text-white"
+                            }`}>
+                              {item.title}
+                            </h3>
+                            <p className={`text-[9px] uppercase tracking-wider mt-0.5 font-extrabold flex items-center gap-1 ${
+                              theme === "light" ? "text-accent-teal" : "text-amber-400"
+                            }`}>
+                              <Compass className="w-3 h-3" /> Millennium Showcase
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -691,24 +746,65 @@ export default function HomePage() {
                     .map((item, idx) => (
                       <div
                         key={item.id}
-                        className={`relative h-[160px] sm:h-[200px] md:h-[287px] rounded-2xl overflow-hidden group shadow-sm ${
+                        className={`relative h-[160px] sm:h-[200px] md:h-[287px] rounded-2xl group transition-all duration-500 hover:-translate-y-1 p-2.5 ${
                           idx === 2 ? "hidden md:block" : ""
                         }`}
+                        style={theme === "light" ? {
+                          background: "linear-gradient(135deg, #FAF7F2 0%, #DED6C9 100%)",
+                          boxShadow: "0 10px 24px -4px rgba(31, 27, 22, 0.08), inset 0 1px 0 #FFF, inset 0 -2px 0 rgba(31, 27, 22, 0.04)",
+                          border: "1px solid rgba(31, 27, 22, 0.1)",
+                        } : {
+                          background: "linear-gradient(135deg, #2C2620 0%, #161310 100%)",
+                          boxShadow: "0 12px 30px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -2px 0 rgba(0, 0, 0, 0.35)",
+                          border: "1px solid rgba(255, 255, 255, 0.12)",
+                        }}
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent flex items-end p-4 sm:p-6">
-                          <div>
-                            <h3 className="font-serif text-base sm:text-lg font-bold text-cream">
-                              {item.title}
-                            </h3>
-                            <p className="text-cream/70 text-[9px] uppercase tracking-wider mt-0.5">
-                              Handcrafted Detail
-                            </p>
+                        {/* Image Frame */}
+                        <div
+                          className={`w-full h-full rounded-xl relative overflow-hidden flex items-center justify-center border ${
+                            theme === "light" ? "border-charcoal/10" : "border-white/10"
+                          }`}
+                          style={{
+                            boxShadow: "inset 0 3px 10px rgba(0, 0, 0, 0.6)",
+                          }}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
+                          {/* Glossy diagonal sheen reflection layer */}
+                          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
+
+                          {/* Ambient bottom shadow overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+                          {/* Beveled Museum Plate */}
+                          <div
+                            className="absolute bottom-3 left-3 right-3 p-3 rounded-xl backdrop-blur-md border flex items-center justify-between z-20"
+                            style={theme === "light" ? {
+                              background: "linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(250,247,242,0.85) 100%)",
+                              borderColor: "rgba(255,255,255,0.7)",
+                              boxShadow: "0 6px 18px rgba(31,27,22,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
+                            } : {
+                              background: "linear-gradient(135deg, rgba(37,32,26,0.92) 0%, rgba(22,19,16,0.85) 100%)",
+                              borderColor: "rgba(212,168,83,0.25)",
+                              boxShadow: "0 8px 22px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)",
+                            }}
+                          >
+                            <div>
+                              <h3 className={`font-serif text-sm sm:text-base font-bold leading-tight ${
+                                theme === "light" ? "text-charcoal" : "text-white"
+                              }`}>
+                                {item.title}
+                              </h3>
+                              <p className={`text-[8px] uppercase tracking-wider mt-0.5 font-extrabold ${
+                                theme === "light" ? "text-accent-teal" : "text-amber-400"
+                              }`}>
+                                Handcrafted Detail
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -735,7 +831,12 @@ export default function HomePage() {
             
             <button
               onClick={() => setReviewModalOpen(true)}
-              className="inline-flex items-center gap-2.5 bg-accent-teal hover:bg-accent-teal/90 text-white rounded-full px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider transition-all duration-300 active:scale-95 border border-accent-teal self-start sm:self-auto"
+              className="inline-flex items-center gap-2.5 text-white rounded-full px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider transition-all duration-300 active:scale-95 border hover:scale-[1.02]"
+              style={{
+                background: "linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%)",
+                borderColor: "rgba(52,211,153,0.4)",
+                boxShadow: "0 6px 14px -2px rgba(16, 185, 129, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.45), inset 0 -2.5px 0 rgba(0, 0, 0, 0.35)",
+              }}
             >
               <Star className="w-3.5 h-3.5 fill-white text-white" />
               <span>+ Write a Review</span>
@@ -745,7 +846,7 @@ export default function HomePage() {
           {/* Auto-sliding Horizontal Track when items exceed 3 */}
           <div
             ref={testimonialCarouselRef}
-            className="flex flex-row gap-4 sm:gap-6 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory"
+            className="flex flex-row gap-4 sm:gap-6 overflow-x-auto py-6 px-2 scrollbar-none snap-x snap-mandatory -my-4 -mx-2"
             style={{ scrollbarWidth: "none" }}
           >
             {(customerTestimonials && customerTestimonials.length > 0 ? customerTestimonials : TESTIMONIALS).map((test, index) => {
@@ -755,11 +856,35 @@ export default function HomePage() {
                   key={test.id}
                   onClick={() => setActiveTestimonial(index)}
                   className={`min-w-[300px] sm:min-w-[350px] md:min-w-[400px] max-w-[420px] snap-start rounded-3xl p-6 md:p-7 transition-all duration-500 flex flex-col justify-between cursor-pointer border shrink-0 relative overflow-hidden ${
-                    isActive
-                      ? "bg-white dark:bg-[#1C1814] border-amber-500/80 shadow-2xl scale-[1.02] ring-1 ring-amber-500/30"
-                      : "bg-white/95 dark:bg-[#1C1814]/95 text-[#1F1B16] dark:text-[#F7F3EC] border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-md hover:border-amber-500/40"
+                    isActive ? "scale-[1.02] z-10" : "hover:scale-[1.005]"
                   }`}
+                  style={theme === "light" ? (
+                    isActive ? {
+                      background: "linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%)",
+                      borderColor: "#2F6F62",
+                      boxShadow: "0 20px 48px -8px rgba(47, 111, 98, 0.15), inset 0 1.5px 0 #FFF, inset 0 -3px 0 rgba(31, 27, 22, 0.05)",
+                    } : {
+                      background: "linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%)",
+                      borderColor: "rgba(31, 27, 22, 0.12)",
+                      boxShadow: "0 10px 28px -4px rgba(31, 27, 22, 0.05), inset 0 1px 0 #FFF, inset 0 -2px 0 rgba(0,0,0,0.03)",
+                    }
+                  ) : (
+                    isActive ? {
+                      background: "linear-gradient(180deg, #2D2721 0%, #1D1915 100%)",
+                      borderColor: "rgba(212, 168, 83, 0.65)",
+                      boxShadow: "0 22px 50px -8px rgba(0,0,0,0.7), inset 0 1.5px 0 rgba(255,255,255,0.15), inset 0 -3.5px 0 rgba(0,0,0,0.45)",
+                    } : {
+                      background: "linear-gradient(180deg, #25201A 0%, #171411 100%)",
+                      borderColor: "rgba(255, 255, 255, 0.08)",
+                      boxShadow: "0 12px 32px -6px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.3)",
+                    }
+                  )}
                 >
+                  {/* Glossy sheen reflection overlay for active card */}
+                  {isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none z-10" />
+                  )}
+
                   {/* Decorative background quote mark watermark */}
                   <span className="absolute top-2 right-4 text-7xl font-serif font-black opacity-[0.06] text-[#1F1B16] dark:text-[#F7F3EC] select-none pointer-events-none">
                     &ldquo;
@@ -767,16 +892,18 @@ export default function HomePage() {
 
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-4">
-                      <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                      <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full shadow-inner">
                         {[...Array(test.rating || 5)].map((_, i) => (
                           <Star
                             key={i}
-                            className="w-4 h-4"
+                            className="w-3.5 h-3.5"
                             style={{ fill: "#F59E0B", color: "#F59E0B" }}
                           />
                         ))}
                       </div>
-                      <span className="text-[10px] font-mono font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                      <span className={`text-[10px] font-mono font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm border ${
+                        theme === "light" ? "text-[#2F6F62] bg-[#2F6F62]/10 border-[#2F6F62]/20" : "text-emerald-400 bg-emerald-500/10 border-emerald-500/30"
+                      }`}>
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         Verified Buyer
                       </span>
@@ -792,7 +919,14 @@ export default function HomePage() {
                     <img
                       src={test.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120"}
                       alt={test.name}
-                      className="w-11 h-11 rounded-full object-cover border-2 border-amber-500/40 shrink-0 shadow-md"
+                      className="w-11 h-11 rounded-full object-cover shrink-0 shadow-md border-2"
+                      style={theme === "light" ? {
+                        borderColor: "#FFFFFF",
+                        boxShadow: "0 4px 10px rgba(31,27,22,0.12)"
+                      } : {
+                        borderColor: "rgba(212,168,83,0.4)",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.4)"
+                      }}
                     />
                     <div className="min-w-0 flex-1">
                       <h4 className="font-serif font-bold text-sm leading-tight truncate text-[#1F1B16] dark:text-[#F7F3EC]">{test.name}</h4>
@@ -840,9 +974,18 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="relative w-full max-w-md max-h-[85vh] overflow-y-auto bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-6 shadow-2xl z-10 text-[#1F1B16] dark:text-[#F7F3EC] scrollbar-thin"
+              className="relative w-full max-w-md max-h-[85vh] overflow-y-auto rounded-3xl p-6 z-10 text-[#1F1B16] dark:text-[#F7F3EC] scrollbar-thin backdrop-blur-xl border"
+              style={theme === "light" ? {
+                background: "linear-gradient(135deg, rgba(255,255,255,0.94) 0%, rgba(247,243,236,0.88) 100%)",
+                borderColor: "rgba(255,255,255,0.7)",
+                boxShadow: "0 24px 64px rgba(31,27,22,0.15), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -3px 0 rgba(0,0,0,0.03)",
+              } : {
+                background: "linear-gradient(135deg, rgba(35,30,25,0.96) 0%, rgba(18,15,13,0.92) 100%)",
+                borderColor: "rgba(212,168,83,0.2)",
+                boxShadow: "0 28px 72px rgba(0,0,0,0.65), inset 0 1.5px 0 rgba(255,255,255,0.15), inset 0 -4px 0 rgba(0,0,0,0.4)",
+              }}
             >
-              <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 mb-4 sticky top-0 bg-white dark:bg-[#1C1814] z-10">
+              <div className="flex items-center justify-between pb-4 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 mb-4 sticky top-0 bg-white/20 dark:bg-black/10 backdrop-blur-md z-10">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-2xl bg-accent-teal/10 text-accent-teal flex items-center justify-center shrink-0">
                     <Star className="w-5 h-5 fill-accent-teal text-accent-teal" />
@@ -881,7 +1024,7 @@ export default function HomePage() {
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    if (!newReview.name || !newReview.quote) return;
+                    if (!newReview.name || !newReview.quote || newReview.rating === 0) return;
                     addCustomerTestimonial({
                       name: newReview.name,
                       role: newReview.role || "Verified Customer, Odisha",
@@ -903,7 +1046,16 @@ export default function HomePage() {
                       value={newReview.name}
                       onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
                       placeholder="e.g. Sweta Mishra"
-                      className="w-full px-4 py-3 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-bold focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                      className="w-full px-4 py-3 rounded-xl focus:outline-none focus:border-accent-teal text-xs font-bold text-[#1F1B16] dark:text-[#F7F3EC] border transition-all duration-300 focus:ring-2 focus:ring-accent-teal/10"
+                      style={theme === "light" ? {
+                        background: "rgba(0, 0, 0, 0.03)",
+                        borderColor: "rgba(31, 27, 22, 0.12)",
+                        boxShadow: "inset 0 2px 4px rgba(0,0,0,0.06)",
+                      } : {
+                        background: "rgba(0, 0, 0, 0.25)",
+                        borderColor: "rgba(255, 255, 255, 0.08)",
+                        boxShadow: "inset 0 2px 5px rgba(0,0,0,0.3)",
+                      }}
                     />
                   </div>
 
@@ -916,7 +1068,16 @@ export default function HomePage() {
                       value={newReview.role}
                       onChange={(e) => setNewReview({ ...newReview, role: e.target.value })}
                       placeholder="e.g. Homeowner, Bhubaneswar"
-                      className="w-full px-4 py-3 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC]"
+                      className="w-full px-4 py-3 rounded-xl focus:outline-none focus:border-accent-teal text-xs font-medium text-[#1F1B16] dark:text-[#F7F3EC] border transition-all duration-300 focus:ring-2 focus:ring-accent-teal/10"
+                      style={theme === "light" ? {
+                        background: "rgba(0, 0, 0, 0.03)",
+                        borderColor: "rgba(31, 27, 22, 0.12)",
+                        boxShadow: "inset 0 2px 4px rgba(0,0,0,0.06)",
+                      } : {
+                        background: "rgba(0, 0, 0, 0.25)",
+                        borderColor: "rgba(255, 255, 255, 0.08)",
+                        boxShadow: "inset 0 2px 5px rgba(0,0,0,0.3)",
+                      }}
                     />
                   </div>
 
@@ -924,21 +1085,36 @@ export default function HomePage() {
                     <label className="block text-[10px] font-extrabold uppercase tracking-wider mb-2 text-[#1F1B16]/70 dark:text-[#F7F3EC]/70">
                       Rating *
                     </label>
-                    <div className="flex gap-3 items-center bg-[#FAF7F2] dark:bg-[#12100E] p-3 rounded-2xl border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                    <div
+                      className="flex gap-3.5 items-center p-3 rounded-2xl border transition-colors duration-300"
+                      style={theme === "light" ? {
+                        background: "rgba(0, 0, 0, 0.03)",
+                        borderColor: "rgba(31, 27, 22, 0.1)",
+                        boxShadow: "inset 0 2px 4px rgba(0,0,0,0.06)",
+                      } : {
+                        background: "rgba(0, 0, 0, 0.25)",
+                        borderColor: "rgba(255, 255, 255, 0.08)",
+                        boxShadow: "inset 0 2px 5px rgba(0,0,0,0.3)",
+                      }}
+                    >
                       {[1, 2, 3, 4, 5].map((star) => {
-                        const isFilled = star <= newReview.rating;
+                        const isFilled = star <= (hoveredRating || newReview.rating);
                         return (
                           <button
                             key={star}
                             type="button"
                             onClick={() => setNewReview({ ...newReview, rating: star })}
-                            className="p-1 hover:scale-125 transition-transform"
+                            onMouseEnter={() => setHoveredRating(star)}
+                            onMouseLeave={() => setHoveredRating(0)}
+                            className="p-1 hover:scale-120 active:scale-95 transition-all duration-200"
                           >
                             <Star
-                              className="w-7 h-7 transition-all scale-110"
+                              className="w-7 h-7 scale-110"
                               style={{
                                 fill: isFilled ? "#F59E0B" : "transparent",
-                                color: isFilled ? "#F59E0B" : "#6B7280",
+                                color: isFilled ? "#F59E0B" : (theme === "light" ? "rgba(0,0,0,0.18)" : "rgba(255,255,255,0.15)"),
+                                filter: isFilled ? "drop-shadow(0 0 5px rgba(245,158,11,0.65))" : "none",
+                                transition: "all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
                               }}
                             />
                           </button>
@@ -960,13 +1136,27 @@ export default function HomePage() {
                       value={newReview.quote}
                       onChange={(e) => setNewReview({ ...newReview, quote: e.target.value })}
                       placeholder="Tell us about the teak wood quality, custom joinery, or delivery..."
-                      className="w-full px-4 py-3 rounded-xl border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 bg-[#FAF7F2] dark:bg-[#12100E] text-xs font-medium focus:outline-none focus:border-accent-teal text-[#1F1B16] dark:text-[#F7F3EC] resize-none"
+                      className="w-full px-4 py-3 rounded-xl focus:outline-none focus:border-accent-teal text-xs font-medium text-[#1F1B16] dark:text-[#F7F3EC] border transition-all duration-300 focus:ring-2 focus:ring-accent-teal/10 resize-none"
+                      style={theme === "light" ? {
+                        background: "rgba(0, 0, 0, 0.03)",
+                        borderColor: "rgba(31, 27, 22, 0.12)",
+                        boxShadow: "inset 0 2px 4px rgba(0,0,0,0.06)",
+                      } : {
+                        background: "rgba(0, 0, 0, 0.25)",
+                        borderColor: "rgba(255, 255, 255, 0.08)",
+                        boxShadow: "inset 0 2px 5px rgba(0,0,0,0.3)",
+                      }}
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full bg-accent-teal text-white font-extrabold py-3.5 rounded-full text-xs uppercase tracking-wider hover:bg-accent-teal/90 transition-all shadow-md mt-2"
+                    className="w-full text-white font-extrabold py-3.5 rounded-full text-xs uppercase tracking-wider transition-all shadow-md mt-2 border hover:scale-[1.01]"
+                    style={{
+                      background: "linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%)",
+                      borderColor: "rgba(52,211,153,0.3)",
+                      boxShadow: "0 4px 10px rgba(16,185,129,0.3), inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.25)",
+                    }}
                   >
                     Submit Review
                   </button>
@@ -991,61 +1181,119 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
             {/* Promo Card 1 */}
-            <div className="bg-[#E6F4F1] dark:bg-[#1A2624] rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex flex-row sm:flex-col items-center sm:items-start justify-between gap-4 shadow-md group">
-              <div className="flex-1 min-w-0 z-10">
-                <span className="text-accent-teal text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest bg-white/90 dark:bg-black/60 rounded-full px-2.5 py-1 inline-block mb-2 sm:mb-3">
+            <div
+              className="rounded-3xl p-5 sm:p-10 flex flex-col sm:flex-col items-center sm:items-start justify-between gap-6 transition-all duration-500 hover:-translate-y-1 relative overflow-hidden group border"
+              style={theme === "light" ? {
+                background: "linear-gradient(135deg, #EBF8F6 0%, #D4EAE5 100%)",
+                borderColor: "rgba(47, 111, 98, 0.2)",
+                boxShadow: "0 14px 36px -6px rgba(31, 27, 22, 0.08), inset 0 1.5px 0 #FFF, inset 0 -3px 0 rgba(31, 27, 22, 0.04)",
+              } : {
+                background: "linear-gradient(135deg, #1E2E2B 0%, #111B19 100%)",
+                borderColor: "rgba(52, 211, 153, 0.2)",
+                boxShadow: "0 18px 40px -8px rgba(0, 0, 0, 0.55), inset 0 1.5px 0 rgba(255, 255, 255, 0.1), inset 0 -3.5px 0 rgba(0, 0, 0, 0.4)",
+              }}
+            >
+              {/* Glossy gloss sheen overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none z-10" />
+
+              <div className="w-full flex-1 min-w-0 z-10">
+                <span className={`text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest rounded-full px-3 py-1 inline-block mb-3 border shadow-sm ${
+                  theme === "light" ? "text-accent-teal bg-white/95 border-accent-teal/20" : "text-emerald-400 bg-black/40 border-emerald-500/20"
+                }`}>
                   Limited Offer
                 </span>
-                <h3 className="font-serif text-xl sm:text-4xl md:text-5xl font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] leading-none mb-1 sm:mb-3">
+                <h3 className="font-serif text-3xl sm:text-5xl font-black text-[#1F1B16] dark:text-[#F7F3EC] leading-none mb-2 sm:mb-4">
                   40% OFF
                 </h3>
-                <p className="font-serif text-xs sm:text-lg font-semibold text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-3 sm:mb-5 line-clamp-2">
+                <p className="font-serif text-sm sm:text-lg font-bold text-[#1F1B16]/85 dark:text-[#F7F3EC]/85 mb-4 sm:mb-6 leading-snug">
                   Odisha Teak Cabinets & Storage
                 </p>
                 <a
                   href="#collections"
-                  className="bg-[#1F1B16] text-[#F7F3EC] dark:bg-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal rounded-full px-4 py-2 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-bold inline-flex items-center gap-1.5 transition-all active:scale-95"
+                  className="inline-flex items-center gap-2 text-white rounded-full px-5 py-2.5 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-300 active:scale-95 border hover:scale-[1.02] shadow-md"
+                  style={{
+                    background: "linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%)",
+                    borderColor: "rgba(52,211,153,0.3)",
+                    boxShadow: "0 4px 10px rgba(16,185,129,0.3), inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.25)",
+                  }}
                 >
-                  Shop Deal <ArrowRight className="w-3.5 h-3.5 text-accent-teal" />
+                  <span>Shop Deal</span> <ArrowRight className="w-3.5 h-3.5" />
                 </a>
               </div>
 
-              <div className="w-28 h-28 sm:w-full sm:h-auto sm:aspect-[16/9] rounded-xl sm:rounded-2xl overflow-hidden shrink-0 relative border border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
+              {/* Inset Photo Frame */}
+              <div
+                className={`w-full h-auto aspect-[16/9] rounded-2xl overflow-hidden shrink-0 relative border p-2 ${
+                  theme === "light" ? "bg-black/5 border-charcoal/10" : "bg-black/35 border-white/10"
+                }`}
+                style={{
+                  boxShadow: "inset 0 3px 8px rgba(0,0,0,0.25)",
+                }}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=700"
                   alt="Teak Cabinet Promo"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover rounded-xl group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </div>
             </div>
 
             {/* Promo Card 2 */}
-            <div className="bg-[#FBF0EA] dark:bg-[#281F1A] rounded-2xl sm:rounded-3xl p-4 sm:p-10 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 flex flex-row sm:flex-col items-center sm:items-start justify-between gap-4 shadow-md group">
-              <div className="flex-1 min-w-0 z-10">
-                <span className="text-amber-600 dark:text-amber-400 text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest bg-white/90 dark:bg-black/60 rounded-full px-2.5 py-1 inline-block mb-2 sm:mb-3">
+            <div
+              className="rounded-3xl p-5 sm:p-10 flex flex-col sm:flex-col items-center sm:items-start justify-between gap-6 transition-all duration-500 hover:-translate-y-1 relative overflow-hidden group border"
+              style={theme === "light" ? {
+                background: "linear-gradient(135deg, #FCF5F1 0%, #F3DFD3 100%)",
+                borderColor: "rgba(217, 119, 6, 0.2)",
+                boxShadow: "0 14px 36px -6px rgba(31, 27, 22, 0.08), inset 0 1.5px 0 #FFF, inset 0 -3px 0 rgba(31, 27, 22, 0.04)",
+              } : {
+                background: "linear-gradient(135deg, #2D231E 0%, #1A1411 100%)",
+                borderColor: "rgba(251, 191, 36, 0.2)",
+                boxShadow: "0 18px 40px -8px rgba(0, 0, 0, 0.55), inset 0 1.5px 0 rgba(255, 255, 255, 0.1), inset 0 -3.5px 0 rgba(0, 0, 0, 0.4)",
+              }}
+            >
+              {/* Glossy gloss sheen overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none z-10" />
+
+              <div className="w-full flex-1 min-w-0 z-10">
+                <span className={`text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest rounded-full px-3 py-1 inline-block mb-3 border shadow-sm ${
+                  theme === "light" ? "text-amber-700 bg-white/95 border-amber-500/20" : "text-amber-400 bg-black/40 border-amber-500/20"
+                }`}>
                   Exclusive Deal
                 </span>
-                <h3 className="font-serif text-xl sm:text-4xl md:text-5xl font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] leading-none mb-1 sm:mb-3">
+                <h3 className="font-serif text-3xl sm:text-5xl font-black text-[#1F1B16] dark:text-[#F7F3EC] leading-none mb-2 sm:mb-4">
                   25% OFF
                 </h3>
-                <p className="font-serif text-xs sm:text-lg font-semibold text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-3 sm:mb-5 line-clamp-2">
+                <p className="font-serif text-sm sm:text-lg font-bold text-[#1F1B16]/85 dark:text-[#F7F3EC]/85 mb-4 sm:mb-6 leading-snug">
                   Handcrafted Oak Lounge Seating
                 </p>
                 <a
                   href="#collections"
-                  className="bg-[#1F1B16] text-[#F7F3EC] dark:bg-[#F7F3EC] dark:text-[#1F1B16] hover:bg-accent-teal rounded-full px-4 py-2 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-bold inline-flex items-center gap-1.5 transition-all active:scale-95"
+                  className="inline-flex items-center gap-2 text-white rounded-full px-5 py-2.5 sm:px-6 sm:py-3 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-300 active:scale-95 border hover:scale-[1.02] shadow-md"
+                  style={{
+                    background: "linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%)",
+                    borderColor: "rgba(52,211,153,0.3)",
+                    boxShadow: "0 4px 10px rgba(16,185,129,0.3), inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.25)",
+                  }}
                 >
-                  Shop Deal <ArrowRight className="w-3.5 h-3.5 text-accent-teal" />
+                  <span>Shop Deal</span> <ArrowRight className="w-3.5 h-3.5" />
                 </a>
               </div>
 
-              <div className="w-28 h-28 sm:w-full sm:h-auto sm:aspect-[16/9] rounded-xl sm:rounded-2xl overflow-hidden shrink-0 relative border border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
+              {/* Inset Photo Frame */}
+              <div
+                className={`w-full h-auto aspect-[16/9] rounded-2xl overflow-hidden shrink-0 relative border p-2 ${
+                  theme === "light" ? "bg-black/5 border-charcoal/10" : "bg-black/35 border-white/10"
+                }`}
+                style={{
+                  boxShadow: "inset 0 3px 8px rgba(0,0,0,0.25)",
+                }}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=700"
                   alt="Lounge Seat Promo"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover rounded-xl group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </div>
             </div>

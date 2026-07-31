@@ -139,9 +139,14 @@ export default function CustomerCrmPage() {
                         >
                           {/* Avatar name details */}
                           <td className="py-5 px-6 flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-2xl bg-accent-teal/10 text-accent-teal font-extrabold flex items-center justify-center shrink-0">
-                              <User className="w-5 h-5" />
-                            </div>
+                            {c.profileImage ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={c.profileImage} alt="" className="w-10 h-10 rounded-2xl object-cover shrink-0" />
+                            ) : (
+                              <div className="w-10 h-10 rounded-2xl bg-accent-teal/10 text-accent-teal font-extrabold flex items-center justify-center shrink-0">
+                                <User className="w-5 h-5" />
+                              </div>
+                            )}
                             <div>
                               <h4 className="font-bold text-[#1F1B16] dark:text-[#F7F3EC] text-xs">{c.name}</h4>
                               <p className="text-[10px] text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 font-mono leading-none mt-1">{c.email}</p>
@@ -207,9 +212,14 @@ export default function CustomerCrmPage() {
               {/* Header */}
               <div className="flex justify-between items-start border-b border-[#1F1B16]/5 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#1F1B16]/5 flex items-center justify-center text-[#1F1B16]/40">
-                    <User className="w-5 h-5" />
-                  </div>
+                  {selectedCustomer.profileImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={selectedCustomer.profileImage} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-[#1F1B16]/5 flex items-center justify-center text-[#1F1B16]/40 shrink-0">
+                      <User className="w-5 h-5" />
+                    </div>
+                  )}
                   <div>
                     <h3 className="font-serif text-lg font-bold text-[#1F1B16] leading-none mb-1">
                       {selectedCustomer.name}

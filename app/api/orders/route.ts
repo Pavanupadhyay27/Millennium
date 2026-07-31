@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { generateInvoicePDFBuffer } from "../../../lib/pdfInvoice";
+import { rateLimitResponse } from "../../../lib/rateLimit";
+import { requireAdmin, escapeHtml, safeErrorResponse } from "../../../lib/apiAuth";
+import { secureId, secureOrderNumber } from "../../../lib/auth";
 
 let ORDERS_DB = [
   {
@@ -22,7 +25,11 @@ let ORDERS_DB = [
   }
 ];
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Protect GET orders route for admins only
+  const authError = requireAdmin(request);
+  if (authError) return authError;
+
   return NextResponse.json({
     success: true,
     total: ORDERS_DB.length,
@@ -31,32 +38,53 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  // Rate limit: 5 requests per minute per IP for order placement
+  const limited = rateLimitResponse(request, { windowMs: 60_000, max: 5 });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const { customerName, customerEmail, customerPhone, address, city, state, postalCode, items, totalAmount, orderId: customOrderId, gstin } = body;
 
-    if (!customerName || !items || items.length === 0) {
+    if (!customerName || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
         { success: false, error: "Customer name and cart items are required" },
         { status: 400 }
       );
     }
 
-    const orderNumber = customOrderId || `RET-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    // Sanitize user inputs for safe processing
+    const cleanCustomerName = String(customerName).trim().slice(0, 100);
+    const cleanCustomerEmail = customerEmail ? String(customerEmail).trim().toLowerCase() : "customer@millenniumfurniture.in";
+    const cleanCustomerPhone = customerPhone ? String(customerPhone).trim() : "+91 674 2530190";
+    const cleanAddress = address ? String(address).trim() : "Bhubaneswar";
+    const cleanCity = city ? String(city).trim() : "Bhubaneswar";
+    const cleanState = state ? String(state).trim() : "Odisha";
+    const cleanPostalCode = postalCode ? String(postalCode).trim() : "751001";
+    const cleanGstin = gstin ? String(gstin).trim() : "";
+
+    const orderNumber = customOrderId ? String(customOrderId).trim() : secureOrderNumber();
+
+    const sanitizedItems = items.map((item: any) => ({
+      name: String(item.name || "Item").slice(0, 150),
+      color: item.color ? String(item.color).slice(0, 50) : undefined,
+      quantity: Math.max(1, Number(item.quantity) || 1),
+      price: Math.max(0, Number(item.price) || 0)
+    }));
 
     const newOrder = {
-      id: `ord-${Date.now()}`,
+      id: secureId("ord"),
       orderNumber,
-      customerName,
-      customerEmail: customerEmail || "customer@millenniumfurniture.in",
-      customerPhone: customerPhone || "+91 674 2530190",
-      address: address || "Bhubaneswar",
-      city: city || "Bhubaneswar",
-      state: state || "Odisha",
-      postalCode: postalCode || "751001",
+      customerName: cleanCustomerName,
+      customerEmail: cleanCustomerEmail,
+      customerPhone: cleanCustomerPhone,
+      address: cleanAddress,
+      city: cleanCity,
+      state: cleanState,
+      postalCode: cleanPostalCode,
       totalAmount: Number(totalAmount) || 0,
       status: "CONFIRMED",
-      items,
+      items: sanitizedItems,
       createdAt: new Date().toISOString()
     };
 
@@ -67,15 +95,15 @@ export async function POST(request: Request) {
     try {
       pdfBuffer = await generateInvoicePDFBuffer({
         orderId: orderNumber,
-        customerName,
+        customerName: cleanCustomerName,
         customerEmail: newOrder.customerEmail,
-        customerPhone,
-        address,
-        city,
-        state,
-        postalCode,
-        gstin,
-        items,
+        customerPhone: cleanCustomerPhone,
+        address: cleanAddress,
+        city: cleanCity,
+        state: cleanState,
+        postalCode: cleanPostalCode,
+        gstin: cleanGstin,
+        items: sanitizedItems,
         totalAmount: newOrder.totalAmount,
         date: new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }),
       });
@@ -89,11 +117,12 @@ export async function POST(request: Request) {
       try {
         const resend = new Resend(resendApiKey);
 
-        const itemsListHtml = items
+        // Escape all HTML values to prevent XSS in email clients (H2 fix)
+        const itemsListHtml = sanitizedItems
           .map(
             (item: any) => `
             <tr>
-              <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>${item.name}</strong> ${item.color ? `(${item.color})` : ''}</td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>${escapeHtml(item.name)}</strong> ${item.color ? `(${escapeHtml(item.color)})` : ''}</td>
               <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
               <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">₹${item.price.toLocaleString("en-IN")}</td>
             </tr>`
@@ -101,9 +130,9 @@ export async function POST(request: Request) {
           .join("");
 
         await resend.emails.send({
-          from: "Millennium Furniture <onboarding@resend.dev>",
+          from: process.env.EMAIL_FROM || "Millennium Furniture <onboarding@resend.dev>",
           to: [newOrder.customerEmail],
-          subject: `Tax Invoice & Order Confirmation - ${orderNumber} | Millennium Furniture`,
+          subject: `Tax Invoice & Order Confirmation - ${escapeHtml(orderNumber)} | Millennium Furniture`,
           html: `
             <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1F1B16; max-width: 600px; margin: 0 auto; border: 1px solid #0D5C53; border-radius: 12px; overflow: hidden;">
               <div style="background-color: #0D5C53; color: white; padding: 24px; text-align: center;">
@@ -112,8 +141,8 @@ export async function POST(request: Request) {
               </div>
 
               <div style="padding: 24px; background-color: #FAF7F2;">
-                <h2 style="font-size: 18px; color: #0D5C53; margin-top: 0;">Thank You for Your Order, ${customerName}!</h2>
-                <p style="font-size: 14px; line-height: 1.5;">We are pleased to confirm your order <strong>${orderNumber}</strong>. Attached is your official tax invoice PDF with verified 10-Year Teak Timber Warranty details.</p>
+                <h2 style="font-size: 18px; color: #0D5C53; margin-top: 0;">Thank You for Your Order, ${escapeHtml(cleanCustomerName)}!</h2>
+                <p style="font-size: 14px; line-height: 1.5;">We are pleased to confirm your order <strong>${escapeHtml(orderNumber)}</strong>. Attached is your official tax invoice PDF with verified 10-Year Teak Timber Warranty details.</p>
 
                 <div style="background: white; border: 1px solid #E5DEC9; border-radius: 8px; padding: 16px; margin: 20px 0;">
                   <h3 style="margin-top: 0; font-size: 14px; text-transform: uppercase; color: #0D5C53;">Order Summary</h3>
@@ -153,7 +182,6 @@ export async function POST(request: Request) {
             },
           ],
         });
-        console.log(`Successfully dispatched PDF invoice email to ${newOrder.customerEmail}`);
       } catch (emailErr) {
         console.error("Resend Email dispatch error:", emailErr);
       }
@@ -162,27 +190,26 @@ export async function POST(request: Request) {
     // Twilio WhatsApp API
     const twilioSid = process.env.TWILIO_ACCOUNT_SID;
     const twilioToken = process.env.TWILIO_AUTH_TOKEN;
-    const twilioFrom = process.env.TWILIO_WHATSAPP_NUMBER || "whatsapp:+14155238886";
-    const twilioTo = process.env.MY_WHATSAPP_NUMBER || "whatsapp:+919334309230";
+    const twilioFrom = process.env.TWILIO_WHATSAPP_NUMBER;
+    const twilioTo = process.env.MY_WHATSAPP_NUMBER;
 
-    const itemsFormatted = (items || [])
-      .map((i: any, idx: number) => `${idx + 1}. ${i.name} (${i.color || "Natural"}) x${i.quantity} @ Rs.${i.price}`)
-      .join("\n");
+    if (twilioSid && twilioToken && twilioFrom && twilioTo) {
+      const itemsFormatted = sanitizedItems
+        .map((i: any, idx: number) => `${idx + 1}. ${i.name} (${i.color || "Natural"}) x${i.quantity} @ Rs.${i.price}`)
+        .join("\n");
 
-    const orderSummaryText =
-      `*NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
-      `----------------------------------------\n` +
-      `Ref: ${newOrder.orderNumber}\n` +
-      `Customer: ${customerName}\n` +
-      `Email: ${newOrder.customerEmail}\n` +
-      `Phone: ${customerPhone || "N/A"}\n` +
-      `Address: ${address}, ${city}, ${state} - ${postalCode}\n\n` +
-      `ITEMS:\n${itemsFormatted}\n\n` +
-      `Payment: Cash on Delivery (COD)\n` +
-      `TOTAL: Rs.${Number(totalAmount).toLocaleString("en-IN")}\n` +
-      `PDF Invoice automatically generated & emailed.`;
+      const orderSummaryText =
+        `*NEW ORDER RECEIVED - MILLENNIUM FURNITURE*\n` +
+        `----------------------------------------\n` +
+        `Ref: ${newOrder.orderNumber}\n` +
+        `Customer: ${cleanCustomerName}\n` +
+        `Email: ${newOrder.customerEmail}\n` +
+        `Phone: ${cleanCustomerPhone}\n` +
+        `Address: ${cleanAddress}, ${cleanCity}, ${cleanState} - ${cleanPostalCode}\n\n` +
+        `ITEMS:\n${itemsFormatted}\n\n` +
+        `TOTAL: Rs.${Number(totalAmount).toLocaleString("en-IN")}\n` +
+        `PDF Invoice automatically generated & emailed.`;
 
-    if (twilioSid && twilioToken) {
       try {
         await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
           method: "POST",
@@ -201,17 +228,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // CallMeBot WhatsApp API
-    const waPhone = process.env.WHATSAPP_BUSINESS_PHONE || "919334309230";
-    const waApiKey = process.env.CALLMEBOT_API_KEY || "933430230";
-    if (waPhone && waApiKey) {
-      try {
-        await fetch(`https://api.callmebot.com/whatsapp.php?phone=${waPhone}&text=${encodeURIComponent(orderSummaryText)}&apikey=${waApiKey}`);
-      } catch (err) {
-        console.error("WhatsApp CallMeBot notification error:", err);
-      }
-    }
-
     return NextResponse.json(
       {
         success: true,
@@ -221,10 +237,7 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || "Order creation failed" },
-      { status: 500 }
-    );
+  } catch (error) {
+    return safeErrorResponse(error, "Order creation failed");
   }
 }

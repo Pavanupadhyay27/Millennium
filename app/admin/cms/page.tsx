@@ -620,6 +620,7 @@ export default function HomepageCmsPage() {
         {activeTab === "testimonials" && (
           <TestimonialsManager
             customerTestimonials={customerTestimonials}
+            addCustomerTestimonial={addCustomerTestimonial}
             updateCustomerTestimonial={updateCustomerTestimonial}
             deleteCustomerTestimonial={deleteCustomerTestimonial}
             showToast={showToast}
@@ -636,11 +637,13 @@ export default function HomepageCmsPage() {
    ═══════════════════════════════════════════════════════════════════ */
 function TestimonialsManager({
   customerTestimonials,
+  addCustomerTestimonial,
   updateCustomerTestimonial,
   deleteCustomerTestimonial,
   showToast,
 }: {
   customerTestimonials: CustomerTestimonial[];
+  addCustomerTestimonial: (t: Omit<CustomerTestimonial, "id" | "date" | "verified">) => void;
   updateCustomerTestimonial: (id: string, t: Partial<CustomerTestimonial>) => void;
   deleteCustomerTestimonial: (id: string) => void;
   showToast: (msg: string) => void;
@@ -648,6 +651,40 @@ function TestimonialsManager({
   const [searchQuery, setSearchQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<Partial<CustomerTestimonial>>({});
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newDraft, setNewDraft] = useState({
+    name: "",
+    role: "",
+    quote: "",
+    rating: 5,
+    company: "",
+    projectTag: "",
+    orderVolume: "",
+    photo: "",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120"
+  });
+
+  const handleAddSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDraft.name || !newDraft.role || !newDraft.quote) {
+      showToast("Please fill in Name, Role, and Review text.");
+      return;
+    }
+    addCustomerTestimonial(newDraft);
+    showToast(`Review by "${newDraft.name}" added successfully!`);
+    setNewDraft({
+      name: "",
+      role: "",
+      quote: "",
+      rating: 5,
+      company: "",
+      projectTag: "",
+      orderVolume: "",
+      photo: "",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120"
+    });
+    setShowAddForm(false);
+  };
 
   const filtered = useMemo(() => {
     if (!customerTestimonials) return [];
@@ -663,7 +700,7 @@ function TestimonialsManager({
 
   const startEdit = (t: CustomerTestimonial) => {
     setEditingId(t.id);
-    setEditDraft({ name: t.name, role: t.role, quote: t.quote, rating: t.rating });
+    setEditDraft({ name: t.name, role: t.role, quote: t.quote, rating: t.rating, photo: t.photo, company: t.company, projectTag: t.projectTag, orderVolume: t.orderVolume });
   };
 
   const cancelEdit = () => {
@@ -705,27 +742,176 @@ function TestimonialsManager({
         </p>
       </div>
 
-      {/* Search Bar + Count */}
+      {/* Search Bar + Count + Add Review Form Toggle */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full px-5 py-2.5 w-full max-w-md">
-          <Search className="w-4 h-4 text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 mr-2.5 shrink-0" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by reviewer name, role, or quote..."
-            className="bg-transparent text-xs focus:outline-none w-full text-[#1F1B16] dark:text-[#F7F3EC] placeholder:text-[#1F1B16]/40 dark:placeholder:text-[#F7F3EC]/40 font-medium"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery("")} className="ml-2 text-[#1F1B16]/40 hover:text-[#1F1B16] dark:text-[#F7F3EC]/40 dark:hover:text-[#F7F3EC]">
-              <X className="w-4 h-4" />
-            </button>
-          )}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-full px-5 py-2.5 w-full sm:w-80 md:w-96">
+            <Search className="w-4 h-4 text-[#1F1B16]/40 dark:text-[#F7F3EC]/40 mr-2.5 shrink-0" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by reviewer name, role, or quote..."
+              className="bg-transparent text-xs focus:outline-none w-full text-[#1F1B16] dark:text-[#F7F3EC] placeholder:text-[#1F1B16]/40 dark:placeholder:text-[#F7F3EC]/40 font-medium"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="ml-2 text-[#1F1B16]/40 hover:text-[#1F1B16] dark:text-[#F7F3EC]/40 dark:hover:text-[#F7F3EC]">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-accent-teal hover:bg-accent-teal/90 text-white text-xs font-bold uppercase tracking-wider transition-all"
+          >
+            {showAddForm ? "Hide Form" : "＋ Create Testimonial"}
+          </button>
         </div>
         <span className="text-xs font-bold text-[#1F1B16]/50 dark:text-[#F7F3EC]/50">
           Showing {filtered.length} of {customerTestimonials?.length || 0} reviews
         </span>
       </div>
+
+      {/* Collapsible Add New Testimonial Form */}
+      <AnimatePresence>
+        {showAddForm && (
+          <motion.form
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            onSubmit={handleAddSubmit}
+            className="overflow-hidden bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-6 shadow-sm space-y-4"
+          >
+            <div className="pb-2 border-b border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
+              <h4 className="font-serif text-sm font-bold text-[#1F1B16] dark:text-[#F7F3EC]">
+                Create a New Review Card
+              </h4>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                  Full Name *
+                </label>
+                <input
+                  type="text" required placeholder="Vikramjit Sharma"
+                  value={newDraft.name}
+                  onChange={(e) => setNewDraft({ ...newDraft, name: e.target.value })}
+                  className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3.5 py-2.5 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-bold focus:outline-none focus:border-accent-teal"
+                />
+              </div>
+              <div>
+                <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                  Role / City *
+                </label>
+                <input
+                  type="text" required placeholder="Interior Designer, Bhubaneswar"
+                  value={newDraft.role}
+                  onChange={(e) => setNewDraft({ ...newDraft, role: e.target.value })}
+                  className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3.5 py-2.5 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                Rating Star Count (1 - 5)
+              </label>
+              <div className="flex items-center gap-1.5">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setNewDraft({ ...newDraft, rating: s })}
+                    className="p-1 hover:scale-110 transition-transform"
+                  >
+                    <Star
+                      className="w-5 h-5"
+                      style={{
+                        fill: s <= newDraft.rating ? "#F59E0B" : "transparent",
+                        color: s <= newDraft.rating ? "#F59E0B" : "#9CA3AF",
+                      }}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                Review Description *
+              </label>
+              <textarea
+                rows={3} required placeholder="Write review details..."
+                value={newDraft.quote}
+                onChange={(e) => setNewDraft({ ...newDraft, quote: e.target.value })}
+                className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3.5 py-2.5 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal resize-none"
+              />
+            </div>
+
+            {/* Wholesale-Specific Optional Fields */}
+            <div className="pt-3 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+              <span className="text-[9px] font-extrabold text-accent-teal uppercase tracking-widest block mb-3">
+                🏢 B2B Partner Portal Fields (Optional - If filling B2B Cards)
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Company Name
+                  </label>
+                  <input
+                    type="text" placeholder="Sharma Interior Projects"
+                    value={newDraft.company}
+                    onChange={(e) => setNewDraft({ ...newDraft, company: e.target.value })}
+                    className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3 py-2 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Project Tag
+                  </label>
+                  <input
+                    type="text" placeholder="Resort & Hospitality"
+                    value={newDraft.projectTag}
+                    onChange={(e) => setNewDraft({ ...newDraft, projectTag: e.target.value })}
+                    className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3 py-2 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                    Order Volume
+                  </label>
+                  <input
+                    type="text" placeholder="₹8,50,000"
+                    value={newDraft.orderVolume}
+                    onChange={(e) => setNewDraft({ ...newDraft, orderVolume: e.target.value })}
+                    className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3 py-2 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                Portrait Photo URL
+              </label>
+              <input
+                type="url" placeholder="https://images.unsplash.com/photo-..."
+                value={newDraft.photo}
+                onChange={(e) => setNewDraft({ ...newDraft, photo: e.target.value })}
+                className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3 py-2 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="px-6 py-3 bg-accent-teal hover:bg-accent-teal/90 text-white font-extrabold text-[10px] uppercase tracking-wider rounded-xl transition-all shadow-md"
+            >
+              Publish Testimonial
+            </button>
+          </motion.form>
+        )}
+      </AnimatePresence>
 
       {/* Review Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -827,6 +1013,63 @@ function TestimonialsManager({
                         />
                       </div>
 
+                      {/* ── Wholesale Partner Fields ── */}
+                      <div className="grid grid-cols-2 gap-3 pt-1 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
+                        <div>
+                          <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                            Company
+                          </label>
+                          <input
+                            type="text"
+                            value={editDraft.company ?? ""}
+                            onChange={(e) => setEditDraft({ ...editDraft, company: e.target.value })}
+                            placeholder="Sharma Interior Projects"
+                            className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3 py-2 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                            Project Tag
+                          </label>
+                          <input
+                            type="text"
+                            value={editDraft.projectTag ?? ""}
+                            onChange={(e) => setEditDraft({ ...editDraft, projectTag: e.target.value })}
+                            placeholder="Resort & Hospitality"
+                            className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3 py-2 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                            Order Volume
+                          </label>
+                          <input
+                            type="text"
+                            value={editDraft.orderVolume ?? ""}
+                            onChange={(e) => setEditDraft({ ...editDraft, orderVolume: e.target.value })}
+                            placeholder="₹8,50,000"
+                            className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3 py-2 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-[9px] font-extrabold uppercase tracking-widest text-[#1F1B16]/50 dark:text-[#F7F3EC]/50 block mb-1">
+                          Portrait Photo URL
+                        </label>
+                        <input
+                          type="url"
+                          value={editDraft.photo ?? ""}
+                          onChange={(e) => setEditDraft({ ...editDraft, photo: e.target.value })}
+                          placeholder="https://images.unsplash.com/photo-..."
+                          className="w-full border border-[#1F1B16]/15 dark:border-[#F7F3EC]/15 rounded-xl px-3 py-2 text-xs bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] font-medium focus:outline-none focus:border-accent-teal"
+                        />
+                        {editDraft.photo && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={editDraft.photo} alt="preview" className="mt-2 w-12 h-12 rounded-xl object-cover border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10" />
+                        )}
+                      </div>
+
                       {/* Edit Mode Actions */}
                       <div className="flex items-center gap-2 pt-1">
                         <button
@@ -851,13 +1094,19 @@ function TestimonialsManager({
                       </p>
 
                       <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">
-                            {t.name}
-                          </h4>
-                          <span className="text-[10px] text-accent-teal font-semibold">
-                            {t.role}
-                          </span>
+                        <div className="flex items-center gap-3">
+                          {t.photo && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={t.photo} alt={t.name} className="w-10 h-10 rounded-xl object-cover shrink-0 border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10" />
+                          )}
+                          <div>
+                            <h4 className="font-bold text-xs text-[#1F1B16] dark:text-[#F7F3EC]">
+                              {t.name}
+                            </h4>
+                            <span className="text-[10px] text-accent-teal font-semibold">
+                              {t.company ? `${t.company} · ` : ""}{t.role}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Per-Card Action Buttons */}

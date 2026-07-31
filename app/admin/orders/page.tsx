@@ -92,7 +92,7 @@ const INITIAL_ORDERS = [
 ];
 
 export default function OrderProcessorPage() {
-  const { orders, updateOrderStatus } = useStore();
+  const { orders, updateOrderStatus, updateOrderTrackingFlow } = useStore();
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
   
   // Filter States
@@ -137,6 +137,24 @@ export default function OrderProcessorPage() {
     if (matched) {
       showToast(`Status updated to ${newStatus}. Email alert dispatched to ${matched.email} via Resend.`);
     }
+  };
+
+  const handleDateChange = (orderId: string, expectedDeliveryDate: string) => {
+    updateOrderStatus(orderId, selectedOrder?.status || "Pending", expectedDeliveryDate);
+    
+    if (selectedOrder && selectedOrder.id === orderId) {
+      setSelectedOrder((prev: OrderRecord | null) => (prev ? { ...prev, expectedDeliveryDate } : null));
+    }
+    
+    showToast(`Expected delivery date updated to: "${expectedDeliveryDate}"`);
+  };
+
+  const handleTrackingFlowChange = (orderId: string, trackingFlow: string) => {
+    updateOrderTrackingFlow(orderId, trackingFlow);
+    if (selectedOrder && selectedOrder.id === orderId) {
+      setSelectedOrder((prev: OrderRecord | null) => (prev ? { ...prev, trackingFlow } : null));
+    }
+    showToast(`Tracking workflow template updated to "${trackingFlow}"`);
   };
 
   const showToast = (msg: string) => {
@@ -357,13 +375,51 @@ export default function OrderProcessorPage() {
                     onChange={(e) => handleStatusChange(selectedOrder.id, e.target.value)}
                     className="w-full border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs font-bold bg-[#F7F3EC] text-[#1F1B16] focus:outline-none cursor-pointer appearance-none"
                   >
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
+                    <option value="Order Booked">Order Booked</option>
+                    <option value="Order Accepted">Order Accepted</option>
+                    <option value="Crafting">Crafting (Furniture/Custom)</option>
+                    <option value="Painting">Painting (Furniture/Custom)</option>
+                    <option value="Foam Layering">Foam Layering (Mattress)</option>
+                    <option value="Cover Stitching">Cover Stitching (Mattress)</option>
+                    <option value="Timber Selection">Timber Selection (Custom)</option>
+                    <option value="Hand Carving">Hand Carving (Custom)</option>
+                    <option value="Quality Inspection">Quality Inspection (Ready-Ship)</option>
+                    <option value="Secured Packing">Secured Packing (Ready-Ship)</option>
                     <option value="Shipped">Shipped</option>
                     <option value="Delivered">Delivered</option>
                   </select>
                   <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-[#1F1B16]/50" />
                 </div>
+              </div>
+
+              {/* Tracking workflow template dropdown */}
+              <div>
+                <span className="text-[9px] font-bold text-[#1F1B16]/40 uppercase tracking-wider block mb-2">Tracking Workflow Template</span>
+                <div className="relative">
+                  <select
+                    value={selectedOrder.trackingFlow || "Furniture"}
+                    onChange={(e) => handleTrackingFlowChange(selectedOrder.id, e.target.value)}
+                    className="w-full border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs font-bold bg-[#F7F3EC] text-[#1F1B16] focus:outline-none cursor-pointer appearance-none"
+                  >
+                    <option value="Furniture">Furniture Carpentry (Crafting → Painting)</option>
+                    <option value="Mattress">Mattress Assembly (Foam Layering → Cover Stitching)</option>
+                    <option value="Custom Woodwork">Custom Woodwork (Timber Selection → Hand Carving)</option>
+                    <option value="Ready-Ship">Ready-Ship Accessories (Quality Inspection → Secured Packing)</option>
+                  </select>
+                  <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-[#1F1B16]/50" />
+                </div>
+              </div>
+
+              {/* Expected Delivery Date input */}
+              <div>
+                <span className="text-[9px] font-bold text-[#1F1B16]/40 uppercase tracking-wider block mb-2">Expected Delivery Date / Timeline</span>
+                <input
+                  type="text"
+                  placeholder="e.g. Aug 15, 2026 or 2-3 Working Days"
+                  value={selectedOrder.expectedDeliveryDate || ""}
+                  onChange={(e) => handleDateChange(selectedOrder.id, e.target.value)}
+                  className="w-full border border-[#1F1B16]/10 rounded-full px-5 py-3 text-xs font-bold bg-[#FAF7F2] text-[#1F1B16] focus:outline-none focus:border-accent-teal"
+                />
               </div>
 
               {/* Client specifications */}

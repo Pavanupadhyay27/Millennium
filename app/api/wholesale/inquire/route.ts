@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { requireAdmin, safeErrorResponse } from "../../../../lib/apiAuth";
+import { rateLimitResponse } from "../../../../lib/rateLimit";
+import { secureId } from "../../../../lib/auth";
 
 let INQUIRIES_DB = [
   {
@@ -16,7 +19,11 @@ let INQUIRIES_DB = [
   }
 ];
 
-export async function GET() {
+export async function GET(request: Request) {
+  // GET inquiries is restricted to admins only (H1 fix)
+  const authError = requireAdmin(request);
+  if (authError) return authError;
+
   return NextResponse.json({
     success: true,
     total: INQUIRIES_DB.length,
@@ -25,6 +32,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  // Rate limit: 3 inquiries per 5 minutes per IP
+  const limited = rateLimitResponse(request, { windowMs: 5 * 60 * 1000, max: 3 });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const { name, companyName, email, phone, city, itemTitle, quantity, notes } = body;
@@ -36,16 +47,24 @@ export async function POST(request: Request) {
       );
     }
 
+    const cleanName = String(name).trim().slice(0, 100);
+    const cleanCompany = companyName ? String(companyName).trim().slice(0, 100) : "Independent Trade Buyer";
+    const cleanEmail = email ? String(email).trim().toLowerCase() : `${phone}@wholesale.in`;
+    const cleanPhone = phone ? String(phone).trim() : "";
+    const cleanCity = city ? String(city).trim().slice(0, 50) : "Bhubaneswar";
+    const cleanTitle = itemTitle ? String(itemTitle).trim().slice(0, 150) : "Wholesale B2B Inquiry";
+    const cleanNotes = notes ? String(notes).trim().slice(0, 1000) : "Submitted via Wholesale B2B Trade form.";
+
     const newInquiry = {
-      id: `inq-${Date.now()}`,
-      name,
-      companyName: companyName || "Independent Trade Buyer",
-      email: email || `${phone}@wholesale.in`,
-      phone,
-      city: city || "Bhubaneswar",
-      itemTitle: itemTitle || "Wholesale B2B Inquiry",
-      quantity: Number(quantity) || 10,
-      notes: notes || "Submitted via Wholesale B2B Trade form.",
+      id: secureId("inq"),
+      name: cleanName,
+      companyName: cleanCompany,
+      email: cleanEmail,
+      phone: cleanPhone,
+      city: cleanCity,
+      itemTitle: cleanTitle,
+      quantity: Math.max(1, Number(quantity) || 10),
+      notes: cleanNotes,
       status: "NEW",
       createdAt: new Date().toISOString()
     };
@@ -60,10 +79,7 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || "Failed to submit wholesale inquiry" },
-      { status: 500 }
-    );
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to submit wholesale inquiry");
   }
 }

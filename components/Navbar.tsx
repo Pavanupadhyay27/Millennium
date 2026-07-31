@@ -52,6 +52,15 @@ export default function Navbar({ transparent = false }: NavbarProps) {
       setTheme("dark");
       document.documentElement.classList.add("dark");
     }
+
+    const handleThemeChange = () => {
+      const currentTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+      if (currentTheme) setTheme(currentTheme);
+    };
+    window.addEventListener("theme-change", handleThemeChange);
+    return () => {
+      window.removeEventListener("theme-change", handleThemeChange);
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -63,6 +72,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
     } else {
       document.documentElement.classList.remove("dark");
     }
+    window.dispatchEvent(new Event("theme-change"));
   };
 
   useEffect(() => {
@@ -106,12 +116,12 @@ export default function Navbar({ transparent = false }: NavbarProps) {
   const shouldBeTransparent = transparent && !isScrolled;
 
   const textThemeClass = shouldBeTransparent
-    ? "text-white/90 hover:text-white"
-    : "text-[#1F1B16]/85 hover:text-accent-teal dark:text-[#F7F3EC]/85 dark:hover:text-accent-teal";
+    ? (theme === "light" ? "text-charcoal/90 hover:text-charcoal font-bold" : "text-white/90 hover:text-white font-bold")
+    : (theme === "light" ? "text-charcoal/90 hover:text-accent-teal font-bold" : "text-white/90 hover:text-emerald-400 font-bold");
 
   const iconThemeClass = shouldBeTransparent
-    ? "text-white/90 hover:bg-white/10 hover:text-white"
-    : "text-[#1F1B16]/80 hover:bg-[#1F1B16]/5 hover:text-[#1F1B16] dark:text-[#F7F3EC]/80 dark:hover:bg-[#F7F3EC]/5 dark:hover:text-[#F7F3EC]";
+    ? (theme === "light" ? "text-charcoal/90 hover:bg-charcoal/10 hover:text-charcoal" : "text-white/90 hover:bg-white/10 hover:text-white")
+    : (theme === "light" ? "text-charcoal/90 hover:bg-charcoal/10 hover:text-charcoal" : "text-white/90 hover:bg-white/10 hover:text-white");
 
   return (
     <>
@@ -136,24 +146,30 @@ export default function Navbar({ transparent = false }: NavbarProps) {
       {/* BRAND LOGO */}
       <a
         href="/"
-        className="pointer-events-auto shrink-0 flex items-center transition-all duration-300 hover:scale-105"
+        className="pointer-events-auto shrink-0 flex items-center transition-all duration-300 hover:scale-105 translate-y-2 md:translate-y-3.5"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo.png"
           alt="Millennium Furniture Logo"
           className="h-14 sm:h-16 md:h-20 lg:h-24 w-auto object-contain drop-shadow-md"
+          style={{ imageRendering: "-webkit-optimize-contrast" }}
         />
       </a>
 
       {/* FLOATING NAV PILL */}
       <div className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 pointer-events-auto relative">
         <nav
-          className={`transition-all duration-300 rounded-full border px-4 sm:px-8 py-2 flex items-center gap-3 sm:gap-6 ${
-            shouldBeTransparent
-              ? "bg-black/40 dark:bg-black/60 backdrop-blur-md border-white/20 shadow-xl"
-              : "bg-[#FAF7F2]/95 dark:bg-[#12100E]/95 backdrop-blur-md border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 shadow-xl"
-          }`}
+          className="transition-all duration-300 rounded-full border px-4 sm:px-8 py-2.5 flex items-center gap-3 sm:gap-6 relative"
+          style={theme === "light" ? {
+            background: "linear-gradient(180deg, rgba(250, 247, 242, 0.85) 0%, rgba(247, 243, 236, 0.95) 100%)",
+            boxShadow: "0 14px 32px -4px rgba(31, 27, 22, 0.15), inset 0 1.5px 0 rgba(255, 255, 255, 0.6), inset 0 -2.5px 0 rgba(31, 27, 22, 0.1)",
+            borderColor: "rgba(31, 27, 22, 0.15)",
+          } : {
+            background: "linear-gradient(180deg, #2D2721 0%, #1A1612 100%)",
+            boxShadow: "0 14px 32px -4px rgba(0, 0, 0, 0.6), inset 0 1.5px 0 rgba(255, 255, 255, 0.25), inset 0 -2.5px 0 rgba(0, 0, 0, 0.5)",
+            borderColor: "rgba(255,255,255,0.2)",
+          }}
         >
           {/* Search Input field */}
           {searchActive ? (
@@ -206,34 +222,56 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                 <AnimatePresence>
                   {spacesDropdownOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-[#FAF7F2] dark:bg-[#12100E] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/20 rounded-2xl shadow-2xl p-3 flex flex-col gap-1 backdrop-blur-lg z-50 text-[#1F1B16] dark:text-[#F7F3EC]"
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 border rounded-3xl p-3 flex flex-col gap-1.5 z-50 overflow-hidden"
+                      style={theme === "light" ? {
+                        background: "linear-gradient(180deg, rgba(250, 247, 242, 0.95) 0%, rgba(247, 243, 236, 0.98) 100%)",
+                        boxShadow: "0 20px 50px rgba(31, 27, 22, 0.15), inset 0 1.5px 0 rgba(255, 255, 255, 0.6)",
+                        borderColor: "rgba(31, 27, 22, 0.15)",
+                      } : {
+                        background: "linear-gradient(180deg, #2D2721 0%, #1A1612 100%)",
+                        boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1.5px 0 rgba(255, 255, 255, 0.25)",
+                        borderColor: "rgba(255,255,255,0.2)",
+                      }}
                     >
                       <a
                         href="/spaces/home"
-                        className="px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal dark:hover:text-white transition-all flex items-center justify-between"
+                        className={`px-4 py-3 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-between group border border-transparent hover:border-[#2F6F62]/20 hover:bg-[#2F6F62]/5 ${
+                          theme === "light" ? "text-charcoal hover:text-accent-teal" : "text-[#F7F3EC] hover:text-white"
+                        }`}
                       >
-                        Home Spaces <span>→</span>
+                        <span className="flex items-center gap-2">🛋️ Home Spaces</span>
+                        <span className="text-emerald-400 group-hover:translate-x-1 transition-transform">→</span>
                       </a>
                       <a
                         href="/spaces/office"
-                        className="px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal dark:hover:text-white transition-all flex items-center justify-between"
+                        className={`px-4 py-3 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-between group border border-transparent hover:border-[#2F6F62]/20 hover:bg-[#2F6F62]/5 ${
+                          theme === "light" ? "text-charcoal hover:text-accent-teal" : "text-[#F7F3EC] hover:text-white"
+                        }`}
                       >
-                        Office & Work <span>→</span>
+                        <span className="flex items-center gap-2">💼 Office & Work</span>
+                        <span className="text-emerald-400 group-hover:translate-x-1 transition-transform">→</span>
                       </a>
                       <a
                         href="/spaces/commercial"
-                        className="px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal dark:hover:text-white transition-all flex items-center justify-between"
+                        className={`px-4 py-3 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-between group border border-transparent hover:border-[#2F6F62]/20 hover:bg-[#2F6F62]/5 ${
+                          theme === "light" ? "text-charcoal hover:text-accent-teal" : "text-[#F7F3EC] hover:text-white"
+                        }`}
                       >
-                        Commercial & Lobby <span>→</span>
+                        <span className="flex items-center gap-2">🏨 Commercial & Lobby</span>
+                        <span className="text-emerald-400 group-hover:translate-x-1 transition-transform">→</span>
                       </a>
                       <a
                         href="/spaces/outdoor"
-                        className="px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-accent-teal hover:text-white dark:hover:bg-accent-teal dark:hover:text-white transition-all flex items-center justify-between"
+                        className={`px-4 py-3 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-between group border border-transparent hover:border-[#2F6F62]/20 hover:bg-[#2F6F62]/5 ${
+                          theme === "light" ? "text-charcoal hover:text-accent-teal" : "text-[#F7F3EC] hover:text-white"
+                        }`}
                       >
-                        Outdoor & Patio <span>→</span>
+                        <span className="flex items-center gap-2">🌿 Outdoor & Patio</span>
+                        <span className="text-emerald-400 group-hover:translate-x-1 transition-transform">→</span>
                       </a>
                     </motion.div>
                   )}
@@ -261,6 +299,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
           {/* Action Icons */}
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
+              suppressHydrationWarning
               onClick={toggleTheme}
               aria-label="Toggle theme"
               className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all ${iconThemeClass}`}
@@ -269,6 +308,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
             </button>
             
             <button
+              suppressHydrationWarning
               onClick={() => setSearchActive(!searchActive)}
               aria-label="Toggle Search"
               className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all ${
@@ -287,6 +327,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
             </a>
 
             <button
+              suppressHydrationWarning
               onClick={() => toggleCartDrawer(true)}
               aria-label="Cart"
               className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all relative ${iconThemeClass}`}
@@ -301,6 +342,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
 
             {/* Mobile Menu Trigger */}
             <button
+              suppressHydrationWarning
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all ${iconThemeClass}`}
             >

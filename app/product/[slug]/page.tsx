@@ -398,13 +398,19 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                       </button>
                     </div>
 
-                    {/* Action buttons: Add to Cart & Buy Now */}
+                    {/* Action buttons: Add to Cart & Buy Now - 3D Skeuomorphic */}
                     <div className="flex-1 flex flex-col sm:flex-row items-center gap-3">
                       <button
                         onClick={handleAddToCart}
-                        className="w-full sm:w-auto flex-1 bg-white dark:bg-[#1C1814] text-[#1F1B16] dark:text-[#F7F3EC] border border-[#1F1B16]/20 dark:border-[#F7F3EC]/20 hover:border-accent-teal font-bold py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-sm uppercase tracking-wider text-xs transition-all active:scale-95"
+                        className="w-full sm:w-auto flex-1 text-[#1F1B16] dark:text-[#F7F3EC] font-extrabold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-md uppercase tracking-widest text-xs transition-all transform active:translate-y-0.5 border border-[#1F1B16]/15 dark:border-[#F7F3EC]/20 relative overflow-hidden"
+                        style={{
+                          background: "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,238,233,0.95) 100%)",
+                          boxShadow: "0 6px 16px -2px rgba(0,0,0,0.15), inset 0 1.5px 0 rgba(255,255,255,1), inset 0 -2.5px 0 rgba(0,0,0,0.1)",
+                        }}
                       >
-                        <ShoppingBag className="w-4 h-4 text-accent-teal" /> Add To Cart
+                        <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/60 to-transparent pointer-events-none" />
+                        <ShoppingBag className="w-4 h-4 text-emerald-600 relative z-10" />
+                        <span className="relative z-10">Add To Cart</span>
                       </button>
 
                       <button
@@ -412,9 +418,15 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                           handleAddToCart();
                           toggleCartDrawer(true);
                         }}
-                        className="w-full sm:w-auto flex-1 bg-accent-teal hover:bg-accent-teal/90 text-white font-bold py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-md uppercase tracking-wider text-xs transition-all active:scale-95"
+                        className="w-full sm:w-auto flex-1 text-white font-extrabold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all uppercase tracking-widest text-xs transform active:translate-y-0.5 relative overflow-hidden border border-emerald-400/30"
+                        style={{
+                          background: "linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%)",
+                          boxShadow: "0 8px 22px -2px rgba(16, 185, 129, 0.5), inset 0 1.5px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 0 rgba(0, 0, 0, 0.35)",
+                        }}
                       >
-                        <Zap className="w-4 h-4 text-amber-300 fill-amber-300" /> Buy Now
+                        <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
+                        <Zap className="w-4 h-4 text-amber-300 fill-amber-300 relative z-10" />
+                        <span className="relative z-10">Buy Now</span>
                       </button>
                     </div>
                   </div>
@@ -633,7 +645,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
           {/* SIMILAR PRODUCT SUGGESTIONS (YOU MAY ALSO LIKE) */}
           <div className="mt-20 border-t border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 pt-14">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent-teal bg-accent-teal/10 px-3 py-1 rounded-full inline-block mb-2">
                   Handcrafted Alternatives
@@ -644,11 +656,13 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               </div>
               <a
                 href="/spaces/home"
-                className="text-xs font-bold text-accent-teal hover:underline flex items-center gap-1.5 self-start md:self-auto"
+                className="text-xs font-bold text-accent-teal hover:underline flex items-center gap-1.5 self-start sm:self-auto"
               >
                 Browse Full Catalog <ArrowRight className="w-3.5 h-3.5" />
               </a>
-              <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6">
+            </div>
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {storeProducts
                 .filter((p) => p.id !== product.id && p.status === "active")
                 .slice(0, 4)
@@ -656,38 +670,39 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   <a
                     key={item.id}
                     href={`/product/${item.id}`}
-                    className="group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl p-2.5 sm:p-0 flex flex-row sm:flex-col gap-3.5 sm:gap-0 shadow-sm hover:shadow-md transition-all"
+                    className="group glass-panel rounded-3xl p-2.5 sm:p-3.5 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="w-24 h-24 shrink-0 sm:w-full sm:h-auto sm:aspect-[4/3] bg-[#FAF7F2] dark:bg-[#12100E] rounded-xl sm:rounded-2xl relative overflow-hidden flex items-center justify-center border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
+                    <div className="aspect-[4/3] w-full bg-[#FAF7F2] dark:bg-[#12100E] rounded-2xl relative overflow-hidden flex items-center justify-center border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={item.image || "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400"}
                         alt={item.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
+                      <div className="absolute inset-0 bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
 
-                    <div className="flex-1 min-w-0 sm:p-4 flex flex-col justify-between">
+                    <div className="flex-1 mt-3 sm:mt-4 flex flex-col justify-between">
                       <div>
                         <span className="text-[9px] font-bold text-accent-teal uppercase tracking-widest block mb-0.5">
                           {item.category}
                         </span>
-                        <h4 className="font-serif font-bold text-sm text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors line-clamp-1">
+                        <h4 className="font-serif font-bold text-xs sm:text-sm text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors line-clamp-1">
                           {item.name}
                         </h4>
                       </div>
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
+                      <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
                         <span className="font-mono font-extrabold text-xs sm:text-sm text-[#1F1B16] dark:text-[#F7F3EC]">
                           {formatPrice(item.price)}
                         </span>
-                        <span className="text-[10px] font-bold text-accent-teal flex items-center gap-0.5">
+                        <span className="text-[10px] font-bold text-accent-teal flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
                           View &rarr;
                         </span>
                       </div>
                     </div>
                   </a>
                 ))}
-            </div>         </div>
+            </div>
           </div>
 
         </main>

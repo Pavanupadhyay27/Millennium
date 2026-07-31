@@ -242,6 +242,25 @@ export default function SpacePage({ params }: { params: { space: string } }) {
   const spaceInfo = SPACE_DETAILS[currentSpaceKey];
 
   const { addToCart, toggleWishlist, wishlist, products: storeProducts } = useStore();
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      setTheme("dark");
+    }
+
+    const handleThemeChange = () => {
+      const currentTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+      if (currentTheme) setTheme(currentTheme);
+    };
+    window.addEventListener("theme-change", handleThemeChange);
+    return () => {
+      window.removeEventListener("theme-change", handleThemeChange);
+    };
+  }, []);
 
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedColor, setSelectedColor] = useState<string>("all");
@@ -390,10 +409,12 @@ export default function SpacePage({ params }: { params: { space: string } }) {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            {/* Sidebar Filters */}
-            <aside className={`lg:col-span-3 bg-white dark:bg-[#1A1612] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-5 sm:p-6 shadow-sm sticky top-20 ${
-              mobileFilterOpen ? "block mb-6 lg:mb-0" : "hidden lg:block"
-            }`}>
+            {/* Sidebar Filters - Minimalist Panel */}
+            <aside
+              className={`lg:col-span-3 sticky top-20 ${
+                mobileFilterOpen ? "block mb-6 lg:mb-0" : "hidden lg:block"
+              }`}
+            >
               <div className="flex items-center justify-between pb-3 mb-5 border-b border-[#1F1B16]/10 dark:border-[#F7F3EC]/10">
                 <h3 className="font-serif font-bold text-base flex items-center gap-2 text-[#1F1B16] dark:text-[#F7F3EC]">
                   <SlidersHorizontal className="w-4 h-4 text-accent-teal" /> Filters
@@ -421,11 +442,19 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                           <button
                             key={color.id}
                             onClick={() => setSelectedColor("all")}
-                            className={`px-3 py-1.5 rounded-full text-[11px] font-bold transition-all border ${
+                            className={`px-3 py-1.5 rounded-full text-[11px] font-bold border ${
                               isSelected
-                                ? "bg-accent-teal text-white border-accent-teal shadow-sm"
+                                ? "text-white border-emerald-800/10"
                                 : "bg-[#1F1B16]/5 dark:bg-[#F7F3EC]/10 border-[#1F1B16]/10 dark:border-[#F7F3EC]/20 text-[#1F1B16] dark:text-[#F7F3EC]"
                             }`}
+                            style={
+                              isSelected
+                                ? {
+                                    background: "linear-gradient(180deg, #10B981 0%, #059669 100%)",
+                                    boxShadow: "inset 0 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1.5px 0 rgba(0, 0, 0, 0.2)",
+                                  }
+                                : {}
+                            }
                           >
                             All
                           </button>
@@ -435,10 +464,12 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                         <button
                           key={color.id}
                           onClick={() => setSelectedColor(isSelected ? "all" : color.id)}
-                          className={`w-7 h-7 rounded-full transition-transform flex items-center justify-center border-2 ${
-                            isSelected ? "border-accent-teal ring-2 ring-accent-teal/30 scale-110" : "border-white/50 shadow-sm"
+                          className={`w-7 h-7 rounded-full flex items-center justify-center border-2 ${
+                            isSelected ? "border-accent-teal" : "border-charcoal/20 dark:border-white/20"
                           }`}
-                          style={{ backgroundColor: color.hex }}
+                          style={{
+                            backgroundColor: color.hex,
+                          }}
                           title={color.name}
                         >
                           {isSelected && <span className="w-2 h-2 rounded-full bg-white shadow-sm" />}
@@ -450,16 +481,16 @@ export default function SpacePage({ params }: { params: { space: string } }) {
 
                 {/* Category Filter */}
                 <div>
-                  <label className="block text-[11px] font-extrabold uppercase tracking-wider text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-2">
+                  <label className="block text-[11px] font-extrabold uppercase tracking-wider text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 mb-3">
                     Category
                   </label>
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <button
                       onClick={() => setSelectedCategory("all")}
-                      className={`w-full text-left px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                      className={`w-full text-left pl-3.5 py-1.5 border-l-2 text-xs font-bold ${
                         selectedCategory === "all"
-                          ? "bg-accent-teal text-white shadow-sm"
-                          : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10"
+                          ? "border-accent-teal text-accent-teal dark:text-emerald-400 font-extrabold"
+                          : "border-transparent text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 hover:text-accent-teal dark:hover:text-emerald-400"
                       }`}
                     >
                       All Categories
@@ -468,10 +499,10 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                       <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
-                        className={`w-full text-left px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                        className={`w-full text-left pl-3.5 py-1.5 border-l-2 text-xs font-bold ${
                           selectedCategory === cat
-                            ? "bg-accent-teal text-white shadow-sm"
-                            : "text-[#1F1B16]/80 dark:text-[#F7F3EC]/80 hover:bg-[#1F1B16]/5 dark:hover:bg-[#F7F3EC]/10"
+                            ? "border-accent-teal text-accent-teal dark:text-emerald-400 font-extrabold"
+                            : "border-transparent text-[#1F1B16]/70 dark:text-[#F7F3EC]/70 hover:text-accent-teal dark:hover:text-emerald-400"
                         }`}
                       >
                         {cat}
@@ -486,7 +517,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                     <label className="text-[11px] font-extrabold uppercase tracking-wider text-[#1F1B16]/80 dark:text-[#F7F3EC]/80">
                       Price Limit
                     </label>
-                    <span className="text-xs font-bold text-accent-teal">₹{maxPrice.toLocaleString("en-IN")}</span>
+                    <span className="text-xs font-bold text-accent-teal font-mono">₹{maxPrice.toLocaleString("en-IN")}</span>
                   </div>
                   <input
                     type="range"
@@ -502,7 +533,7 @@ export default function SpacePage({ params }: { params: { space: string } }) {
               </div>
             </aside>
 
-            {/* PRODUCT CARDS LIST - Horizontal E-commerce row on Mobile, Grid on Desktop */}
+            {/* PRODUCT CARDS LIST - Dynamic Responsive Grid */}
             <main className="lg:col-span-9">
               {filteredProducts.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-[#1A1612] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-3xl p-8">
@@ -510,28 +541,46 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                   <p className="text-xs text-[#1F1B16]/60 dark:text-[#F7F3EC]/60 mb-4">Try resetting your filters.</p>
                   <button
                     onClick={resetFilters}
-                    className="inline-flex items-center gap-2 bg-accent-teal text-white px-5 py-2 rounded-full text-xs font-bold shadow-md hover:bg-accent-teal/90 transition-all"
+                    className="inline-flex items-center gap-2 text-white px-5 py-2.5 rounded-full text-xs font-bold border border-emerald-800/10"
+                    style={{
+                      background: "linear-gradient(180deg, #10B981 0%, #059669 100%)",
+                      boxShadow: "inset 0 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1.5px 0 rgba(0, 0, 0, 0.2)",
+                    }}
                   >
                     <RotateCcw className="w-3.5 h-3.5" /> Reset Filters
                   </button>
                 </div>
               ) : (
-                <div className="flex flex-col sm:grid sm:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
                   {filteredProducts.map((product) => (
                     <div
                       key={product.id}
-                      className="group bg-white dark:bg-[#1C1814] border border-[#1F1B16]/10 dark:border-[#F7F3EC]/10 rounded-2xl sm:rounded-3xl p-2.5 sm:p-0 flex flex-row sm:flex-col gap-3.5 sm:gap-0 shadow-sm hover:shadow-lg transition-all"
+                      className="group rounded-3xl p-3 sm:p-0 flex flex-row sm:flex-col gap-4 sm:gap-0 border"
+                      style={theme === "light" ? {
+                        background: "linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%)",
+                        boxShadow: "inset 0 1.5px 0 rgba(255, 255, 255, 0.9), inset 0 -3px 0 rgba(31, 27, 22, 0.05)",
+                        borderColor: "rgba(31, 27, 22, 0.12)",
+                      } : {
+                        background: "linear-gradient(180deg, #25201A 0%, #161310 100%)",
+                        boxShadow: "inset 0 1.5px 0 rgba(255, 255, 255, 0.15), inset 0 -3px 0 rgba(0, 0, 0, 0.4)",
+                        borderColor: "rgba(255, 255, 255, 0.15)",
+                      }}
                     >
-                      {/* Image Frame - Small horizontal square thumbnail on mobile (< sm), full aspect ratio on desktop */}
+                      {/* Image Frame - 3D Inset Viewport */}
                       <a
                         href={`/product/${product.id}`}
-                        className="w-28 h-28 shrink-0 sm:w-full sm:h-auto sm:aspect-[4/3] bg-[#FAF8F5] dark:bg-[#12100E] rounded-xl sm:rounded-2xl relative overflow-hidden flex items-center justify-center border border-[#1F1B16]/5 dark:border-[#F7F3EC]/5"
+                        className={`w-32 h-32 shrink-0 sm:w-full sm:h-auto sm:aspect-[4/3] rounded-2xl sm:rounded-t-3xl sm:rounded-b-none relative overflow-hidden flex items-center justify-center border-b ${
+                          theme === "light" ? "bg-[#FAF7F2] border-charcoal/10" : "bg-[#12100E] border-white/10"
+                        }`}
+                        style={{
+                          boxShadow: "inset 0 4px 14px rgba(0, 0, 0, 0.6)",
+                        }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          className="w-full h-full object-cover"
                         />
                         <button
                           onClick={(e) => {
@@ -546,34 +595,71 @@ export default function SpacePage({ params }: { params: { space: string } }) {
                               bg: "bg-cream"
                             });
                           }}
-                          className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 dark:bg-black/80 backdrop-blur-md transition-all text-[#1F1B16] dark:text-[#F7F3EC] shadow-md"
+                          className="absolute top-3 right-3 z-10 p-2.5 rounded-full border active:scale-90"
+                          style={theme === "light" ? {
+                            background: "linear-gradient(180deg, rgba(250,247,242,0.9) 0%, rgba(247,243,236,0.95) 100%)",
+                            boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.8)",
+                            borderColor: "rgba(31,27,22,0.15)",
+                          } : {
+                            background: "linear-gradient(180deg, rgba(30,24,18,0.85) 0%, rgba(15,12,9,0.95) 100%)",
+                            boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.3)",
+                            borderColor: "rgba(255,255,255,0.3)",
+                          }}
+                          title={wishlist.some(w => w.id === product.id) ? "Remove from Wishlist" : "Save to Wishlist"}
                         >
-                          <Heart className={`w-3.5 h-3.5 ${wishlist.some(w => w.id === product.id) ? "fill-accent-terracotta text-accent-terracotta" : "opacity-60"}`} />
+                          <Heart
+                            className={`w-4 h-4 ${
+                              wishlist.some((w) => w.id === product.id)
+                                ? "fill-rose-500 text-rose-500"
+                                : "text-rose-400 stroke-[2.5] hover:text-rose-500"
+                            }`}
+                          />
                         </button>
                       </a>
 
                       {/* Card Info Content */}
-                      <div className="flex-1 min-w-0 sm:p-5 flex flex-col justify-between">
+                      <div className="flex-1 min-w-0 sm:p-5 flex flex-col justify-between space-y-3">
                         <a href={`/product/${product.id}`} className="block">
-                          <span className="text-[9px] font-bold text-accent-teal uppercase tracking-widest block mb-0.5">
-                            {product.category}
-                          </span>
-                          <h3 className="font-serif font-bold text-sm sm:text-base text-[#1F1B16] dark:text-[#F7F3EC] group-hover:text-accent-teal transition-colors leading-snug line-clamp-2 sm:truncate">
+                          <div className="flex items-center justify-between gap-1 mb-1.5">
+                            <span className="text-[9px] font-extrabold text-[#1F1B16]/80 dark:text-amber-400 uppercase tracking-widest bg-[#1F1B16]/5 dark:bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-[#1F1B16]/10 dark:border-amber-500/20">
+                              {product.category}
+                            </span>
+                            <span className={`text-[10px] font-bold flex items-center gap-0.5 ${
+                              theme === "light" ? "text-charcoal" : "text-amber-400"
+                            }`}>
+                              ★ 4.9
+                            </span>
+                          </div>
+                          <h3 className={`font-serif font-bold text-sm sm:text-base leading-snug line-clamp-2 sm:truncate ${
+                            theme === "light" ? "text-charcoal" : "text-[#F7F3EC]"
+                          }`}>
                             {product.name}
                           </h3>
                         </a>
 
-                        <div className="mt-2 sm:mt-4 flex items-end justify-between gap-2 border-t sm:pt-3 border-[#1F1B16]/5 dark:border-[#F7F3EC]/10">
+                        <div className={`flex items-center justify-between gap-2 border-t pt-3 ${
+                          theme === "light" ? "border-charcoal/10" : "border-white/10"
+                        }`}>
                           <div>
-                            <span className="font-mono text-xs sm:text-base font-extrabold text-[#1F1B16] dark:text-[#F7F3EC] block">
+                            <span className={`font-mono text-xs sm:text-base font-extrabold block ${
+                              theme === "light" ? "text-accent-teal" : "text-emerald-400"
+                            }`}>
                               ₹{product.price.toLocaleString("en-IN")}
                             </span>
                           </div>
+
+                          {/* Skeuomorphic 3D + Add Button */}
                           <button
                             onClick={() => handleAddToCart(product)}
-                            className="bg-accent-teal hover:bg-accent-teal/90 text-white text-[10px] sm:text-xs font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all shadow-sm active:scale-95"
+                            className="text-white text-[10px] sm:text-xs font-extrabold px-4 py-2 rounded-xl border border-emerald-800/10 active:scale-95"
+                            style={{
+                              background: "linear-gradient(180deg, #34D399 0%, #10B981 100%)",
+                              boxShadow: "inset 0 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1.5px 0 rgba(0, 0, 0, 0.2)",
+                            }}
                           >
-                            + Add
+                            <span className="relative z-10 flex items-center gap-1">
+                              + Add
+                            </span>
                           </button>
                         </div>
                       </div>

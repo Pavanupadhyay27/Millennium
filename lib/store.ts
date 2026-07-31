@@ -263,6 +263,10 @@ export interface CustomerTestimonial {
   avatar: string;
   verified: boolean;
   date: string;
+  photo?: string; // full portrait image for wholesale testimonials
+  company?: string;
+  projectTag?: string;
+  orderVolume?: string;
 }
 
 export interface OrderRecord {
@@ -277,6 +281,8 @@ export interface OrderRecord {
   phone: string;
   gstin?: string;
   items: Array<{ name: string; color?: string; quantity: number; price: number }>;
+  expectedDeliveryDate?: string;
+  trackingFlow?: string;
 }
 
 export interface CustomerRecord {
@@ -292,6 +298,7 @@ export interface CustomerRecord {
   phone?: string;
   history: Array<{ id: string; date: string; value: number; status: string }>;
   customDiscountCode?: string;
+  profileImage?: string;
 }
 
 const INITIAL_ORDERS_LIST: OrderRecord[] = [];
@@ -374,6 +381,10 @@ const INITIAL_TESTIMONIALS: CustomerTestimonial[] = [
     quote: "Millennium's attention to teak joinery and finish is exceptional. Delivery inside Bhubaneswar was prompt and seamless.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120",
+    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800",
+    company: "Mohapatra Design Studio",
+    projectTag: "Resort & Hospitality",
+    orderVolume: "₹8,50,000",
     verified: true,
     date: "May 14, 2026",
   },
@@ -384,6 +395,10 @@ const INITIAL_TESTIMONIALS: CustomerTestimonial[] = [
     quote: "Visiting their local studio in Bhubaneswar convinced me. The blush accent chair is now the highlight of our living room!",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120",
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+    company: "Apex Design Studio",
+    projectTag: "Commercial Office",
+    orderVolume: "₹4,20,000",
     verified: true,
     date: "Apr 28, 2026",
   },
@@ -394,6 +409,10 @@ const INITIAL_TESTIMONIALS: CustomerTestimonial[] = [
     quote: "Excellent commercial terms and reliable logistics. The build quality of solid wood frames is highly appreciated.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120",
+    photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800",
+    company: "Heritage Living Spaces",
+    projectTag: "Retail Showroom",
+    orderVolume: "₹12,00,000",
     verified: true,
     date: "Jun 02, 2026",
   },
@@ -410,6 +429,19 @@ export interface AppNotification {
 }
 
 const INITIAL_NOTIFICATIONS: AppNotification[] = [];
+
+export interface SavedAddress {
+  id: string;
+  label: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  phone: string;
+  email?: string;
+  isDefault?: boolean;
+}
 
 interface AppState {
   cart: CartItem[];
@@ -428,7 +460,11 @@ interface AppState {
   leadContext?: { itemTitle?: string; actionType?: string };
   lastAddedItem: CartItem | null;
   isAuthenticated: boolean;
-  user: { name: string; email: string } | null;
+  user: { name: string; email: string; phone?: string; profileImage?: string } | null;
+  updateProfile: (profile: { name?: string; email?: string; phone?: string; profileImage?: string }) => void;
+  addresses: SavedAddress[];
+  addSavedAddress: (addr: Omit<SavedAddress, "id">) => void;
+  updateSavedAddress: (id: string, addr: Partial<SavedAddress>) => void;
   
   cmsSettings: CmsSettings;
   updateCmsSettings: (settings: Partial<CmsSettings>) => void;
@@ -452,7 +488,8 @@ interface AppState {
   markAllNotificationsRead: () => void;
   addNotification: (notif: Omit<AppNotification, "id" | "timeAgo" | "read">) => void;
   addOrder: (order: OrderRecord) => void;
-  updateOrderStatus: (orderId: string, status: string) => void;
+  updateOrderStatus: (orderId: string, status: string, expectedDeliveryDate?: string) => void;
+  updateOrderTrackingFlow: (orderId: string, trackingFlow: string) => void;
 
   // Customer CRM Actions
   registerCustomerOnOrder: (order: OrderRecord) => void;
@@ -507,7 +544,62 @@ export const useStore = create<AppState>()(
       leadModalOpen: false,
       lastAddedItem: null,
       isAuthenticated: false,
+      addresses: [
+        {
+          id: "addr-1",
+          label: "PRIMARY RESIDENCE",
+          name: "Pawan",
+          address: "Plot 412, Kharvel Nagar, Janpath Road",
+          city: "Bhubaneswar",
+          state: "Odisha",
+          postalCode: "751001",
+          phone: "+91 70081 29381",
+          email: "Pk@gmail.com",
+          isDefault: true,
+        },
+      ],
+
+      addSavedAddress: (addrData) =>
+        set((state) => ({
+          addresses: [
+            ...state.addresses,
+            { ...addrData, id: `addr-${Date.now()}` },
+          ],
+        })),
+
+      updateSavedAddress: (id, addrData) =>
+        set((state) => ({
+          addresses: state.addresses.map((a) =>
+            a.id === id ? { ...a, ...addrData } : a
+          ),
+        })),
+
       user: null,
+
+      updateProfile: (profileData) =>
+        set((state) => {
+          const defaultUser = { name: "Pawan", email: "Pk@gmail.com", phone: "+91 70081 29381" };
+          const currentUser = state.user || defaultUser;
+          const updatedUser = { ...currentUser, ...profileData };
+          const userEmail = currentUser.email.toLowerCase();
+
+          // Also sync with the CRM customers list if the email matches
+          const updatedCustomers = state.customers.map((c) => {
+            if (c.email.toLowerCase() === userEmail) {
+              return {
+                ...c,
+                name: profileData.name || c.name,
+                phone: profileData.phone || c.phone,
+                profileImage: profileData.profileImage || c.profileImage,
+              };
+            }
+            return c;
+          });
+          return {
+            user: updatedUser,
+            customers: updatedCustomers,
+          };
+        }),
 
       cmsSettings: INITIAL_CMS_SETTINGS,
       updateCmsSettings: (newSettings) =>
@@ -609,9 +701,29 @@ export const useStore = create<AppState>()(
         get().registerCustomerOnOrder(newOrder);
       },
 
-      updateOrderStatus: (orderId, status) =>
+      updateOrderStatus: (orderId, status, expectedDeliveryDate) =>
         set((state) => ({
-          orders: state.orders.map((o) => (o.id === orderId ? { ...o, status } : o)),
+          orders: state.orders.map((o) =>
+            o.id === orderId
+              ? {
+                  ...o,
+                  status,
+                  expectedDeliveryDate: expectedDeliveryDate !== undefined ? expectedDeliveryDate : o.expectedDeliveryDate,
+                }
+              : o
+          ),
+        })),
+
+      updateOrderTrackingFlow: (orderId, trackingFlow) =>
+        set((state) => ({
+          orders: state.orders.map((o) =>
+            o.id === orderId
+              ? {
+                  ...o,
+                  trackingFlow,
+                }
+              : o
+          ),
         })),
 
       registerCustomerOnOrder: (order) => {
@@ -627,6 +739,8 @@ export const useStore = create<AppState>()(
             status: order.status,
           };
 
+          const userProfileImage = state.user && state.user.email.toLowerCase() === order.email.toLowerCase() ? state.user.profileImage : undefined;
+
           if (existingIdx > -1) {
             const updated = [...state.customers];
             const target = updated[existingIdx];
@@ -636,6 +750,7 @@ export const useStore = create<AppState>()(
               lifetimeValue: target.lifetimeValue + order.total,
               history: [orderEntry, ...target.history],
               phone: order.phone || target.phone,
+              profileImage: target.profileImage || userProfileImage,
             };
             return { customers: updated };
           } else {
@@ -651,6 +766,7 @@ export const useStore = create<AppState>()(
               phone: order.phone,
               gstin: order.gstin,
               history: [orderEntry],
+              profileImage: userProfileImage,
             };
             return { customers: [newCustomer, ...state.customers] };
           }

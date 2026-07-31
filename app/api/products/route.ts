@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { requireAdmin, safeErrorResponse } from "../../../lib/apiAuth";
+import { rateLimitResponse } from "../../../lib/rateLimit";
+import { secureId } from "../../../lib/auth";
 
-// In-memory mock database store for seamless demo execution without external DB setup
 let PRODUCTS_DB = [
   {
     id: "prod-1",
@@ -73,6 +75,10 @@ let PRODUCTS_DB = [
 ];
 
 export async function GET(request: Request) {
+  // Public GET route for catalog browsing, rate limited to 60 req/min
+  const limited = rateLimitResponse(request, { windowMs: 60_000, max: 60 });
+  if (limited) return limited;
+
   const { searchParams } = new URL(request.url);
   const space = searchParams.get("space");
   const category = searchParams.get("category");
@@ -103,6 +109,14 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  // REQUIRE ADMIN AUTHENTICATION to create products (H1 fix)
+  const authError = requireAdmin(request);
+  if (authError) return authError;
+
+  // Rate limit admin product creations
+  const limited = rateLimitResponse(request, { windowMs: 60_000, max: 20 });
+  if (limited) return limited;
+
   try {
     const body = await request.json();
 
@@ -113,18 +127,23 @@ export async function POST(request: Request) {
       );
     }
 
+    const cleanName = String(body.name).trim().slice(0, 150);
+    const cleanSlug = body.slug
+      ? String(body.slug).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-")
+      : cleanName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
     const newProduct = {
-      id: `prod-${Date.now()}`,
-      name: body.name,
-      slug: body.slug || body.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      description: body.description || "Handcrafted solid timber furniture.",
+      id: secureId("prod"),
+      name: cleanName,
+      slug: cleanSlug,
+      description: body.description ? String(body.description).slice(0, 1000) : "Handcrafted solid timber furniture.",
       price: Number(body.price),
       wholesalePrice: Number(body.wholesalePrice) || Math.round(Number(body.price) * 0.75),
-      images: body.images && body.images.length > 0 ? body.images : ["https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=700"],
-      space: body.space || "home",
-      categoryName: body.categoryName || "Chairs",
-      material: body.material || "Solid Teak Wood",
-      colorName: body.colorName || "Natural Teak",
+      images: Array.isArray(body.images) && body.images.length > 0 ? body.images : ["https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&q=80&w=700"],
+      space: body.space ? String(body.space).toLowerCase() : "home",
+      categoryName: body.categoryName ? String(body.categoryName) : "Chairs",
+      material: body.material ? String(body.material) : "Solid Teak Wood",
+      colorName: body.colorName ? String(body.colorName) : "Natural Teak",
       rating: 5.0,
       stock: Number(body.stock) || 10,
       featured: Boolean(body.featured),
@@ -137,10 +156,7 @@ export async function POST(request: Request) {
       { success: true, message: "Product created successfully", product: newProduct },
       { status: 201 }
     );
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || "Failed to create product" },
-      { status: 500 }
-    );
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to create product");
   }
 }
